@@ -1,3 +1,13 @@
+# Basic import modules
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import os
+
+# Define path location
+# This command ensure that it can open all files if they are stored in the same directory as this code.
+os.chdir((os.path.dirname(os.path.abspath(__file__))))
+
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -9,19 +19,24 @@ def parse_row(row):
     return values
 
 def load_data(acceleration_file, angular_velocity_file):
-    # Load accelerometer data
-    acceleration_data = pd.read_csv(acceleration_file, header=None)
-    # Skip the header row and parse the data
-    acceleration_xyz = np.array([parse_row(row) for row in acceleration_data.iloc[:, 0]])
-
-    # Load gyroscope data
-    angular_velocity_data = pd.read_csv(angular_velocity_file, header=None)
-    # Skip the header row and parse the data
-    angular_velocity_xyz = np.array([parse_row(row) for row in angular_velocity_data.iloc[:, 0]])
+    try:
+        # Load accelerometer data
+        acceleration_data = pd.read_csv(acceleration_file, header=0)
+        # Skip the header row and parse the data
+        acceleration_xyz = np.array([parse_row(row) for row in acceleration_data[0]])
+    except FileNotFoundError:
+        raise FileNotFoundError("Accelerometer Data File Not found")
+        
+    try:
+        # Load gyroscope data
+        angular_velocity_data = pd.read_csv(angular_velocity_file, header=0)
+        # Skip the header row and parse the data
+        angular_velocity_xyz = np.array([parse_row(row) for row in angular_velocity_data[0]])
+    except FileNotFoundError:
+        raise FileNotFoundError("Gyroscope Data File Not found")
     
     return acceleration_xyz, angular_velocity_xyz
 
-    
 
 def integrate_acceleration(acceleration, dt):
     return acceleration * dt
@@ -39,7 +54,7 @@ def detect_throw_start(acceleration):
     # Find the index where total acceleration starts decreasing
     start_index = 0
     for i in range(1, len(total_acceleration)):
-        if total_acceleration[i] < total_acceleration[i-1]:
+        if total_acceleration[i] < total_acceleration[i-1] and total_acceleration[i] < total_acceleration[i-2]:
             start_index = i
             break
     return start_index
