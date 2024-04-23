@@ -19,21 +19,30 @@ def parse_row(row):
     return values
 
 def load_data(acceleration_file, angular_velocity_file):
+    # Load accelerometer data
+    # Skip the header row and parse the data
+    # Raises error if file is not found
     try:
-        # Load accelerometer data
-        acceleration_data = pd.read_csv(acceleration_file, header=0)
-        # Skip the header row and parse the data
+        acceleration_data = pd.read_csv(acceleration_file, header=None, skiprows=1)
         acceleration_xyz = np.array([parse_row(row) for row in acceleration_data[0]])
     except FileNotFoundError:
         raise FileNotFoundError("Accelerometer Data File Not found")
         
+    # Load gyroscope data
+    # Skip the header row and parse the data
+    # Raises error if file is not found
     try:
-        # Load gyroscope data
-        angular_velocity_data = pd.read_csv(angular_velocity_file, header=0)
-        # Skip the header row and parse the data
+        angular_velocity_data = pd.read_csv(angular_velocity_file, header=None, skiprows=1)
         angular_velocity_xyz = np.array([parse_row(row) for row in angular_velocity_data[0]])
     except FileNotFoundError:
         raise FileNotFoundError("Gyroscope Data File Not found")
+    
+    # Raises error if lenght of both files are not the same 
+    # In other words: files do no match the same throw
+    if not len(acceleration_xyz) == len(angular_velocity_xyz):
+        raise IndexError("Length of both files do not match! Data is not from the same throw.")
+    
+    ### Possibly also going to retrieve "dt" from this file. - Zibbo, 24/04/2024
     
     return acceleration_xyz, angular_velocity_xyz
 
@@ -92,16 +101,21 @@ def roll_dice(acceleration_xyz, angular_velocity_xyz, dt):
 
     return position, orientation, measured_acceleration, measured_angular_velocity
 
+#######################################################################################################
+# Define data filenames
+accelerometer_data_filename = "accelerometer_data.csv"
+gyroscope_data_filename = "gyroscope_data.csv"
+
 # Specify file paths
 current_directory = os.getcwd()
-acceleration_file = os.path.join(current_directory, "accelerometer_data.csv")
-angular_velocity_file = os.path.join(current_directory, "gyroscope_data.csv")
-
-# Time step size (seconds)
-dt = 0.01
+acceleration_file = os.path.join(current_directory, accelerometer_data_filename)
+angular_velocity_file = os.path.join(current_directory, gyroscope_data_filename)
 
 # Load data from CSV files
 acceleration_xyz, angular_velocity_xyz = load_data(acceleration_file, angular_velocity_file)
+
+# Time step size (seconds)
+dt = 0.01
 
 # Simulate dice trajectory
 position, orientation, measured_acceleration, measured_angular_velocity = roll_dice(acceleration_xyz, angular_velocity_xyz, dt)
