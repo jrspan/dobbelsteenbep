@@ -51,6 +51,25 @@ class KalmanFilter:
         
         return self.x
 
+def get_dice_number_from_orientation(orientation):
+    # Define the orientations of each dice number (assuming a standard dice)
+    orientations = {
+        1: [1, 0, 0, 0],  # Number 1 is facing in line with the X-axis
+        2: [0, 1, 0, 0],  # Number 2 is facing in line with the Y-axis
+        3: [0, 0, 1, 0],  # Number 3 is facing in line with the Z-axis
+        4: [0, 0, -1, 0], # Number 4 is facing opposite to the Z-axis
+        5: [0, -1, 0, 0], # Number 5 is facing opposite to the Y-axis
+        6: [-1, 0, 0, 0]  # Number 6 is facing opposite to the X-axis
+    }
+    
+    # Calculate the dot product of the current orientation with each number orientation
+    dot_products = {number: np.dot(orientation, orientations[number]) for number in orientations}
+    
+    # Determine the number with the highest dot product (indicating closest alignment)
+    top_number = max(dot_products, key=dot_products.get)
+    
+    return top_number
+
 
 def get_filepath(filename: str):
     filepath = os.path.dirname((os.path.abspath(__file__)))
@@ -78,13 +97,27 @@ def load_data(acceleration_file, angular_velocity_file):
     
     return acceleration_xyz, angular_velocity_xyz, dt
 
-
 def integrate_acceleration(velocity, acceleration, dt):
     return velocity + acceleration * dt
 
 def detect_throw_end(acceleration_data, gyroscope_data):
     min_length = min(len(acceleration_data), len(gyroscope_data))
     return min_length
+
+def rotate_quaternion(quaternion, axis, angle):
+    # Normalize the axis
+    axis = (axis / np.linalg.norm(axis)).astype(np.float64)
+
+    # Compute the quaternion representing the rotation
+    rotation_quaternion = np.concatenate([[np.cos(angle / 2)], np.sin(angle / 2) * axis])
+    
+    # Perform quaternion multiplication
+    result_quaternion = quaternion_multiply(rotation_quaternion, quaternion)
+    
+    # Convert to integers
+    result_quaternion = np.round(result_quaternion).astype(int)
+    
+    return result_quaternion
 
 def roll_dice_with_kalman_filter(accelerometer_data, gyroscope_data, dt, initial_orientation):
     num_steps = detect_throw_end(accelerometer_data, gyroscope_data)
@@ -128,8 +161,28 @@ def roll_dice_with_kalman_filter(accelerometer_data, gyroscope_data, dt, initial
 
     return position, orientation, measured_acceleration, measured_angular_velocity
 
-# Define the initial orientation (quaternion representing no rotation)
-initial_orientation = np.array([1.0, 0.0, 0.0, 0.0])
+# Function to compute quaternion multiplication
+def quaternion_multiply(q1, q2):
+    w1, x1, y1, z1 = q1
+    w2, x2, y2, z2 = q2
+    w = w1 * w2 - x1 * x2 - y1 * y2 - z1 * z2
+    x = w1 * x2 + x1 * w2 + y1 * z2 - z1 * y2
+    y = w1 * y2 - x1 * z2 + y1 * w2 + z1 * x2
+    z = w1 * z2 + x1 * y2 - y1 * x2 + z1 * w2
+    return np.array([w, x, y, z])
+
+# Define the initial orientation based on the specifications
+initial_orientation = np.array([1.0, 0.0, 0.0, 0.0])  # Identity quaternion
+
+# Rotate the Z-axis by 50 degrees around the Y-axis
+z_axis = np.array([0, 0, 1])
+y_axis = np.array([0, 1, 0])
+angle_degrees = 50
+angle_radians = np.radians(angle_degrees)
+initial_orientation = rotate_quaternion(initial_orientation, y_axis, angle_radians)
+
+# Rotate the Y-axis by 90 degrees around the resulting Z-axis
+initial_orientation = rotate_quaternion(initial_orientation, z_axis, np.radians(90))
 
 # Load data from CSV files
 filepath_accelerometer = get_filepath("acceleration_data.csv")
@@ -141,8 +194,11 @@ position_filtered, orientation_filtered, measured_acceleration_filtered, measure
     acceleration_xyz, angular_velocity_xyz, dt, initial_orientation
 )
 
+# Determine the number on the top side of the dice for each time step
+dice_numbers = [get_dice_number_from_orientation(orientation) for orientation in orientation_filtered]
+
 # Plot the results
-fig, axs = plt.subplots(3, 1, figsize=(10, 12))
+fig, axs = plt.subplots(5, 1, figsize=(10, 20))
 axs[0].plot(position_filtered[:, 0], label='X position (filtered)')
 axs[0].plot(position_filtered[:, 1], label='Y position (filtered)')
 axs[0].plot(position_filtered[:, 2], label='Z position (filtered)')
@@ -167,6 +223,21 @@ axs[2].set_xlabel('Time step')
 axs[2].set_ylabel('Acceleration (m/s^2)')
 axs[2].legend()
 axs[2].grid(True)
+
+# Calculate total distance traveled
+total_distance = np.linalg.norm(position_filtered, axis=1)
+axs[3].plot(total_distance, label='Total Distance Traveled')
+axs[3].set_xlabel('Time step')
+axs[3].set_ylabel('Total Distance (m)')
+axs[3].legend()
+axs[3].grid(True)
+
+# Plot the number on the top side of the dice
+axs[4].plot(dice_numbers, label='Top Side Dice Number')
+axs[4].set_xlabel('Time step')
+axs[4].set_ylabel('Dice Number')
+axs[4].legend()
+axs[4].grid(True)
 
 plt.tight_layout()
 plt.show()
