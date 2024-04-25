@@ -77,7 +77,7 @@ def get_filepath(filename: str):
 def load_data(data_file):
     try:
         data = pd.read_csv(data_file, header=None, skiprows=1)
-        combined_data = data.iloc[:, 1:].values.tolist()
+        combined_data = data.values.tolist()
         t1 = data.iloc[0, 0]
         t2 = data.iloc[1, 0]
         dt = t2 - t1
@@ -85,7 +85,6 @@ def load_data(data_file):
         raise FileNotFoundError("Data File Not found")
     except:
         raise IndexError("Only one row with data exists!")    
-    
     return combined_data, dt
 
 def integrate_acceleration(velocity, acceleration, dt):
@@ -127,8 +126,8 @@ def roll_dice_with_kalman_filter(combined_data, dt, initial_orientation):
 
     orientation[0] = initial_orientation
 
-    for i in range(1, num_steps):
-        x_accel, y_accel, z_accel, x_gyro, y_gyro, z_gyro = combined_data[i]
+    for i in range(0, num_steps):
+        _, x_accel, y_accel, z_accel, x_gyro, y_gyro, z_gyro = combined_data[i]
 
         acceleration = np.array([x_accel, y_accel, z_accel])
         measured_acceleration[i] = integrate_acceleration(measured_acceleration[i-1], acceleration, dt)
