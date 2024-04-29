@@ -49,11 +49,15 @@ def stream(length):
     acc = libmetawear.mbl_mw_acc_get_acceleration_data_signal(device.board)
     gyro = libmetawear.mbl_mw_gyro_bmi160_get_rotation_data_signal(device.board)
 
+
     # Fuse the signals together
     signals = (c_void_p * 1)()
     signals[0] = gyro
     libmetawear.mbl_mw_dataprocessor_fuser_create(acc, signals, 1, None, fn_wrapper)
     e.wait()
+
+    # Start logger
+    libmetawear.mbl_mw_logging_start(d.board, 0)
 
     # Subscribe to it
     libmetawear.mbl_mw_datasignal_subscribe(processor, None, callback)
