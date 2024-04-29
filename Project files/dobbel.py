@@ -1,4 +1,5 @@
-from mbientlab.metawear import MetaWear, libmetawear, parse_value, create_voidp
+from mbientlab.warble import *
+from mbientlab.metawear import *
 from mbientlab.metawear.cbindings import *
 from ctypes import cast, byref
 from threading import Event
@@ -6,8 +7,22 @@ from time import sleep
 import pandas as pd
 from math import nan
 
-class dobbel():
+class dobbellogger():
     def __init__(self):
+        e = Event()
+        address = None
+        def device_discover_task(result):
+            global address
+            if (result.has_service_uuid(MetaWear.GATT_SERVICE)):
+                # grab the first discovered metawear device
+                address = result.mac
+                e.set()
+
+        BleScanner.set_handler(device_discover_task)
+        BleScanner.start()
+        e.wait()
+
+        BleScanner.stop()
         d = MetaWear('D4:06:BD:85:8F:23')
         d.connect()
         self.d = d
