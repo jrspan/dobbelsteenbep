@@ -70,6 +70,7 @@ def get_dice_number_from_orientation(orientation):
     
     return top_number
 
+
 def get_filepath(filename: str):
     filepath = os.path.dirname((os.path.abspath(__file__)))
     return os.path.join(filepath, filename)
@@ -77,24 +78,24 @@ def get_filepath(filename: str):
 def load_data(data_file):
     try:
         data = pd.read_csv(data_file, header=None, skiprows=1)
-        acceleration_xyz = data.iloc[:, 1:4].values.tolist()
-        angular_velocity_xyz = data.iloc[:, 4:7].values.tolist()
+        data_xyz = [row.tolist() for _, row in data.iterrows()]
+    except FileNotFoundError:
+        raise FileNotFoundError("Data File Not found")
+    
+    try:
         t1 = data.iloc[0, 0]
         t2 = data.iloc[1, 0]
         dt = t2 - t1
-    except FileNotFoundError:
-        raise FileNotFoundError("Data File Not found")
     except:
         raise IndexError("Only one row with data exists!")    
     
-    return acceleration_xyz, angular_velocity_xyz, dt
+    return data_xyz, dt
 
 def integrate_acceleration(velocity, acceleration, dt):
     return velocity + acceleration * dt
 
-def detect_throw_end(acceleration_data, gyroscope_data):
-    min_length = min(len(acceleration_data), len(gyroscope_data))
-    return min_length
+def detect_throw_end(data):
+    return len(data)
 
 def rotate_quaternion(quaternion, axis, angle):
     # Normalize the axis
@@ -111,8 +112,8 @@ def rotate_quaternion(quaternion, axis, angle):
     
     return result_quaternion
 
-def roll_dice_with_kalman_filter(accelerometer_data, gyroscope_data, dt, initial_orientation):
-    num_steps = detect_throw_end(accelerometer_data, gyroscope_data)
+def roll_dice_with_kalman_filter(data, dt, initial_orientation):
+    num_steps = detect_throw_end(data)
 
     position = np.zeros((num_steps, 3))
     orientation = np.zeros((num_steps, 4))  # Represented as quaternions
@@ -129,8 +130,7 @@ def roll_dice_with_kalman_filter(accelerometer_data, gyroscope_data, dt, initial
     orientation[0] = initial_orientation
 
     for i in range(1, num_steps):
-        _, x_accel, y_accel, z_accel = accelerometer_data[i]
-        _, x_gyro, y_gyro, z_gyro = gyroscope_data[i]
+        _, x_accel, y_accel, z_accel, x_gyro, y_gyro, z_gyro = data[i]
 
         acceleration = np.array([x_accel, y_accel, z_accel])
         measured_acceleration[i] = integrate_acceleration(measured_acceleration[i-1], acceleration, dt)
@@ -149,6 +149,7 @@ def roll_dice_with_kalman_filter(accelerometer_data, gyroscope_data, dt, initial
         # Update the orientation with the filtered estimate
         orientation[i] = filtered_orientation
 
+        # Update the position using the measured acceleration (with velocity integrated)
         position[i] = integrate_acceleration(position[i-1], measured_acceleration[i], dt)
 
     return position, orientation, measured_acceleration, measured_angular_velocity
@@ -177,12 +178,12 @@ initial_orientation = rotate_quaternion(initial_orientation, y_axis, angle_radia
 initial_orientation = rotate_quaternion(initial_orientation, z_axis, np.radians(90))
 
 # Load data from CSV file
-filepath_data = get_filepath("combined_data.csv")
-acceleration_xyz, angular_velocity_xyz, dt = load_data(filepath_data)
+filepath = get_filepath("merged_testfile.csv")
+sensor_data, dt = load_data(filepath)
 
 # Perform the simulation with the Kalman filter
 position_filtered, orientation_filtered, measured_acceleration_filtered, measured_angular_velocity_filtered = roll_dice_with_kalman_filter(
-    acceleration_xyz, angular_velocity_xyz, dt, initial_orientation
+    sensor_data, dt, initial_orientation
 )
 
 # Determine the number on the top side of the dice for each time step
