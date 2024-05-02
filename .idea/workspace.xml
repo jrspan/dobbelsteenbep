@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="6bc8d556-0586-4692-969b-25e062bb5047" name="Changes" comment="kleine veranderingen" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ExportToHTMLSettings">
+    <option name="printScope" value="1" />
+    <option name="OPEN_IN_BROWSER" value="true" />
+    <option name="OUTPUT_DIRECTORY" value="$USER_HOME$/Downloads" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+        <option value="Jupyter Notebook" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="jeltes-klootbranch" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="UPDATE_TYPE" value="REBASE" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 3
+}</component>
+  <component name="ProjectId" id="2dda1KumkpVk7pyv9AkNphyvTgQ" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "Python.dobbel.executor": "Run",
+    "Python.dobbelstreamer.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/jelte/Documents/dobbelsteenbep",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Project",
+    "project.structure.proportion": "0.15332031",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "editor.preferences.smartKeys",
+    "vue.rearranger.settings.migration": "true"
+  },
+  "keyToStringList": {
+    "com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File": [
+      "TEXT"
+    ]
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\jelte\Documents\dobbelsteenbep\Project files\Zooi" />
+      <recent name="C:\Users\jelte\Documents\dobbelsteenbep\Project files" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\jelte\Documents\dobbelsteenbep\Project files" />
+      <recent name="C:\Users\jelte\Documents\dobbelsteenbep\Project files\Zooi" />
+      <recent name="C:\Users\jelte\Documents\dobbelsteenbep\.idea\project" />
+      <recent name="C:\Users\jelte\Documents\dobbelsteenbep\.idea" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="jdk-21.0.2-openjdk-21.0.2-4caba194b151-4f524021" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="6bc8d556-0586-4692-969b-25e062bb5047" name="Changes" comment="" />
+      <created>1710340192972</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1710340192972</updated>
+      <workItem from="1710340194014" duration="386000" />
+      <workItem from="1713860778133" duration="276000" />
+      <workItem from="1713861071625" duration="1615000" />
+      <workItem from="1713862715022" duration="4474000" />
+      <workItem from="1713867944269" duration="9716000" />
+      <workItem from="1713956999646" duration="39809000" />
+      <workItem from="1714376729250" duration="6895000" />
+      <workItem from="1714553102233" duration="16921000" />
+      <workItem from="1714571373132" duration="1122000" />
+    </task>
+    <task id="LOCAL-00001" summary="eerste test met metawear">
+      <option name="closed" value="true" />
+      <created>1713866475959</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1713866475959</updated>
+    </task>
+    <task id="LOCAL-00002" summary="eerste test met metawear">
+      <option name="closed" value="true" />
+      <created>1713866483323</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1713866483323</updated>
+    </task>
+    <task id="LOCAL-00003" summary="eerste test met metawear">
+      <option name="closed" value="true" />
+      <created>1713866667893</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1713866667893</updated>
+    </task>
+    <task id="LOCAL-00004" summary="eerste test met metawear">
+      <option name="closed" value="true" />
+      <created>1713868088249</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1713868088250</updated>
+    </task>
+    <task id="LOCAL-00005" summary="bestand verplaatst naar project map">
+      <option name="closed" value="true" />
+      <created>1713868190681</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1713868190681</updated>
+    </task>
+    <task id="LOCAL-00006" summary="bestand gemaakt met test voor metawear">
+      <option name="closed" value="true" />
+      <created>1713868278824</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1713868278824</updated>
+    </task>
+    <task id="LOCAL-00007" summary="moet weg dit">
+      <option name="closed" value="true" />
+      <created>1713871499177</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1713871499177</updated>
+    </task>
+    <task id="LOCAL-00008" summary="wat dingen van chatgpt geprobeerd, log werkt nog niet">
+      <option name="closed" value="true" />
+      <created>1713878500372</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1713878500372</updated>
+    </task>
+    <task id="LOCAL-00009" summary="wat dingen van chatgpt geprobeerd, log werkt nog niet">
+      <option name="closed" value="true" />
+      <created>1713971350858</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1713971350858</updated>
+    </task>
+    <task id="LOCAL-00010" summary="paar probeer bestanden, ff pushen voor bram">
+      <option name="closed" value="true" />
+      <created>1714036786738</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1714036786738</updated>
+    </task>
+    <task id="LOCAL-00011" summary="werkende stream file">
+      <option name="closed" value="true" />
+      <created>1714043771532</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1714043771532</updated>
+    </task>
+    <task id="LOCAL-00012" summary="files naar zooi map verplaatst">
+      <option name="closed" value="true" />
+      <created>1714043870205</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1714043870205</updated>
+    </task>
+    <task id="LOCAL-00013" summary="log werkt. Import dobbel.py om het te gebruiken">
+      <option name="closed" value="true" />
+      <created>1714140107789</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1714140107789</updated>
+    </task>
+    <task id="LOCAL-00014" summary="files geordend">
+      <option name="closed" value="true" />
+      <created>1714376969223</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1714376969223</updated>
+    </task>
+    <task id="LOCAL-00015" summary="files geordend">
+      <option name="closed" value="true" />
+      <created>1714377031522</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1714377031522</updated>
+    </task>
+    <task id="LOCAL-00016" summary="dobbellogger bluetooth connect fix">
+      <option name="closed" value="true" />
+      <created>1714378617137</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1714378617137</updated>
+    </task>
+    <task id="LOCAL-00017" summary="dobbel.py gefixt en orientatie quaternion vekregen vanuit angular velocity">
+      <option name="closed" value="true" />
+      <created>1714561300907</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1714561300907</updated>
+    </task>
+    <task id="LOCAL-00018" summary="positie geïntegreerd">
+      <option name="closed" value="true" />
+      <created>1714570818354</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1714570818354</updated>
+    </task>
+    <task id="LOCAL-00019" summary="kleine veranderingen">
+      <option name="closed" value="true" />
+      <created>1714641814866</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1714641814866</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="CUSTOM_BOOLEAN_PROPERTIES">
+                <map>
+                  <entry key="Show.Git.Branches" value="true" />
+                </map>
+              </option>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="origin/Cool-Branche" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="eerste test met metawear" />
+    <MESSAGE value="bestand verplaatst naar project map" />
+    <MESSAGE value="bestand gemaakt met test voor metawear" />
+    <MESSAGE value="moet weg dit" />
+    <MESSAGE value="wat dingen van chatgpt geprobeerd, log werkt nog niet" />
+    <MESSAGE value="paar probeer bestanden, ff pushen voor bram" />
+    <MESSAGE value="werkende stream file" />
+    <MESSAGE value="files naar zooi map verplaatst" />
+    <MESSAGE value="log werkt. Import dobbel.py om het te gebruiken" />
+    <MESSAGE value="files geordend" />
+    <MESSAGE value="dobbellogger bluetooth connect fix" />
+    <MESSAGE value="dobbel.py gefixt en orientatie quaternion vekregen vanuit angular velocity" />
+    <MESSAGE value="positie geïntegreerd" />
+    <MESSAGE value="kleine veranderingen" />
+    <option name="LAST_COMMIT_MESSAGE" value="kleine veranderingen" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/dobbelsteenbep$dobbel.coverage" NAME="dobbel Coverage Results" MODIFIED="1714139935007" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Project files/Zooi" />
+    <SUITE FILE_PATH="coverage/dobbelsteenbep$dobbelstreamer.coverage" NAME="dobbelstreamer Coverage Results" MODIFIED="1714043720205" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Project files" />
+  </component>
+</project>
