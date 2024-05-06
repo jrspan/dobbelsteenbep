@@ -33,6 +33,11 @@ class dobbellogger():
 
     def reconnect(self):
         self.d.connect()
+
+    def reset(self):
+        libmetawear.mbl_mw_logging_clear_entries(self.d.board)
+        libmetawear.mbl_mw_debug_reset(self.d.board)
+
     def log(self, duration, freq, acc_range, gyro_range):
         self.e = Event()
 
@@ -136,7 +141,7 @@ class dobbellogger():
 
         libmetawear.mbl_mw_logging_clear_entries(self.d.board)
         all_epochs = sorted(set(list(acc_data.keys()) + list(gyro_data.keys())))
-        self.datadf = pd.DataFrame(columns=['Timestamp', 'x_acc', 'y_acc', 'z_acc', 'x_gyro', 'y_gyro', 'z_gyro'])
+        self.datadf = pd.DataFrame(columns=['timestamp', 'x_acc', 'y_acc', 'z_acc', 'x_gyro', 'y_gyro', 'z_gyro'])
 
         for epoch in all_epochs:
             row = [float(epoch - all_epochs[0])]
@@ -147,6 +152,11 @@ class dobbellogger():
             else:
                 row += [nan, nan, nan, gyro_data[epoch]['x'], gyro_data[epoch]['y'], gyro_data[epoch]['z']]
             self.datadf.loc[len(self.datadf)] = row
+
+        libmetawear.mbl_mw_logging_clear_entries(self.d.board)
+        libmetawear.mbl_mw_debug_reset(self.d.board)
+        print('Done! The data is located in self.datadf')
+
 
     def show(self, length=20):
         self.datadf.head(length)
