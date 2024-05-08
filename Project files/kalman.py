@@ -7,7 +7,7 @@ from time import sleep
 import pandas as pd
 from math import nan
 
-class dobbellogger():
+class dobbellog():
     def __init__(self):
         e = Event()
         address = None
@@ -78,10 +78,10 @@ class dobbellogger():
         libmetawear.mbl_mw_gyro_bmi160_write_config(self.d.board)
 
         #magnetometer preset
-        # libmetawear.mbl_mw_mag_bmm150_set_preset(self.d.board, MagBmm150Odr._20Hz)
+        libmetawear.mbl_mw_mag_bmm150_set_preset(self.d.board, MagBmm150Odr._10Hz)
 
         # Acc and gyro signals
-        # mag = libmetawear.mbl_mw_mag_bmm150_get_b_field_data_signal(self.d.board)
+        mag = libmetawear.mbl_mw_mag_bmm150_get_b_field_data_signal(self.d.board)
         acc = libmetawear.mbl_mw_acc_get_acceleration_data_signal(self.d.board)
         gyro = libmetawear.mbl_mw_gyro_bmi160_get_rotation_data_signal(self.d.board)
 
@@ -89,15 +89,15 @@ class dobbellogger():
         # Create a logger
         self.acc_logger = create_voidp(lambda fn: libmetawear.mbl_mw_datasignal_log(acc, None, fn), resource = "acc_logger")
         self.gyro_logger = create_voidp(lambda fn: libmetawear.mbl_mw_datasignal_log(gyro, None, fn), resource = "gyro_logger")
-        # self.mag_logger = create_voidp(lambda fn: libmetawear.mbl_mw_datasignal_log(mag, None, fn), resource = "mag_logger")
+        self.mag_logger = create_voidp(lambda fn: libmetawear.mbl_mw_datasignal_log(mag, None, fn), resource = "mag_logger")
 
         # Start logger
         libmetawear.mbl_mw_logging_start(self.d.board, 0)
         # Turn on the accelerometer
-        # libmetawear.mbl_mw_mag_bmm150_enable_b_field_sampling(self.d.board)
+        libmetawear.mbl_mw_mag_bmm150_enable_b_field_sampling(self.d.board)
         libmetawear.mbl_mw_acc_enable_acceleration_sampling(self.d.board)
         libmetawear.mbl_mw_gyro_bmi160_enable_rotation_sampling(self.d.board)
-        # libmetawear.mbl_mw_mag_bmm150_start(self.d.board)
+        libmetawear.mbl_mw_mag_bmm150_start(self.d.board)
         libmetawear.mbl_mw_acc_start(self.d.board)
         libmetawear.mbl_mw_gyro_bmi160_start(self.d.board)
 
@@ -109,10 +109,10 @@ class dobbellogger():
         # Turn off the accelerometer
         libmetawear.mbl_mw_acc_stop(self.d.board)
         libmetawear.mbl_mw_gyro_bmi160_stop(self.d.board)
+        libmetawear.mbl_mw_mag_bmm150_stop(self.d.board)
         libmetawear.mbl_mw_acc_disable_acceleration_sampling(self.d.board)
         libmetawear.mbl_mw_gyro_bmi160_disable_rotation_sampling(self.d.board)
-        # libmetawear.mbl_mw_mag_bmm150_stop(self.d.board)
-        # libmetawear.mbl_mw_mag_bmm150_disable_b_field_sampling(self.d.board)
+        libmetawear.mbl_mw_mag_bmm150_disable_b_field_sampling(self.d.board)
 
         # Stop logging
         libmetawear.mbl_mw_logging_stop(self.d.board)
@@ -131,7 +131,7 @@ class dobbellogger():
 
         acc_data = {}
         gyro_data = {}
-        #mag_data = {}
+        mag_data = {}
 
         def acc_data_handler(context, p):
             parsed = parse_value(p)
@@ -141,63 +141,47 @@ class dobbellogger():
             parsed = parse_value(p)
             gyro_data[int(p.contents.epoch)] = {'x': parsed.x, 'y': parsed.y, 'z': parsed.z}
 
-        # def mag_data_handler(context, p):
-        #     parsed = parse_value(p)
-        #     mag_data[int(p.contents.epoch)] = {'x': parsed.x, 'y': parsed.y, 'z': parsed.z}
+        def mag_data_handler(context, p):
+            parsed = parse_value(p)
+            mag_data[int(p.contents.epoch)] = {'x': parsed.x, 'y': parsed.y, 'z': parsed.z}
 
         acc_callback = FnVoid_VoidP_DataP(acc_data_handler)
         gyro_callback = FnVoid_VoidP_DataP(gyro_data_handler)
-        # mag_callback = FnVoid_VoidP_DataP(mag_data_handler)
+        mag_callback = FnVoid_VoidP_DataP(mag_data_handler)
 
         # Stop logger
         libmetawear.mbl_mw_logger_subscribe(self.acc_logger, None, acc_callback)
         libmetawear.mbl_mw_logger_subscribe(self.gyro_logger, None, gyro_callback)
-        # libmetawear.mbl_mw_logger_subscribe(self.mag_logger, None, mag_callback)
+        libmetawear.mbl_mw_logger_subscribe(self.mag_logger, None, mag_callback)
 
         # Download logger contents
         libmetawear.mbl_mw_logging_download(self.d.board, 0, byref(download_handler))
         self.e.wait()
 
         libmetawear.mbl_mw_logging_clear_entries(self.d.board)
-        all_epochs = sorted(set(list(acc_data.keys()) + list(gyro_data.keys())))
-        self.datadf = pd.DataFrame(columns=['timestamp', 'x_acc', 'y_acc', 'z_acc', 'x_gyro', 'y_gyro', 'z_gyro'])
+        all_epochs = sorted(set(list(acc_data.keys()) + list(gyro_data.keys()) + list(mag_data.keys())))
+        self.datadf = pd.DataFrame(columns=['timestamp', 'x_acc', 'y_acc', 'z_acc', 'x_gyro', 'y_gyro', 'z_gyro', 'x_mag', 'y_mag', 'z_mag'])
 
         for epoch in all_epochs:
             row = [float(epoch - all_epochs[0])]
-            if epoch in acc_data.keys() and epoch in gyro_data.keys():
-                row += [acc_data[epoch]['x'], acc_data[epoch]['y'], acc_data[epoch]['z'], gyro_data[epoch]['x'], gyro_data[epoch]['y'], gyro_data[epoch]['z']]
+            if epoch in acc_data.keys() and epoch in gyro_data.keys() and epoch in mag_data.keys():
+                row += [acc_data[epoch]['x'], acc_data[epoch]['y'], acc_data[epoch]['z'], gyro_data[epoch]['x'], gyro_data[epoch]['y'], gyro_data[epoch]['z'], mag_data[epoch]['x'], mag_data[epoch]['y'], mag_data[epoch]['z']]
             elif epoch in acc_data.keys():
-                row += [acc_data[epoch]['x'], acc_data[epoch]['y'], acc_data[epoch]['z'], nan, nan, nan]
+                row += [acc_data[epoch]['x'], acc_data[epoch]['y'], acc_data[epoch]['z'], nan, nan, nan, nan, nan, nan]
+            elif epoch in mag_data.keys():
+                row += [nan, nan, nan, nan, nan, nan, mag_data[epoch]['x'], mag_data[epoch]['y'], mag_data[epoch]['z']]
+            elif epoch in acc_data.keys() and epoch in gyro_data.keys():
+                row += [acc_data[epoch]['x'], acc_data[epoch]['y'], acc_data[epoch]['z'], gyro_data[epoch]['x'], gyro_data[epoch]['y'], gyro_data[epoch]['z'], nan, nan, nan]
+            elif epoch in gyro_data.keys() and epoch in mag_data.keys():
+                row += [nan, nan, nan, gyro_data[epoch]['x'], gyro_data[epoch]['y'], gyro_data[epoch]['z'], mag_data[epoch]['x'], mag_data[epoch]['y'], mag_data[epoch]['z']]
+            elif epoch in acc_data.keys() and epoch in mag_data.keys():
+                row += [acc_data[epoch]['x'], acc_data[epoch]['y'], acc_data[epoch]['z'], nan, nan, nan, mag_data[epoch]['x'], mag_data[epoch]['y'], mag_data[epoch]['z']]
             else:
-                row += [nan, nan, nan, gyro_data[epoch]['x'], gyro_data[epoch]['y'], gyro_data[epoch]['z']]
-
-
-
-        #With magneto meter !!!error
-        # all_epochs = sorted(set(list(acc_data.keys()) + list(gyro_data.keys()) + list(mag_data.keys())))
-        # self.datadf = pd.DataFrame(columns=['timestamp', 'x_acc', 'y_acc', 'z_acc', 'x_gyro', 'y_gyro', 'z_gyro', 'x_mag', 'y_mag', 'z_mag'])
-
-        # for epoch in all_epochs:
-        #     row = [float(epoch - all_epochs[0])]
-        #     if epoch in acc_data.keys() and epoch in gyro_data.keys() and epoch in mag_data.keys():
-        #         row += [acc_data[epoch]['x'], acc_data[epoch]['y'], acc_data[epoch]['z'], gyro_data[epoch]['x'], gyro_data[epoch]['y'], gyro_data[epoch]['z'], mag_data[epoch]['x'], mag_data[epoch]['y'], mag_data[epoch]['z']]
-        #     elif epoch in acc_data.keys():
-        #         row += [acc_data[epoch]['x'], acc_data[epoch]['y'], acc_data[epoch]['z'], nan, nan, nan, nan, nan, nan]
-        #     elif epoch in mag_data.keys():
-        #         row += [nan, nan, nan, nan, nan, nan, mag_data[epoch]['x'], mag_data[epoch]['y'], mag_data[epoch]['z']]
-        #     elif epoch in acc_data.keys() and epoch in gyro_data.keys():
-        #         row += [acc_data[epoch]['x'], acc_data[epoch]['y'], acc_data[epoch]['z'], gyro_data[epoch]['x'], gyro_data[epoch]['y'], gyro_data[epoch]['z'], nan, nan, nan]
-        #     elif epoch in gyro_data.keys() and epoch in mag_data.keys():
-        #         row += [nan, nan, nan, gyro_data[epoch]['x'], gyro_data[epoch]['y'], gyro_data[epoch]['z'], mag_data[epoch]['x'], mag_data[epoch]['y'], mag_data[epoch]['z']]
-        #     elif epoch in acc_data.keys() and epoch in mag_data.keys():
-        #         row += [acc_data[epoch]['x'], acc_data[epoch]['y'], acc_data[epoch]['z'], nan, nan, nan, mag_data[epoch]['x'], mag_data[epoch]['y'], mag_data[epoch]['z']]
-        #     else:
-        #         row += [nan, nan, nan, gyro_data[epoch]['x'], gyro_data[epoch]['y'], gyro_data[epoch]['z'], nan, nan, nan]
-            
+                row += [nan, nan, nan, gyro_data[epoch]['x'], gyro_data[epoch]['y'], gyro_data[epoch]['z'], nan, nan, nan]
             self.datadf.loc[len(self.datadf)] = row
-
-        libmetawear.mbl_mw_logging_clear_entries(self.d.board)
-        libmetawear.mbl_mw_debug_reset(self.d.board)
+        #
+        # libmetawear.mbl_mw_logging_clear_entries(self.d.board)
+        # libmetawear.mbl_mw_debug_reset(self.d.board)
         print('Done! The data is located in self.datadf')
 
 
