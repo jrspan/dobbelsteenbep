@@ -48,6 +48,13 @@ def quat_to_euler(q):
     phi = np.arctan((2*y*z-2*w*x)/((2*w**2)+(2*z**2)-1))
     return np.array([psi, theta, phi])
 
+def logq(q):
+    q0 = q[0]
+    qv = np.array([q[1], q[2], q[3]])
+    if np.linalg.norm(qv) == 0:
+        return np.array([0, 0, 0])
+    return np.arccos(q0) * qv / np.linalg.norm(qv)
+
 def remove_nan(df):
     counter = 0
     nan = True
