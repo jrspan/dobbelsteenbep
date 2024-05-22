@@ -88,7 +88,7 @@ def left_quat_mul(q):
     q0, q1, q2, q3 = q
     lqm = np.array([
         [q0, -q1, -q2, -q3],
-        [q1, q0, -q3, -q2],
+        [q1, q0, -q3, q2],
         [q2, q3, q0, -q1],
         [q3, -q2, q1, q0]
     ])
@@ -96,13 +96,13 @@ def left_quat_mul(q):
 
 def right_quat_mul(q):
     q0, q1, q2, q3 = q
-    lqm = np.array([
+    rqm = np.array([
         [q0, -q1, -q2, -q3],
         [q1, q0, q3, -q2],
         [q2, -q3, q0, q1],
         [q3, q2, -q1, q0]
     ])
-    return lqm
+    return rqm
 
 def rotate_data(data):
     angle = np.deg2rad(-39)
