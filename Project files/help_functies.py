@@ -48,6 +48,15 @@ def quat_to_euler(q):
     phi = np.arctan((2*y*z-2*w*x)/((2*w**2)+(2*z**2)-1))
     return np.array([psi, theta, phi])
 
+import numpy as np
+
+def quaternion_to_euler(q):
+    q0, q1, q2, q3 = q
+    psi = np.arctan2(2 * (q1 * q2 - q0 * q3), 2 * (q0**2 + q1**2) - 1)
+    theta = np.arcsin(2 * (q1 * q3 + q0 * q2))
+    phi = np.arctan2(2 * (q2 * q3 - q0 * q1), 2 * (q0**2 + q3**2) - 1)
+    return np.array([psi, theta, phi])
+
 def logq(q):
     q0 = q[0]
     qv = np.array([q[1], q[2], q[3]])
