@@ -113,14 +113,24 @@ def right_quat_mul(q):
     ])
     return rqm
 
-def rotate_data(data):
-    angle = np.deg2rad(-39)
-    rotate_y = np.array([[np.cos(angle),0,np.sin(angle)], [0,1,0],[-np.sin(angle),0,np.cos(angle)]])
-    trace = np.trace(rotate_y)
-    q_0 = np.sqrt(1+trace)/2
-    q_2 = 1/(4*q_0) * (np.sin(angle)+np.sin(angle))
-    q_rotate = np.array([q_0,0,q_2,0])
+def rotate_data(data, quat):
     for i, row in data.iterrows():
-        data.loc[i, 'x_acc'], data.loc[i, 'y_acc'], data.loc[i, 'z_acc'] = rotate_vector(np.array([row['x_acc'], row['y_acc'], row['z_acc']]), q_rotate)
-        data.loc[i, 'x_gyro'], data.loc[i, 'y_gyro'], data.loc[i, 'z_gyro'] = rotate_vector(np.array([row['x_gyro'], row['y_gyro'], row['z_gyro']]), q_rotate)
+        data.loc[i, 'x_acc'], data.loc[i, 'y_acc'], data.loc[i, 'z_acc'] = rotate_vector(np.array([row['x_acc'], row['y_acc'], row['z_acc']]), quat)
+        data.loc[i, 'x_gyro'], data.loc[i, 'y_gyro'], data.loc[i, 'z_gyro'] = rotate_vector(np.array([row['x_gyro'], row['y_gyro'], row['z_gyro']]), quat)
     return data
+
+def remove_bias(data, cali):
+    data_nb = data.copy()
+    acc_values = cali['acc values']
+    for i, ax in zip(range(3), ['x_acc', 'y_acc', 'z_acc']):
+        posi = acc_values[i * 2]
+        nega = acc_values[i * 2 + 1]
+        no_bias = np.array(data_nb[ax]) - (posi + nega) * 0.5
+        scaled = no_bias * 2 / (posi - nega)
+        data_nb[ax] = scaled
+
+    gyro_means = cali['gyro bias']
+    for i, ax in zip(range(3), ['x_gyro', 'y_gyro', 'z_gyro']):
+        data_nb[ax] = data_nb[ax] - gyro_means[i]
+
+    return data_nb
