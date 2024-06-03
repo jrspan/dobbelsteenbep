@@ -32,7 +32,7 @@ def calibrate(dob, logtime, waittime, freq, acc_range, gyro_range, rotation_quat
         gyro_stds.append(np.std(gyro_ar, axis=0))
 
     acc_values = np.array([acc_means[i] for i in [1,4,2,3,0,5]])
-    acc_stds_out = np.array([np.mean([acc_stds[i], acc_stds[i+3]]) for i in range(3)])
+    acc_stds_out = np.array([np.mean(acc_stds[i]) for i in [1, 4, 2, 3, 0, 5]])
     gyro_means = np.reshape(np.concatenate(gyro_means), (6, 3))
     gyro_means = np.mean(gyro_means, axis=0)
     gyro_stds = np.reshape(np.concatenate(gyro_stds), (6, 3))
@@ -45,6 +45,5 @@ def calibrate(dob, logtime, waittime, freq, acc_range, gyro_range, rotation_quat
         'acc std': acc_stds_out
     }
 
-    dob.disconnect()
 
     return cali
