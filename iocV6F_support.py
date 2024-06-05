@@ -7,17 +7,19 @@
 
 import os
 import sys
+if not os.path.dirname(__file__) in sys.path:
+    sys.path.append(os.path.dirname(__file__))
+    
 import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter.constants import *
 
 import iocV6F
-if not os.path.dirname(__file__) in sys.path:
-    sys.path.append(os.path.dirname(__file__))
+
 
 _debug = True # False to eliminate debug printing from callback functions.
 
-def on_closing():
+def on_destroy():
     root.destroy()
     sys.exit()
 
@@ -25,7 +27,7 @@ def main(*args):
     '''Main entry point for the application.'''
     global root
     root = tk.Tk()
-    root.protocol( 'WM_DELETE_WINDOW' , on_closing)
+    root.protocol( 'WM_DELETE_WINDOW' , on_destroy)
     # Creates a toplevel widget.
     global _top1, _w1
     _top1 = root

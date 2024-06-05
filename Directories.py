@@ -3,6 +3,8 @@
 import sys
 import os
 
+import numpy as np
+
 def dir_add(directory_name: str):
     # Adds a specific directory to the current sys path
     # Only works with directories stored in same folder as this code.

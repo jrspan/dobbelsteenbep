@@ -32,7 +32,6 @@ import numpy as np
 from dobbel import dobbellogger
 from calibrator3 import calibrate
 
-
 _location = os.path.dirname(__file__)
 
 import iocV6F_support
@@ -497,7 +496,7 @@ The die will now start the logging process and store the logged data in the sele
         self.l_StatusLoggingLabel.configure(text='''Status Logging:''')
 
         self.l_StatusLogIndicator = tk.Label(self.Frame5)
-        self.l_StatusLogIndicator.place(relx=0.317, rely=0.851, height=21
+        self.l_StatusLogIndicator.place(relx=0.309, rely=0.851, height=21
                 , width=150)
         self.l_StatusLogIndicator.configure(activebackground="#d9d9d9")
         self.l_StatusLogIndicator.configure(activeforeground="black")
@@ -608,20 +607,20 @@ The die will now start the logging process and store the logged data in the sele
         self.c_CalibratorButton.configure(text='''Start Calibrator''')
         self.c_CalibratorButton.configure(command=self.on_click_calibrate)
 
-        self.c_WaitLengthLabel = tk.Label(self.Frame4)
-        self.c_WaitLengthLabel.place(relx=0.044, rely=0.409, height=20
-                , width=145)
-        self.c_WaitLengthLabel.configure(activebackground="#d9d9d9")
-        self.c_WaitLengthLabel.configure(activeforeground="black")
-        self.c_WaitLengthLabel.configure(anchor='w')
-        self.c_WaitLengthLabel.configure(background="#d9d9d9")
-        self.c_WaitLengthLabel.configure(compound='left')
-        self.c_WaitLengthLabel.configure(disabledforeground="#a3a3a3")
-        self.c_WaitLengthLabel.configure(font="-family {Segoe UI} -size 9")
-        self.c_WaitLengthLabel.configure(foreground="#000000")
-        self.c_WaitLengthLabel.configure(highlightbackground="#d9d9d9")
-        self.c_WaitLengthLabel.configure(highlightcolor="#000000")
-        self.c_WaitLengthLabel.configure(text='''Length of waiting interval''')
+        #self.c_WaitLengthLabel = tk.Label(self.Frame4)
+        #self.c_WaitLengthLabel.place(relx=0.044, rely=0.409, height=20
+        #        , width=145)
+        #self.c_WaitLengthLabel.configure(activebackground="#d9d9d9")
+        #self.c_WaitLengthLabel.configure(activeforeground="black")
+        #self.c_WaitLengthLabel.configure(anchor='w')
+        #self.c_WaitLengthLabel.configure(background="#d9d9d9")
+        #self.c_WaitLengthLabel.configure(compound='left')
+        #self.c_WaitLengthLabel.configure(disabledforeground="#a3a3a3")
+        #self.c_WaitLengthLabel.configure(font="-family {Segoe UI} -size 9")
+        #self.c_WaitLengthLabel.configure(foreground="#000000")
+        #self.c_WaitLengthLabel.configure(highlightbackground="#d9d9d9")
+        #self.c_WaitLengthLabel.configure(highlightcolor="#000000")
+        #self.c_WaitLengthLabel.configure(text='''Length of waiting interval''')
 
         self.c_MeasurementTimeLabel = tk.Label(self.Frame4)
         self.c_MeasurementTimeLabel.place(relx=0.044, rely=0.489, height=20
@@ -638,19 +637,19 @@ The die will now start the logging process and store the logged data in the sele
         self.c_MeasurementTimeLabel.configure(highlightcolor="#000000")
         self.c_MeasurementTimeLabel.configure(text='''Measurement time''')
 
-        self.c_WaitLengthUnit = tk.Label(self.Frame4)
-        self.c_WaitLengthUnit.place(relx=0.726, rely=0.409, height=20, width=70)
-        self.c_WaitLengthUnit.configure(activebackground="#d9d9d9")
-        self.c_WaitLengthUnit.configure(activeforeground="black")
-        self.c_WaitLengthUnit.configure(anchor='w')
-        self.c_WaitLengthUnit.configure(background="#d9d9d9")
-        self.c_WaitLengthUnit.configure(compound='left')
-        self.c_WaitLengthUnit.configure(disabledforeground="#a3a3a3")
-        self.c_WaitLengthUnit.configure(font="-family {Segoe UI} -size 9")
-        self.c_WaitLengthUnit.configure(foreground="#000000")
-        self.c_WaitLengthUnit.configure(highlightbackground="#d9d9d9")
-        self.c_WaitLengthUnit.configure(highlightcolor="#000000")
-        self.c_WaitLengthUnit.configure(text='''Sec''')
+        #self.c_WaitLengthUnit = tk.Label(self.Frame4)
+        #self.c_WaitLengthUnit.place(relx=0.726, rely=0.409, height=20, width=70)
+        #self.c_WaitLengthUnit.configure(activebackground="#d9d9d9")
+        #self.c_WaitLengthUnit.configure(activeforeground="black")
+        #self.c_WaitLengthUnit.configure(anchor='w')
+        #self.c_WaitLengthUnit.configure(background="#d9d9d9")
+        #self.c_WaitLengthUnit.configure(compound='left')
+        #self.c_WaitLengthUnit.configure(disabledforeground="#a3a3a3")
+        #self.c_WaitLengthUnit.configure(font="-family {Segoe UI} -size 9")
+        #self.c_WaitLengthUnit.configure(foreground="#000000")
+        #self.c_WaitLengthUnit.configure(highlightbackground="#d9d9d9")
+        #self.c_WaitLengthUnit.configure(highlightcolor="#000000")
+        #self.c_WaitLengthUnit.configure(text='''Sec''')
 
         self.c_MeasurementTimeUnit = tk.Label(self.Frame4)
         self.c_MeasurementTimeUnit.place(relx=0.726, rely=0.489, height=20
@@ -764,18 +763,18 @@ The die will now start the logging process and store the logged data in the sele
         self.Label7.configure(highlightcolor="#000000")
         self.Label7.configure(text='''Die Connector & Calibrator''')
 
-        self.c_WaitLengthEntry = tk.Entry(self.Frame4)
-        self.c_WaitLengthEntry.place(relx=0.505, rely=0.409, height=20
-                , relwidth=0.195)
-        self.c_WaitLengthEntry.configure(background="white")
-        self.c_WaitLengthEntry.configure(disabledforeground="#a3a3a3")
-        self.c_WaitLengthEntry.configure(font="-family {Courier New} -size 10")
-        self.c_WaitLengthEntry.configure(foreground="#000000")
-        self.c_WaitLengthEntry.configure(highlightbackground="#d9d9d9")
-        self.c_WaitLengthEntry.configure(highlightcolor="#000000")
-        self.c_WaitLengthEntry.configure(insertbackground="#000000")
-        self.c_WaitLengthEntry.configure(selectbackground="#d9d9d9")
-        self.c_WaitLengthEntry.configure(selectforeground="black")
+        #self.c_WaitLengthEntry = tk.Entry(self.Frame4)
+        #self.c_WaitLengthEntry.place(relx=0.505, rely=0.409, height=20
+        #        , relwidth=0.195)
+        #self.c_WaitLengthEntry.configure(background="white")
+        #self.c_WaitLengthEntry.configure(disabledforeground="#a3a3a3")
+        #self.c_WaitLengthEntry.configure(font="-family {Courier New} -size 10")
+        #self.c_WaitLengthEntry.configure(foreground="#000000")
+        #self.c_WaitLengthEntry.configure(highlightbackground="#d9d9d9")
+        #self.c_WaitLengthEntry.configure(highlightcolor="#000000")
+        #self.c_WaitLengthEntry.configure(insertbackground="#000000")
+        #self.c_WaitLengthEntry.configure(selectbackground="#d9d9d9")
+        #self.c_WaitLengthEntry.configure(selectforeground="black")
 
         self.c_MeasurementTimeEntry = tk.Entry(self.Frame4)
         self.c_MeasurementTimeEntry.place(relx=0.505, rely=0.489, height=20
@@ -966,9 +965,9 @@ The die will now start the logging process and store the logged data in the sele
         self.c_ConnectIndicatorLabel.configure(text="Connecting...")
         try:
             print("Verbinding wordt geprobeerd....")
-            dob = dobbellogger()
-            dob.reset()
-            dob.connect()
+            self.dob = dobbellogger()
+            self.dob.reset()
+            self.dob.connect()
             print("Verbinding vastgelegd")
         except:
             tk.messagebox.showinfo(title="Connection Error", message="Please check your bluetooth connection and try again.")
@@ -1006,7 +1005,7 @@ The die will now start the logging process and store the logged data in the sele
         self.c_CalibrationIndicatorLabel.configure(foreground="#ff8000")
         self.c_CalibrationIndicatorLabel.configure(text="Calibrating...")
         try:
-            self.c_lowi = int(self.c_WaitLengthEntry.get())
+            self.c_lowi = 1
             self.c_mt = int(self.c_MeasurementTimeEntry.get())
             self.c_freq = int(self.c_FrequencyEntry.get())
             self.c_accrange = int(self.c_AccRangeEntry.get())
@@ -1019,7 +1018,15 @@ The die will now start the logging process and store the logged data in the sele
             self.enable_connect_cal_log()
             return
         self.q_rot = np.array([-0.22758238, -0.66122331, -0.6738042, 0.23870041])
-        cali = calibrate(self.dob, self.c_mt, self.c_lowi, self.c_freq, self.c_accrange, self.c_gyrrange, self.q_rot)
+        try:
+            cali = calibrate(self.dob, self.c_mt, self.c_lowi, self.c_freq, self.c_accrange, self.c_gyrrange, self.q_rot)
+        except AttributeError:
+            tk.messagebox.showinfo(title="Error: Connection Failure",
+                                   message = "The die is disconnected.")
+            self.c_CalibrationIndicatorLabel.configure(foreground="#ff0000")
+            self.c_CalibrationIndicatorLabel.configure(text="Not Calibrated")
+            self.enable_connect_cal_log()
+            return
         print("cali succesvol gedefinieerd met self.dob")
         self.c_CalibrationIndicatorLabel.configure(foreground="#008000")
         self.c_CalibrationIndicatorLabel.configure(text="Calibrated!")
