@@ -1,0 +1,17 @@
+What to put on results window:
+-------------------------------
+Total time:
+Time in hand:
+
+Average Velocity mid-throw
+Average Velocity full throw:
+
+Average angular velocity
+Amount of rotations
+
+"Plot of angular velocty"
+"Plot of angular acceleration"
+
+Predicted position
+Final position (number on top)
+--------------------------------
