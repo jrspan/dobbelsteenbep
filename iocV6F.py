@@ -27,6 +27,10 @@ import tkinter.ttk as ttk
 from tkinter.constants import *
 from tkinter import filedialog, messagebox
 import webbrowser
+import numpy as np
+
+from dobbel import dobbellogger
+from calibrator3 import calibrate
 
 
 _location = os.path.dirname(__file__)
@@ -80,6 +84,10 @@ class Toplevel1:
         self.l_freq = ""
         self.l_accrange = ""
         self.l_gyrrange = ""
+        
+        self.gyrrange_options = ["125", "250", "500", "1000", "2000"]
+        self.accrange_options = ["1", "2", "4", "8", "16"]
+        self.freq_options = ["25", "50", "100", "200", "400", "800"]
         
         
 
@@ -293,7 +301,7 @@ The die will now start the logging process and store the logged data in the sele
 
         self.l_MeasurementTimeLabel = tk.Label(self.Frame5)
         self.l_MeasurementTimeLabel.place(relx=0.071, rely=0.489, height=20
-                , width=100)
+                , width=120)
         self.l_MeasurementTimeLabel.configure(activebackground="#d9d9d9")
         self.l_MeasurementTimeLabel.configure(activeforeground="black")
         self.l_MeasurementTimeLabel.configure(anchor='w')
@@ -307,7 +315,7 @@ The die will now start the logging process and store the logged data in the sele
         self.l_MeasurementTimeLabel.configure(text='''Measurement time''')
 
         self.l_MeasurementTimeEntry = tk.Entry(self.Frame5)
-        self.l_MeasurementTimeEntry.place(relx=0.468, rely=0.489, height=20
+        self.l_MeasurementTimeEntry.place(relx=0.508, rely=0.489, height=20
                 , relwidth=0.205)
         self.l_MeasurementTimeEntry.configure(background="white")
         self.l_MeasurementTimeEntry.configure(disabledforeground="#a3a3a3")
@@ -320,7 +328,7 @@ The die will now start the logging process and store the logged data in the sele
         self.l_MeasurementTimeEntry.configure(selectforeground="black")
 
         self.l_Sec = tk.Label(self.Frame5)
-        self.l_Sec.place(relx=0.705, rely=0.489, height=20, width=32)
+        self.l_Sec.place(relx=0.745, rely=0.489, height=20, width=32)
         self.l_Sec.configure(activebackground="#d9d9d9")
         self.l_Sec.configure(activeforeground="black")
         self.l_Sec.configure(anchor='w')
@@ -347,21 +355,17 @@ The die will now start the logging process and store the logged data in the sele
         self.l_FreqLabel.configure(highlightcolor="#000000")
         self.l_FreqLabel.configure(text='''Frequency''')
 
-        self.l_FreqEntry = tk.Entry(self.Frame5)
-        self.l_FreqEntry.place(relx=0.468, rely=0.57, height=20, relwidth=0.205)
+        self.l_FreqEntry = ttk.Combobox(self.Frame5)
+        self.l_FreqEntry.place(relx=0.508, rely=0.57, height=20, relwidth=0.205)
         self.l_FreqEntry.configure(background="white")
-        self.l_FreqEntry.configure(disabledforeground="#a3a3a3")
         self.l_FreqEntry.configure(font="-family {Courier New} -size 10")
         self.l_FreqEntry.configure(foreground="#000000")
-        self.l_FreqEntry.configure(highlightbackground="#d9d9d9")
-        self.l_FreqEntry.configure(highlightcolor="#000000")
-        self.l_FreqEntry.configure(insertbackground="#000000")
-        self.l_FreqEntry.configure(selectbackground="#d9d9d9")
-        self.l_FreqEntry.configure(selectforeground="black")
-        self.l_FreqEntry.insert(0, self.l_freq)
+        self.l_FreqEntry.configure(state='readonly')
+        self.l_FreqEntry.configure(values=self.freq_options)
+        self.l_FreqEntry.set(self.freq_options[2])
 
         self.l_Hz = tk.Label(self.Frame5)
-        self.l_Hz.place(relx=0.705, rely=0.57, height=20, width=32)
+        self.l_Hz.place(relx=0.745, rely=0.57, height=20, width=32)
         self.l_Hz.configure(activebackground="#d9d9d9")
         self.l_Hz.configure(activeforeground="black")
         self.l_Hz.configure(anchor='w')
@@ -388,21 +392,18 @@ The die will now start the logging process and store the logged data in the sele
         self.l_AccRangeLabel.configure(highlightcolor="#000000")
         self.l_AccRangeLabel.configure(text='''Acceleration range''')
 
-        self.l_AccRangeEntry = tk.Entry(self.Frame5)
-        self.l_AccRangeEntry.place(relx=0.468, rely=0.651, height=20
+        self.l_AccRangeEntry = ttk.Combobox(self.Frame5)
+        self.l_AccRangeEntry.place(relx=0.508, rely=0.651, height=20
                 , relwidth=0.205)
         self.l_AccRangeEntry.configure(background="white")
-        self.l_AccRangeEntry.configure(disabledforeground="#a3a3a3")
         self.l_AccRangeEntry.configure(font="-family {Courier New} -size 10")
         self.l_AccRangeEntry.configure(foreground="#000000")
-        self.l_AccRangeEntry.configure(highlightbackground="#d9d9d9")
-        self.l_AccRangeEntry.configure(highlightcolor="#000000")
-        self.l_AccRangeEntry.configure(insertbackground="#000000")
-        self.l_AccRangeEntry.configure(selectbackground="#d9d9d9")
-        self.l_AccRangeEntry.configure(selectforeground="black")
+        self.l_AccRangeEntry.configure(values=self.accrange_options)
+        self.l_AccRangeEntry.configure(state='readonly')
+        self.l_AccRangeEntry.set(self.accrange_options[-2])
 
         self.l_g = tk.Label(self.Frame5)
-        self.l_g.place(relx=0.705, rely=0.651, height=21, width=71)
+        self.l_g.place(relx=0.745, rely=0.651, height=21, width=71)
         self.l_g.configure(activebackground="#d9d9d9")
         self.l_g.configure(activeforeground="black")
         self.l_g.configure(anchor='w')
@@ -429,21 +430,18 @@ The die will now start the logging process and store the logged data in the sele
         self.l_GyrRangeLabel.configure(highlightcolor="#000000")
         self.l_GyrRangeLabel.configure(text='''Gyroscope range''')
 
-        self.l_GyrRangeEntry = tk.Entry(self.Frame5)
-        self.l_GyrRangeEntry.place(relx=0.468, rely=0.736, height=20
+        self.l_GyrRangeEntry = ttk.Combobox(self.Frame5)
+        self.l_GyrRangeEntry.place(relx=0.508, rely=0.736, height=20
                 , relwidth=0.205)
         self.l_GyrRangeEntry.configure(background="white")
-        self.l_GyrRangeEntry.configure(disabledforeground="#a3a3a3")
         self.l_GyrRangeEntry.configure(font="-family {Courier New} -size 10")
         self.l_GyrRangeEntry.configure(foreground="#000000")
-        self.l_GyrRangeEntry.configure(highlightbackground="#d9d9d9")
-        self.l_GyrRangeEntry.configure(highlightcolor="#000000")
-        self.l_GyrRangeEntry.configure(insertbackground="#000000")
-        self.l_GyrRangeEntry.configure(selectbackground="#d9d9d9")
-        self.l_GyrRangeEntry.configure(selectforeground="black")
+        self.l_GyrRangeEntry.configure(values=self.gyrrange_options)
+        self.l_GyrRangeEntry.configure(state='readonly')
+        self.l_GyrRangeEntry.set(self.gyrrange_options[-1])
 
         self.l_DegSec = tk.Label(self.Frame5)
-        self.l_DegSec.place(relx=0.705, rely=0.736, height=20, width=61)
+        self.l_DegSec.place(relx=0.745, rely=0.736, height=20, width=61)
         self.l_DegSec.configure(activebackground="#d9d9d9")
         self.l_DegSec.configure(activeforeground="black")
         self.l_DegSec.configure(anchor='w')
@@ -481,6 +479,37 @@ The die will now start the logging process and store the logged data in the sele
         self.l_StartLoggingButton.configure(highlightbackground="#d9d9d9")
         self.l_StartLoggingButton.configure(highlightcolor="#000000")
         self.l_StartLoggingButton.configure(text='''Start logging''')
+        self.l_StartLoggingButton.configure(command=self.on_click_logging)
+        
+        self.l_StatusLoggingLabel = tk.Label(self.Frame5)
+        self.l_StatusLoggingLabel.place(relx=0.049, rely=0.851, height=21
+                , width=104)
+        self.l_StatusLoggingLabel.configure(activebackground="#d9d9d9")
+        self.l_StatusLoggingLabel.configure(activeforeground="black")
+        self.l_StatusLoggingLabel.configure(anchor='w')
+        self.l_StatusLoggingLabel.configure(background="#d9d9d9")
+        self.l_StatusLoggingLabel.configure(compound='left')
+        self.l_StatusLoggingLabel.configure(cursor="fleur")
+        self.l_StatusLoggingLabel.configure(disabledforeground="#a3a3a3")
+        self.l_StatusLoggingLabel.configure(foreground="#000000")
+        self.l_StatusLoggingLabel.configure(highlightbackground="#d9d9d9")
+        self.l_StatusLoggingLabel.configure(highlightcolor="#000000")
+        self.l_StatusLoggingLabel.configure(text='''Status Logging:''')
+
+        self.l_StatusLogIndicator = tk.Label(self.Frame5)
+        self.l_StatusLogIndicator.place(relx=0.317, rely=0.851, height=21
+                , width=84)
+        self.l_StatusLogIndicator.configure(activebackground="#d9d9d9")
+        self.l_StatusLogIndicator.configure(activeforeground="black")
+        self.l_StatusLogIndicator.configure(anchor='w')
+        self.l_StatusLogIndicator.configure(background="#d9d9d9")
+        self.l_StatusLogIndicator.configure(compound='left')
+        self.l_StatusLogIndicator.configure(disabledforeground="#a3a3a3")
+        self.l_StatusLogIndicator.configure(font="-family {Segoe UI} -size 9 -weight bold")
+        self.l_StatusLogIndicator.configure(foreground="#ff0000")
+        self.l_StatusLogIndicator.configure(highlightbackground="#d9d9d9")
+        self.l_StatusLogIndicator.configure(highlightcolor="#000000")
+        self.l_StatusLogIndicator.configure(text='''Not Logging''')
 
         self.Frame4 = tk.Frame(self.top)
         self.Frame4.place(relx=0.403, rely=0.489, relheight=0.326
@@ -577,6 +606,7 @@ The die will now start the logging process and store the logged data in the sele
         self.c_CalibratorButton.configure(highlightbackground="#d9d9d9")
         self.c_CalibratorButton.configure(highlightcolor="#000000")
         self.c_CalibratorButton.configure(text='''Start Calibrator''')
+        self.c_CalibratorButton.configure(command=self.on_click_calibrate)
 
         self.c_WaitLengthLabel = tk.Label(self.Frame4)
         self.c_WaitLengthLabel.place(relx=0.044, rely=0.409, height=20
@@ -707,19 +737,6 @@ The die will now start the logging process and store the logged data in the sele
         self.c_GyrRangeLabel.configure(highlightcolor="#000000")
         self.c_GyrRangeLabel.configure(text='''Gyroscope range''')
 
-        self.c_GyrRangeEntry = tk.Entry(self.Frame4)
-        self.c_GyrRangeEntry.place(relx=0.505, rely=0.736, height=20
-                , relwidth=0.195)
-        self.c_GyrRangeEntry.configure(background="white")
-        self.c_GyrRangeEntry.configure(disabledforeground="#a3a3a3")
-        self.c_GyrRangeEntry.configure(font="-family {Courier New} -size 10")
-        self.c_GyrRangeEntry.configure(foreground="#000000")
-        self.c_GyrRangeEntry.configure(highlightbackground="#d9d9d9")
-        self.c_GyrRangeEntry.configure(highlightcolor="#000000")
-        self.c_GyrRangeEntry.configure(insertbackground="#000000")
-        self.c_GyrRangeEntry.configure(selectbackground="#d9d9d9")
-        self.c_GyrRangeEntry.configure(selectforeground="black")
-
         self.c_DegSec = tk.Label(self.Frame4)
         self.c_DegSec.place(relx=0.726, rely=0.736, height=20, width=60)
         self.c_DegSec.configure(activebackground="#d9d9d9")
@@ -773,31 +790,36 @@ The die will now start the logging process and store the logged data in the sele
         self.c_MeasurementTimeEntry.configure(selectbackground="#d9d9d9")
         self.c_MeasurementTimeEntry.configure(selectforeground="black")
 
-        self.c_FrequencyEntry = tk.Entry(self.Frame4)
+        self.c_FrequencyEntry = ttk.Combobox(self.Frame4)
         self.c_FrequencyEntry.place(relx=0.505, rely=0.57, height=20
                 , relwidth=0.195)
         self.c_FrequencyEntry.configure(background="white")
-        self.c_FrequencyEntry.configure(disabledforeground="#a3a3a3")
         self.c_FrequencyEntry.configure(font="-family {Courier New} -size 10")
         self.c_FrequencyEntry.configure(foreground="#000000")
-        self.c_FrequencyEntry.configure(highlightbackground="#d9d9d9")
-        self.c_FrequencyEntry.configure(highlightcolor="#000000")
-        self.c_FrequencyEntry.configure(insertbackground="#000000")
-        self.c_FrequencyEntry.configure(selectbackground="#d9d9d9")
-        self.c_FrequencyEntry.configure(selectforeground="black")
+        self.c_FrequencyEntry.configure(state='readonly')
+        self.c_FrequencyEntry.configure(values=self.freq_options)
+        self.c_FrequencyEntry.set(self.freq_options[2])
 
-        self.c_AccRangeEntry = tk.Entry(self.Frame4)
+
+        self.c_AccRangeEntry = ttk.Combobox(self.Frame4)
         self.c_AccRangeEntry.place(relx=0.505, rely=0.651, height=20
                 , relwidth=0.195)
         self.c_AccRangeEntry.configure(background="white")
-        self.c_AccRangeEntry.configure(disabledforeground="#a3a3a3")
         self.c_AccRangeEntry.configure(font="-family {Courier New} -size 10")
         self.c_AccRangeEntry.configure(foreground="#000000")
-        self.c_AccRangeEntry.configure(highlightbackground="#d9d9d9")
-        self.c_AccRangeEntry.configure(highlightcolor="#000000")
-        self.c_AccRangeEntry.configure(insertbackground="#000000")
-        self.c_AccRangeEntry.configure(selectbackground="#d9d9d9")
-        self.c_AccRangeEntry.configure(selectforeground="black")
+        self.c_AccRangeEntry.configure(values=self.accrange_options)
+        self.c_AccRangeEntry.configure(state="readonly")
+        self.c_AccRangeEntry.set(self.accrange_options[-2])
+        
+        self.c_GyrRangeEntry = ttk.Combobox(self.Frame4)
+        self.c_GyrRangeEntry.place(relx=0.505, rely=0.736, height=20
+                , relwidth=0.195)
+        self.c_GyrRangeEntry.configure(background="white")
+        self.c_GyrRangeEntry.configure(font="-family {Courier New} -size 10")
+        self.c_GyrRangeEntry.configure(foreground="#000000")
+        self.c_GyrRangeEntry.configure(values=self.gyrrange_options)
+        self.c_GyrRangeEntry.configure(state="readonly")
+        self.c_GyrRangeEntry.set(self.gyrrange_options[-1])
 
         self.Frame6 = tk.Frame(self.top)
         self.Frame6.place(relx=0.403, rely=0.821, relheight=0.106, relwidth=0.58)
@@ -931,23 +953,63 @@ The die will now start the logging process and store the logged data in the sele
     
     def copy_values(self):
         # Retrieve the value from the Entry widget
-        self.l_freq = self.c_FrequencyEntry.get()
-        self.l_FreqEntry.delete(0, tk.END)
-        self.l_FreqEntry.insert(0, self.l_freq)
+        self.l_FreqEntry.set(self.c_FrequencyEntry.get())
         self.l_mt = self.c_MeasurementTimeEntry.get()
         self.l_MeasurementTimeEntry.delete(0, tk.END)
         self.l_MeasurementTimeEntry.insert(0, self.l_mt)
-        self.l_accrange = self.c_AccRangeEntry.get()
-        self.l_AccRangeEntry.delete(0, tk.END)
-        self.l_AccRangeEntry.insert(0, self.l_accrange)
-        self.l_gyrrange = self.c_GyrRangeEntry.get()
-        self.l_GyrRangeEntry.delete(0, tk.END)
-        self.l_GyrRangeEntry.insert(0, self.l_gyrrange)
+        self.l_AccRangeEntry.set(self.c_AccRangeEntry.get())
+        self.l_GyrRangeEntry.set(self.c_GyrRangeEntry.get())
         
     def on_click_connect(self):
-        from dobbel import dobbellogger
-        dob = dobbellogger()
-        dob.connect()
+        try:
+            self.c_ConnectIndicatorLabel.configure(foreground="#ff8000")
+            self.c_ConnectIndicatorLabel.configure(text="Connecting...")
+            print("Dobbellogger geïmporteerd")
+            dob = dobbellogger()
+            print("Dobbelsteen aangemaakt")
+            dob.reset()
+            print("Dobbelsteen Reset")
+            dob.connect()
+            print("Verbinding vastgelegd")
+            tk.messagebox.showinfo(title="Connection", message="Connection successful")
+            self.c_ConnectIndicatorLabel.configure(foreground="#008000")
+            self.c_ConnectIndicatorLabel.configure(text="Connected")
+        except:
+            tk.messagebox.showinfo(title="Connection Error", message="Please check your bluetooth connection and try again.")
+            self.c_ConnectIndicatorLabel.configure(foreground="#ff0000")
+            self.c_ConnectIndicatorLabel.configure(text="Not Connected")
+            return
+            
+    def on_click_logging(self):
+        tk.messagebox.showinfo(title="Die Logging Tool", message="Press Ok when you are ready to log. The logger will start after continuing.")
+        l_freq = int(self.l_freq)
+        l_accrange = int(self.l_accrange)
+        l_gyrrange = int(self.l_gyrrange)
+        dob.log(l_mt, l_freq, l_accrange, l_gyrrange)
+        dob.download()
+        data = dob.datadf
+            
+    def on_click_calibrate(self):
+        self.c_CalibrationIndicatorLabel.configure(foreground="#ff8000")
+        self.c_CalibrationIndicatorLabel.configure(text="Calibrating...")
+        try:
+            self.c_lowi = int(self.c_WaitLengthEntry.get())
+            self.c_mt = int(self.c_MeasurementTimeEntry.get())
+            self.c_freq = int(self.c_FrequencyEntry.get())
+            self.c_accrange = int(self.c_AccRangeEntry.get())
+            self.c_gyrrange = int(self.c_GyrRangeEntry.get())
+        except ValueError:
+            tk.messagebox.showinfo(title="Error: Calibration parameters",
+                                   message = "One or multiple parameters are not integers!")
+            self.c_CalibrationIndicatorLabel.configure(foreground="#ff0000")
+            self.c_CalibrationIndicatorLabel.configure(text="Not Calibrated")
+            return
+        self.q_rot = np.array([-0.22758238, -0.66122331, -0.6738042, 0.23870041])
+        cali = calibrate(self.dob, self.c_mt, self.c_lowi, self.c_freq, self.c_accrange, self.c_gyrrange, self.q_rot)
+        print("cali succesvol gedefinieerd met self.dob")
+        self.c_CalibrationIndicatorLabel.configure(foreground="#008000")
+        self.c_CalibrationIndicatorLabel.configure(text="Calibrated!")
+        
         
         
     
