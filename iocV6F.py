@@ -981,6 +981,7 @@ The die will now start the logging process and store the logged data in the sele
         self.enable_connect_cal_log()
             
     def on_click_logging(self):
+        self.disable_connect_cal_log()
         self.l_StatusLogIndicator.configure(text="Preparing Logging Tool...")
         self.l_StatusLogIndicator.configure(foreground="#ffff00")
         tk.messagebox.showinfo(title="Die Logging Tool", message="Press Ok when you are ready to log. The logger will start after continuing.")
@@ -999,6 +1000,7 @@ The die will now start the logging process and store the logged data in the sele
         tk.messagebox.showinfo(title="Die Logging Tool", message=f"Logging Complete. File is now saved in selected directory as {self.savefilename}")
         #self.l_StatusLogIndicator.configure(text="Not Logging")
         #self.l_StatusLogIndicator.configure(foreground="#ff0000")
+        self.enable_connect_cal_log()
             
     def on_click_calibrate(self):
         self.disable_connect_cal_log()
@@ -1041,7 +1043,6 @@ The die will now start the logging process and store the logged data in the sele
         self.c_CalibratorButton.configure(state=tk.NORMAL)
         self.l_StartLoggingButton.configure(state=tk.NORMAL)
         self.c_ConnectButton.configure(state=tk.NORMAL)
-        
         
         
     
