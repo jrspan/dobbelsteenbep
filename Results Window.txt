@@ -2,16 +2,22 @@ What to put on results window:
 -------------------------------
 Total time:
 Time in hand:
+Time mid air:
+Time to first bounce:
 
 Average Velocity mid-throw
 Average Velocity full throw:
+Peak velocity:
+Peak acceleration:
 
 Average angular velocity
 Amount of rotations
 
-"Plot of angular velocty"
-"Plot of angular acceleration"
-
 Predicted position
+Initial position (number on top before logging)
 Final position (number on top)
 --------------------------------
+Graphical plots:
+"Plot of angular velocty"
+"Plot of acceleration"
+"Plot of orientation"

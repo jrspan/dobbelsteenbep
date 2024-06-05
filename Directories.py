@@ -1,50 +1,35 @@
-#### NOTE: This file is only used as a test for obtaining DIRECTORY PATHS.
-
-import sys
 import os
+import sys
 
-import numpy as np
+def add_directories_to_sys_path(directory):
+    """
+    Recursively add directories to sys.path starting from the given directory.
+    """
+    # Initialize a set to store directories that have been added
+    added_directories = set()
 
-def dir_add(directory_name: str):
-    # Adds a specific directory to the current sys path
-    # Only works with directories stored in same folder as this code.
-    dir_path = os.path.join(os.path.dirname(__file__), directory_name)
-    if not dir_path in sys.path:
-        sys.path.append(dir_path)
+    # Define a helper function to recursively traverse directories
+    def traverse_directory(dir_path):
+        nonlocal added_directories
+        # Get a list of all items (files and directories) in the current directory
+        items = os.listdir(dir_path)
+        for item in items:
+            item_path = os.path.join(dir_path, item)
+            if os.path.isdir(item_path) and not item.startswith('.'):
+                # If it's a directory, check if it has already been added
+                if item_path not in added_directories:
+                    # Add the directory to sys.path and mark it as added
+                    sys.path.append(item_path)
+                    added_directories.add(item_path)
+                    # Recursively traverse the subdirectory
+                    traverse_directory(item_path)
+
+    # Start traversing from the initial directory
+    traverse_directory(directory)
+    return added_directories
     
-if not os.path.dirname(__file__) in sys.path:
-    sys.path.append(os.path.dirname(__file__))
-dir_add("Project Files")
-import tkinter as tk
-from tkinter import ttk
+current_directory = os.path.dirname(__file__)
+test = add_directories_to_sys_path(current_directory)
 
-class MyApplication:
-    def __init__(self, root):
-        self.root = root
-        self.root.title("10-Second Timer Example")
-        
-        self.progress = ttk.Progressbar(root, orient='horizontal', mode='determinate', maximum=100, value=0)
-        self.progress.pack(padx=20, pady=20, fill='x')
-        
-        self.start_button = ttk.Button(root, text="Start Timer", command=self.start_timer)
-        self.start_button.pack(pady=10)
-        
-        self.reset_button = ttk.Button(root, text="Reset Timer", command=self.reset_timer)
-        self.reset_button.pack(pady=10)
-        
-    def start_timer(self):
-        self.progress['value'] = 0  # Reset progress bar value
-        self.update_progress(0)  # Start updating the progress bar
-    
-    def update_progress(self, value):
-        if value <= 100:
-            self.progress['value'] = value
-            self.root.after(100, self.update_progress, value + 1)  # Schedule next update after 100ms
-    
-    def reset_timer(self):
-        self.progress['value'] = 0  # Reset progress bar value
-
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = MyApplication(root)
-    root.mainloop()
+for thing in test:
+    print(thing)
