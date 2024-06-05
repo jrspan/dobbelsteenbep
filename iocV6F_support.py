@@ -17,11 +17,15 @@ if not os.path.dirname(__file__) in sys.path:
 
 _debug = True # False to eliminate debug printing from callback functions.
 
+def on_closing():
+    root.destroy()
+    sys.exit()
+
 def main(*args):
     '''Main entry point for the application.'''
     global root
     root = tk.Tk()
-    root.protocol( 'WM_DELETE_WINDOW' , root.destroy)
+    root.protocol( 'WM_DELETE_WINDOW' , on_closing)
     # Creates a toplevel widget.
     global _top1, _w1
     _top1 = root

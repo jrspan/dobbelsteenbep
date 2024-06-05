@@ -73,7 +73,7 @@ class Toplevel1:
         top.configure(highlightbackground="#d9d9d9")
         top.configure(highlightcolor="#000000")
         
-        # Variables
+        # Class Variables
         self.c_lowi = ""
         self.c_mt = ""
         self.c_freq = ""
@@ -498,7 +498,7 @@ The die will now start the logging process and store the logged data in the sele
 
         self.l_StatusLogIndicator = tk.Label(self.Frame5)
         self.l_StatusLogIndicator.place(relx=0.317, rely=0.851, height=21
-                , width=84)
+                , width=150)
         self.l_StatusLogIndicator.configure(activebackground="#d9d9d9")
         self.l_StatusLogIndicator.configure(activeforeground="black")
         self.l_StatusLogIndicator.configure(anchor='w')
@@ -961,35 +961,48 @@ The die will now start the logging process and store the logged data in the sele
         self.l_GyrRangeEntry.set(self.c_GyrRangeEntry.get())
         
     def on_click_connect(self):
+        self.disable_connect_cal_log()
+        self.c_ConnectIndicatorLabel.configure(foreground="#ff8000")
+        self.c_ConnectIndicatorLabel.configure(text="Connecting...")
         try:
-            self.c_ConnectIndicatorLabel.configure(foreground="#ff8000")
-            self.c_ConnectIndicatorLabel.configure(text="Connecting...")
-            print("Dobbellogger geïmporteerd")
+            print("Verbinding wordt geprobeerd....")
             dob = dobbellogger()
-            print("Dobbelsteen aangemaakt")
             dob.reset()
-            print("Dobbelsteen Reset")
             dob.connect()
             print("Verbinding vastgelegd")
-            tk.messagebox.showinfo(title="Connection", message="Connection successful")
-            self.c_ConnectIndicatorLabel.configure(foreground="#008000")
-            self.c_ConnectIndicatorLabel.configure(text="Connected")
         except:
             tk.messagebox.showinfo(title="Connection Error", message="Please check your bluetooth connection and try again.")
             self.c_ConnectIndicatorLabel.configure(foreground="#ff0000")
             self.c_ConnectIndicatorLabel.configure(text="Not Connected")
+            self.enable_connect_cal_log()
             return
+        tk.messagebox.showinfo(title="Connection", message="Connection successful")
+        self.c_ConnectIndicatorLabel.configure(foreground="#008000")
+        self.c_ConnectIndicatorLabel.configure(text="Connected")
+        self.enable_connect_cal_log()
             
     def on_click_logging(self):
+        self.l_StatusLogIndicator.configure(text="Preparing Logging Tool...")
+        self.l_StatusLogIndicator.configure(foreground="#ffff00")
         tk.messagebox.showinfo(title="Die Logging Tool", message="Press Ok when you are ready to log. The logger will start after continuing.")
-        l_freq = int(self.l_freq)
-        l_accrange = int(self.l_accrange)
-        l_gyrrange = int(self.l_gyrrange)
-        dob.log(l_mt, l_freq, l_accrange, l_gyrrange)
-        dob.download()
-        data = dob.datadf
+        self.l_StatusLogIndicator.configure(text="Logging...")
+        self.l_StatusLogIndicator.configure(foreground="#ff8000")
+        # More commands....
+        #l_freq = int(self.l_freq)
+        #l_accrange = int(self.l_accrange)
+        #l_gyrrange = int(self.l_gyrrange)
+        #dob.log(l_mt, l_freq, l_accrange, l_gyrrange)
+        #dob.download()
+        #data = dob.datadf
+        self.l_StatusLogIndicator.configure(text="Logging Complete")
+        self.l_StatusLogIndicator.configure(foreground="#008000")
+        self.savefilename = "DummyName.csv"
+        tk.messagebox.showinfo(title="Die Logging Tool", message=f"Logging Complete. File is now saved in selected directory as {self.savefilename}")
+        #self.l_StatusLogIndicator.configure(text="Not Logging")
+        #self.l_StatusLogIndicator.configure(foreground="#ff0000")
             
     def on_click_calibrate(self):
+        self.disable_connect_cal_log()
         self.c_CalibrationIndicatorLabel.configure(foreground="#ff8000")
         self.c_CalibrationIndicatorLabel.configure(text="Calibrating...")
         try:
@@ -1003,12 +1016,24 @@ The die will now start the logging process and store the logged data in the sele
                                    message = "One or multiple parameters are not integers!")
             self.c_CalibrationIndicatorLabel.configure(foreground="#ff0000")
             self.c_CalibrationIndicatorLabel.configure(text="Not Calibrated")
+            self.enable_connect_cal_log()
             return
         self.q_rot = np.array([-0.22758238, -0.66122331, -0.6738042, 0.23870041])
         cali = calibrate(self.dob, self.c_mt, self.c_lowi, self.c_freq, self.c_accrange, self.c_gyrrange, self.q_rot)
         print("cali succesvol gedefinieerd met self.dob")
         self.c_CalibrationIndicatorLabel.configure(foreground="#008000")
         self.c_CalibrationIndicatorLabel.configure(text="Calibrated!")
+        self.enable_connect_cal_log()
+        
+    def disable_connect_cal_log(self):
+        self.c_CalibratorButton.configure(state=tk.DISABLED)
+        self.l_StartLoggingButton.configure(state=tk.DISABLED)
+        self.c_ConnectButton.configure(state=tk.DISABLED)
+        
+    def enable_connect_cal_log(self):
+        self.c_CalibratorButton.configure(state=tk.NORMAL)
+        self.l_StartLoggingButton.configure(state=tk.NORMAL)
+        self.c_ConnectButton.configure(state=tk.NORMAL)
         
         
         
