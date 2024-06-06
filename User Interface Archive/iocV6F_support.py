@@ -14,35 +14,28 @@ import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter.constants import *
 
-import iocV7
+import iocV6F
 
-_debug = True  # False to eliminate debug printing from callback functions.
+
+_debug = True # False to eliminate debug printing from callback functions.
 
 def on_destroy():
     root.destroy()
     sys.exit()
 
-def open_second_window(window_title, RW_csv):
-    global _top2, _w2
-    _top2 = tk.Toplevel(root)
-    _w2 = iocV7.TW_Result(_top2, RW_csv)
-    _top2.title(f"Results for: {window_title}")
-
 def main(*args):
     '''Main entry point for the application.'''
     global root
     root = tk.Tk()
-    root.protocol('WM_DELETE_WINDOW', on_destroy)
-    
-    # Create the first window
+    root.protocol( 'WM_DELETE_WINDOW' , on_destroy)
+    # Creates a toplevel widget.
     global _top1, _w1
     _top1 = root
-    _w1 = iocV7.Toplevel1(_top1)
-    
+    _w1 = iocV6F.Toplevel1(_top1)
     root.mainloop()
 
 if __name__ == '__main__':
-    iocV7.start_up()
+    iocV6F.start_up()
 
 
 

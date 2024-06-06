@@ -15,7 +15,7 @@ if not os.path.dirname(__file__) in sys.path:
 else:
     print("Current directory successfully loaded!")
     
-extra_directory_1 = os.path.join(current_directory, "Project Files")
+extra_directory_1 = os.path.join(current_directory, "Final")
 if not extra_directory_1 in sys.path:
     sys.path.append(extra_directory_1)
     print(f"New directory added: {extra_directory_1}")
@@ -29,6 +29,51 @@ from tkinter import filedialog, messagebox
 import webbrowser
 import numpy as np
 import pandas as pd
+import datetime
+
+# Used to create filename for data
+def create_filename_date():
+    now = datetime.datetime.now()
+    date_string = now.strftime("%Y-%m-%d_%H-%M-%S")
+    filename = f"{date_string}"
+    return filename
+
+# Helper function for directory selection
+def select_directory():
+    root = tk.Tk()
+    root.withdraw()  # Hide the root window
+    directory = filedialog.askdirectory()
+    print(f"Selected directory: {directory}")
+    root.destroy()  # Destroy the root window after selection
+    return directory
+
+# Helper function to convert dataframe to csv and save in specified directory
+def save_dataframe_to_csv(df, filename, directory):
+    """
+    Save a pandas DataFrame to a CSV file in the specified directory.
+
+    Parameters:
+    df (pandas.DataFrame): The DataFrame to be saved.
+    filename (str): The name of the CSV file (without directory path).
+    directory (str): The path to the directory where the file will be saved.
+
+    Returns:
+    str: The full path to the saved CSV file.
+    """
+
+    # Construct the full file path
+    file_path = os.path.join(directory, filename)
+
+    # Save the DataFrame to the CSV file
+    try:
+        df.to_csv(file_path, index=False)
+        print(f"DataFrame successfully saved to {file_path}")
+    except Exception as e:
+        print(f"Error saving DataFrame to CSV: {e}")
+
+from dobbel import *
+from calibrator import *
+from analysis import *
 
 _location = os.path.dirname(__file__)
 
@@ -70,8 +115,11 @@ class Toplevel1:
         top.configure(highlightbackground="#d9d9d9")
         top.configure(highlightcolor="#000000")
         
+        #
+        self.selected_directory = None
+        
         # Class Variables
-        self.c_lowi = ""
+        self.c_lowi = "2"
         self.c_mt = ""
         self.c_freq = ""
         self.c_accrange = ""
@@ -85,6 +133,9 @@ class Toplevel1:
         self.gyrrange_options = ["125", "250", "500", "1000", "2000"]
         self.accrange_options = ["1", "2", "4", "8", "16"]
         self.freq_options = ["25", "50", "100", "200", "400", "800"]
+        ### Variables for CALIBRATOR
+        self.cali = None
+        self.std_cali = None
         
         ### Variables for RESULT WINDOW (All start with "RW_")
         self.RW_title = "<Title name for file>"
@@ -202,7 +253,7 @@ class Toplevel1:
         self.s_Dirname.configure(foreground="#000000")
         self.s_Dirname.configure(highlightbackground="#d9d9d9")
         self.s_Dirname.configure(highlightcolor="#000000")
-        self.s_Dirname.configure(text='''No filder selected''')
+        self.s_Dirname.configure(text="No folder selected.")
 
         self.Frame3 = tk.Frame(self.top)
         self.Frame3.place(relx=0.403, rely=0.188, relheight=0.297, relwidth=0.58)
@@ -928,7 +979,8 @@ The die will now start the logging process and store the logged data in the sele
         sys.exit()
     
     def browse_directory(self):
-        self.selected_directory = filedialog.askdirectory()
+        #self.selected_directory = filedialog.askdirectory()
+        self.selected_directory = select_directory()
         if self.selected_directory:
             self.s_Dirname.configure(text=self.selected_directory)
             self.Scrolledlistbox1.delete(0, tk.END)
@@ -967,11 +1019,12 @@ The die will now start the logging process and store the logged data in the sele
         self.c_ConnectIndicatorLabel.configure(foreground="#ff8000")
         self.c_ConnectIndicatorLabel.configure(text="Connecting...")
         try:
-            from dobbel import dobbellogger
+            #from dobbel import dobbellogger
             print("Verbinding wordt geprobeerd....")
-            self.dob = dobbellogger()
-            self.dob.reset()
-            self.dob.connect()
+            dob = dobbellogger()
+            dob.reset()
+            dob.connect()
+            self.dob = dob
             print("Verbinding vastgelegd")
         except:
             tk.messagebox.showinfo(title="Connection Error", message="Please check your bluetooth connection and try again.")
@@ -985,27 +1038,66 @@ The die will now start the logging process and store the logged data in the sele
         self.enable_connect_cal_log()
             
     def on_click_logging(self):
+        if not self.selected_directory:
+            tk.messagebox.showinfo(title="Error: Die Logging Tool",
+                                   message="No directory selected for saving CSV file.")
+            return
         self.disable_connect_cal_log()
         self.l_StatusLogIndicator.configure(text="Preparing Logging Tool...")
         self.l_StatusLogIndicator.configure(foreground="#ffff00")
-        tk.messagebox.showinfo(title="Die Logging Tool", message="Press Ok when you are ready to log. The logger will start after continuing.")
+        try:
+            ### HIER KOMEN ALLE FUNCTIES VAN LOGGER
+            ### ------------------------------------------
+            ### dob = Dobbel class die is aangemaakt in connect
+            ### self.c_mt = Measurement Time
+            ### self.c_freq = Frequentie
+            ### self.c_accrange = Acceleratie range/bereik
+            ### self.c_gyrrange = Gyroscoop bereik
+            ###
+            ### OUTPUTS:
+            ### output_data -> Is de output.
+            ### self.output_data -> Is de output in Class
+            ### ------------------------------------------
+            ### Note: "from calibrator import *" Werkt niet!
+            ### ------------------------------------------
+            dob = self.dob
+            self.output_data = output_data
+        except:
+            print("ERROR: Calibration or connection issue")
+            tk.messagebox.showinfo(title="Error: Logging tool",
+                                   message="There was an error with one of the previous steps (Connection or calibration)")
+            self.l_StatusLogIndicator.configure(text="Not Logging")
+            self.l_StatusLogIndicator.configure(foreground="#ff0000")
+            self.enable_connect_cal_log()
+            return
+        tk.messagebox.showinfo(title="Die Logging Tool", 
+                               message="Press Ok when you are ready to log. The logger will start after continuing.")
         self.l_StatusLogIndicator.configure(text="Logging...")
         self.l_StatusLogIndicator.configure(foreground="#ff8000")
-        # More commands....
-        #l_freq = int(self.l_freq)
-        #l_accrange = int(self.l_accrange)
-        #l_gyrrange = int(self.l_gyrrange)
-        #dob.log(l_mt, l_freq, l_accrange, l_gyrrange)
-        #dob.download()
-        #data = dob.datadf
-        self.l_StatusLogIndicator.configure(text="Logging Complete")
+        dob.log(self.c_mt, self.c_freq, self.c_accrange, self.c_gyrrange)
+        tk.messagebox.showinfo(title="Die Logging Tool", 
+                               message="The logger has stopped logging. Downloading data now...")
+        self.l_StatusLogIndicator.configure(text="Downloading data...")
+        self.l_StatusLogIndicator.configure(foreground="#ff8000")
+        dob.download()
+        output_data = dob.datadf
+        self.output_data = output_data
+        self.l_StatusLogIndicator.configure(text="Data download complete")
         self.l_StatusLogIndicator.configure(foreground="#008000")
-        self.savefilename = "DummyName.csv"
-        tk.messagebox.showinfo(title="Die Logging Tool", message=f"Logging Complete. File is now saved in selected directory as {self.savefilename}")
+        tk.messagebox.showinfo(title="Die Logging Tool", 
+                               message="Data has been downloaded and saved")
+        ############################
+        ### NOG TE DOEN HIERTUSSEN:
+        ### (- Data smoothing d.m.v. Kalman filter enz., tenzij dit pas wordt gedaan bij results)
+        ############################
+        self.date = create_filename_date()
+        self.filename = f"{self.date}_DieThrowData"
+        save_dataframe_to_csv(self.output_data, self.filename, self.selected_directory)
+        tk.messagebox.showinfo(title="Die Logging Tool", message=f"Logging Complete. File is now saved in selected directory as {self.filename}")
         #self.l_StatusLogIndicator.configure(text="Not Logging")
         #self.l_StatusLogIndicator.configure(foreground="#ff0000")
         self.enable_connect_cal_log()
-            
+    
     def on_click_calibrate(self):
         self.disable_connect_cal_log()
         self.c_CalibrationIndicatorLabel.configure(foreground="#ff8000")
@@ -1025,8 +1117,26 @@ The die will now start the logging process and store the logged data in the sele
             return
         self.q_rot = np.array([-0.22758238, -0.66122331, -0.6738042, 0.23870041])
         try:
-            from calibrator3 import calibrate
-            cali = calibrate(self.dob, self.c_mt, self.c_lowi, self.c_freq, self.c_accrange, self.c_gyrrange, self.q_rot)
+            ### HIER KOMEN ALLE FUNCTIES VAN CALIBRATIE BESTAND
+            ### ------------------------------------------
+            ### dob = Dobbel class die is aangemaakt in connect
+            ### self.c_mt = Measurement Time
+            ### self.c_lowi = Lenght of Waiting Interval (Wachttijd)
+            ### self.c_freq = Frequentie
+            ### self.c_accrange = Acceleratie range/bereik
+            ### self.c_gyrrange = Gyroscoop bereik
+            ###
+            ### OUTPUTS:
+            ### self.cali
+            ### self.std_cali
+            ### ------------------------------------------
+            ### Note: "from calibrator import *" Werkt niet!
+            ### ------------------------------------------
+            #from calibrator import calibrate_rot_bias, cali_std
+            self.cali = calibrate_rot_bias(self.dob, self.c_mt, self.c_lowi, self.c_freq, self.c_accrange, self.c_gyrrange, self.q_rot)
+            self.std_cali = cali_std(self.dob, 3, 100, 125)
+            
+            
         except AttributeError:
             tk.messagebox.showinfo(title="Error: Connection Failure",
                                    message = "The die is disconnected.")
@@ -1034,9 +1144,14 @@ The die will now start the logging process and store the logged data in the sele
             self.c_CalibrationIndicatorLabel.configure(text="Not Calibrated")
             self.enable_connect_cal_log()
             return
-        print("cali succesvol gedefinieerd met self.dob")
+        except:
+            # Error detectie - Indien er iets misgaat. In theorie zou deze nooit voorkomen.
+            print("CALIBRATIE ERROR: Probleem nog niet gevonden.")
         self.c_CalibrationIndicatorLabel.configure(foreground="#008000")
         self.c_CalibrationIndicatorLabel.configure(text="Calibrated!")
+        tk.messagebox.showinfo(title="Calibrator",
+                               message = "Calibration succesful!")
+        print("Calibration success!. Closing calibrator....")
         self.enable_connect_cal_log()
         
     def disable_connect_cal_log(self):
@@ -1052,13 +1167,15 @@ The die will now start the logging process and store the logged data in the sele
     def on_click_results(self):
         ## TODO: Variables defining for opening.
         self.RW_title = self.r_LoadedFile.cget("text")
-        #self.RW_csv = None
-        iocV7_support.open_second_window(self.RW_title, self.RW_csv)
+        #self.cali = calibratie rot angles
+        #self.std_cali = standard deviation
+        #self.RW_csv = CSV bestand
+        iocV7_support.open_second_window(self.RW_title, self.RW_csv, self.cali, self.std_cali)
         
         
 ############## RESULTS WINDOW CLASS ##########################################        
 class TW_Result:
-    def __init__(self, top=None, RW_csv=None):
+    def __init__(self, top=None, RW_csv=None, cali=None, std_cali=None):
         '''This class configures and populates the toplevel window.
            top is the toplevel containing window.'''
 
@@ -1071,8 +1188,24 @@ class TW_Result:
         top.configure(highlightbackground="#d9d9d9")
         top.configure(highlightcolor="#000000")
 
+        ### Initializing result variables
         self.top = top
-        self.RW_csv = RW_csv
+        self.RW_csv = RW_csv        # Dit is het CSV bestand waar naar gekeken word.
+        self.cali = cali
+        self.std_cali = std_cali
+        
+        ### Performing calculation
+        try:
+            results = run_analysis_local(self.RW_csv, self.cali, self.std_cali, N=10, gamma=0.001)
+        except:
+            print("Results Error")
+            tk.messagebox.showinfo(title="Error: Results",
+                                   message = "Results error!")
+            
+        #####
+        # Hiertussen nog allemaal zooi definen die we willen weergeven op het resultaten scherm
+        # (Grafieken, waarden, etc...)
+        #####
 
 
         self.Frame7 = tk.Frame(self.top)

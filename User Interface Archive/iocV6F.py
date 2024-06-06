@@ -28,7 +28,9 @@ from tkinter.constants import *
 from tkinter import filedialog, messagebox
 import webbrowser
 import numpy as np
-import pandas as pd
+
+from dobbel import dobbellogger
+from calibrator3 import calibrate
 
 _location = os.path.dirname(__file__)
 
@@ -86,9 +88,6 @@ class Toplevel1:
         self.accrange_options = ["1", "2", "4", "8", "16"]
         self.freq_options = ["25", "50", "100", "200", "400", "800"]
         
-        ### Variables for RESULT WINDOW (All start with "RW_")
-        self.RW_title = "<Title name for file>"
-        self.RW_csv = "<filepath for CSV>" # Wordt waarschijnlijk een filepath: "C:\Users\(...)\data.csv"
         
 
         self.top = top
@@ -871,7 +870,6 @@ The die will now start the logging process and store the logged data in the sele
         self.r_Results.configure(highlightbackground="#d9d9d9")
         self.r_Results.configure(highlightcolor="#000000")
         self.r_Results.configure(text='''Show Results''')
-        self.r_Results.configure(command=self.on_click_results)
 
         self.QuitProgramButton = tk.Button(self.top)
         self.QuitProgramButton.place(relx=0.021, rely=0.944, height=26
@@ -946,7 +944,6 @@ The die will now start the logging process and store the logged data in the sele
         if selected_item:
             selected_file_name = self.Scrolledlistbox1.get(selected_item)
             self.selected_file = os.path.join(self.selected_directory, selected_file_name)
-            self.RW_csv = self.selected_file
             self.r_LoadedFile.configure(text=selected_file_name)
     
     def open_website(self):
@@ -961,13 +958,12 @@ The die will now start the logging process and store the logged data in the sele
         self.l_MeasurementTimeEntry.insert(0, self.l_mt)
         self.l_AccRangeEntry.set(self.c_AccRangeEntry.get())
         self.l_GyrRangeEntry.set(self.c_GyrRangeEntry.get())
-
+        
     def on_click_connect(self):
         self.disable_connect_cal_log()
         self.c_ConnectIndicatorLabel.configure(foreground="#ff8000")
         self.c_ConnectIndicatorLabel.configure(text="Connecting...")
         try:
-            from dobbel import dobbellogger
             print("Verbinding wordt geprobeerd....")
             self.dob = dobbellogger()
             self.dob.reset()
@@ -1025,7 +1021,6 @@ The die will now start the logging process and store the logged data in the sele
             return
         self.q_rot = np.array([-0.22758238, -0.66122331, -0.6738042, 0.23870041])
         try:
-            from calibrator3 import calibrate
             cali = calibrate(self.dob, self.c_mt, self.c_lowi, self.c_freq, self.c_accrange, self.c_gyrrange, self.q_rot)
         except AttributeError:
             tk.messagebox.showinfo(title="Error: Connection Failure",
@@ -1049,483 +1044,6 @@ The die will now start the logging process and store the logged data in the sele
         self.l_StartLoggingButton.configure(state=tk.NORMAL)
         self.c_ConnectButton.configure(state=tk.NORMAL)
         
-    def on_click_results(self):
-        ## TODO: Variables defining for opening.
-        self.RW_title = self.r_LoadedFile.cget("text")
-        #self.RW_csv = None
-        iocV6F_support.open_second_window(self.RW_title, self.RW_csv)
-        
-        
-############## RESULTS WINDOW CLASS ##########################################        
-class TW_Result:
-    def __init__(self, top=None, RW_csv=None):
-        '''This class configures and populates the toplevel window.
-           top is the toplevel containing window.'''
-
-        top.geometry("1400x650+266+191")
-        top.minsize(1400, 650)
-        top.maxsize(1924, 1061)
-        top.resizable(1,  1)
-        #top.title("Results (Title of top window)")
-        top.configure(background="#d9d9d9")
-        top.configure(highlightbackground="#d9d9d9")
-        top.configure(highlightcolor="#000000")
-
-        self.top = top
-        self.RW_csv = RW_csv
-
-
-        self.Frame7 = tk.Frame(self.top)
-        self.Frame7.place(relx=0.014, rely=0.015, relheight=0.94, relwidth=0.256)
-
-        self.Frame7.configure(relief='groove')
-        self.Frame7.configure(borderwidth="2")
-        self.Frame7.configure(relief="groove")
-        self.Frame7.configure(background="#d9d9d9")
-        self.Frame7.configure(cursor="fleur")
-        self.Frame7.configure(highlightbackground="#d9d9d9")
-        self.Frame7.configure(highlightcolor="#000000")
-
-        self.NR_PeakAcc = tk.Label(self.Frame7)
-        self.NR_PeakAcc.place(relx=0.056, rely=0.458, height=27, width=145)
-        self.NR_PeakAcc.configure(activebackground="#d9d9d9")
-        self.NR_PeakAcc.configure(activeforeground="black")
-        self.NR_PeakAcc.configure(anchor='w')
-        self.NR_PeakAcc.configure(background="#d9d9d9")
-        self.NR_PeakAcc.configure(compound='left')
-        self.NR_PeakAcc.configure(disabledforeground="#a3a3a3")
-        self.NR_PeakAcc.configure(font="-family {Segoe UI} -size 9")
-        self.NR_PeakAcc.configure(foreground="#000000")
-        self.NR_PeakAcc.configure(highlightbackground="#d9d9d9")
-        self.NR_PeakAcc.configure(highlightcolor="#000000")
-        self.NR_PeakAcc.configure(text='''Peak acceleration''')
-
-        self.NR_PeakVel = tk.Label(self.Frame7)
-        self.NR_PeakVel.place(relx=0.056, rely=0.409, height=28, width=131)
-        self.NR_PeakVel.configure(activebackground="#d9d9d9")
-        self.NR_PeakVel.configure(activeforeground="black")
-        self.NR_PeakVel.configure(anchor='w')
-        self.NR_PeakVel.configure(background="#d9d9d9")
-        self.NR_PeakVel.configure(compound='left')
-        self.NR_PeakVel.configure(disabledforeground="#a3a3a3")
-        self.NR_PeakVel.configure(font="-family {Segoe UI} -size 9")
-        self.NR_PeakVel.configure(foreground="#000000")
-        self.NR_PeakVel.configure(highlightbackground="#d9d9d9")
-        self.NR_PeakVel.configure(highlightcolor="#000000")
-        self.NR_PeakVel.configure(text='''Peak velocity''')
-
-        self.NR_AvgVelMidThrow = tk.Label(self.Frame7)
-        self.NR_AvgVelMidThrow.place(relx=0.056, rely=0.36, height=27, width=214)
-
-        self.NR_AvgVelMidThrow.configure(activebackground="#d9d9d9")
-        self.NR_AvgVelMidThrow.configure(activeforeground="black")
-        self.NR_AvgVelMidThrow.configure(anchor='w')
-        self.NR_AvgVelMidThrow.configure(background="#d9d9d9")
-        self.NR_AvgVelMidThrow.configure(compound='left')
-        self.NR_AvgVelMidThrow.configure(disabledforeground="#a3a3a3")
-        self.NR_AvgVelMidThrow.configure(font="-family {Segoe UI} -size 9")
-        self.NR_AvgVelMidThrow.configure(foreground="#000000")
-        self.NR_AvgVelMidThrow.configure(highlightbackground="#d9d9d9")
-        self.NR_AvgVelMidThrow.configure(highlightcolor="#000000")
-        self.NR_AvgVelMidThrow.configure(text='''Average velocity mid-throw''')
-
-        self.NR_AvgVelOverall = tk.Label(self.Frame7)
-        self.NR_AvgVelOverall.place(relx=0.056, rely=0.311, height=27, width=194)
-
-        self.NR_AvgVelOverall.configure(activebackground="#d9d9d9")
-        self.NR_AvgVelOverall.configure(activeforeground="black")
-        self.NR_AvgVelOverall.configure(anchor='w')
-        self.NR_AvgVelOverall.configure(background="#d9d9d9")
-        self.NR_AvgVelOverall.configure(compound='left')
-        self.NR_AvgVelOverall.configure(disabledforeground="#a3a3a3")
-        self.NR_AvgVelOverall.configure(font="-family {Segoe UI} -size 9")
-        self.NR_AvgVelOverall.configure(foreground="#000000")
-        self.NR_AvgVelOverall.configure(highlightbackground="#d9d9d9")
-        self.NR_AvgVelOverall.configure(highlightcolor="#000000")
-        self.NR_AvgVelOverall.configure(text='''Average velocity overall''')
-
-        self.NR_Rotations = tk.Label(self.Frame7)
-        self.NR_Rotations.place(relx=0.056, rely=0.622, height=27, width=159)
-        self.NR_Rotations.configure(activebackground="#d9d9d9")
-        self.NR_Rotations.configure(activeforeground="black")
-        self.NR_Rotations.configure(anchor='w')
-        self.NR_Rotations.configure(background="#d9d9d9")
-        self.NR_Rotations.configure(compound='left')
-        self.NR_Rotations.configure(disabledforeground="#a3a3a3")
-        self.NR_Rotations.configure(font="-family {Segoe UI} -size 9")
-        self.NR_Rotations.configure(foreground="#000000")
-        self.NR_Rotations.configure(highlightbackground="#d9d9d9")
-        self.NR_Rotations.configure(highlightcolor="#000000")
-        self.NR_Rotations.configure(text='''Amount of rotations''')
-
-        self.NR_AvgAngVel = tk.Label(self.Frame7)
-        self.NR_AvgAngVel.place(relx=0.056, rely=0.573, height=27, width=187)
-        self.NR_AvgAngVel.configure(activebackground="#d9d9d9")
-        self.NR_AvgAngVel.configure(activeforeground="black")
-        self.NR_AvgAngVel.configure(anchor='w')
-        self.NR_AvgAngVel.configure(background="#d9d9d9")
-        self.NR_AvgAngVel.configure(compound='left')
-        self.NR_AvgAngVel.configure(disabledforeground="#a3a3a3")
-        self.NR_AvgAngVel.configure(font="-family {Segoe UI} -size 9")
-        self.NR_AvgAngVel.configure(foreground="#000000")
-        self.NR_AvgAngVel.configure(highlightbackground="#d9d9d9")
-        self.NR_AvgAngVel.configure(highlightcolor="#000000")
-        self.NR_AvgAngVel.configure(text='''Average angular velocity''')
-
-        self.NR_StartTopValue = tk.Label(self.Frame7)
-        self.NR_StartTopValue.place(relx=0.056, rely=0.72, height=27, width=131)
-        self.NR_StartTopValue.configure(activebackground="#d9d9d9")
-        self.NR_StartTopValue.configure(activeforeground="black")
-        self.NR_StartTopValue.configure(anchor='w')
-        self.NR_StartTopValue.configure(background="#d9d9d9")
-        self.NR_StartTopValue.configure(compound='left')
-        self.NR_StartTopValue.configure(disabledforeground="#a3a3a3")
-        self.NR_StartTopValue.configure(font="-family {Segoe UI} -size 9")
-        self.NR_StartTopValue.configure(foreground="#000000")
-        self.NR_StartTopValue.configure(highlightbackground="#d9d9d9")
-        self.NR_StartTopValue.configure(highlightcolor="#000000")
-        self.NR_StartTopValue.configure(text='''Initial top value''')
-
-        self.NR_FinalTopValue = tk.Label(self.Frame7)
-        self.NR_FinalTopValue.place(relx=0.056, rely=0.769, height=28, width=131)
-
-        self.NR_FinalTopValue.configure(activebackground="#d9d9d9")
-        self.NR_FinalTopValue.configure(activeforeground="black")
-        self.NR_FinalTopValue.configure(anchor='w')
-        self.NR_FinalTopValue.configure(background="#d9d9d9")
-        self.NR_FinalTopValue.configure(compound='left')
-        self.NR_FinalTopValue.configure(disabledforeground="#a3a3a3")
-        self.NR_FinalTopValue.configure(font="-family {Segoe UI} -size 9")
-        self.NR_FinalTopValue.configure(foreground="#000000")
-        self.NR_FinalTopValue.configure(highlightbackground="#d9d9d9")
-        self.NR_FinalTopValue.configure(highlightcolor="#000000")
-        self.NR_FinalTopValue.configure(text='''Final top value''')
-
-        self.NR_TotalTime = tk.Label(self.Frame7)
-        self.NR_TotalTime.place(relx=0.056, rely=0.065, height=25, width=150)
-        self.NR_TotalTime.configure(activebackground="#d9d9d9")
-        self.NR_TotalTime.configure(activeforeground="black")
-        self.NR_TotalTime.configure(anchor='w')
-        self.NR_TotalTime.configure(background="#d9d9d9")
-        self.NR_TotalTime.configure(compound='left')
-        self.NR_TotalTime.configure(disabledforeground="#a3a3a3")
-        self.NR_TotalTime.configure(font="-family {Segoe UI} -size 9")
-        self.NR_TotalTime.configure(foreground="#000000")
-        self.NR_TotalTime.configure(highlightbackground="#d9d9d9")
-        self.NR_TotalTime.configure(highlightcolor="#000000")
-        self.NR_TotalTime.configure(text='''Total time''')
-
-        self.NR_TimeInHand = tk.Label(self.Frame7)
-        self.NR_TimeInHand.place(relx=0.056, rely=0.115, height=25, width=130)
-        self.NR_TimeInHand.configure(activebackground="#d9d9d9")
-        self.NR_TimeInHand.configure(activeforeground="black")
-        self.NR_TimeInHand.configure(anchor='w')
-        self.NR_TimeInHand.configure(background="#d9d9d9")
-        self.NR_TimeInHand.configure(compound='left')
-        self.NR_TimeInHand.configure(disabledforeground="#a3a3a3")
-        self.NR_TimeInHand.configure(font="-family {Segoe UI} -size 9")
-        self.NR_TimeInHand.configure(foreground="#000000")
-        self.NR_TimeInHand.configure(highlightbackground="#d9d9d9")
-        self.NR_TimeInHand.configure(highlightcolor="#000000")
-        self.NR_TimeInHand.configure(text='''Time in hand''')
-
-        self.NR_TimeInAir = tk.Label(self.Frame7)
-        self.NR_TimeInAir.place(relx=0.056, rely=0.164, height=25, width=150)
-        self.NR_TimeInAir.configure(activebackground="#d9d9d9")
-        self.NR_TimeInAir.configure(activeforeground="black")
-        self.NR_TimeInAir.configure(anchor='w')
-        self.NR_TimeInAir.configure(background="#d9d9d9")
-        self.NR_TimeInAir.configure(compound='left')
-        self.NR_TimeInAir.configure(disabledforeground="#a3a3a3")
-        self.NR_TimeInAir.configure(font="-family {Segoe UI} -size 9")
-        self.NR_TimeInAir.configure(foreground="#000000")
-        self.NR_TimeInAir.configure(highlightbackground="#d9d9d9")
-        self.NR_TimeInAir.configure(highlightcolor="#000000")
-        self.NR_TimeInAir.configure(text='''Time in air''')
-
-        self.NR_TimeToFirstBounce = tk.Label(self.Frame7)
-        self.NR_TimeToFirstBounce.place(relx=0.056, rely=0.213, height=25
-                , width=150)
-        self.NR_TimeToFirstBounce.configure(activebackground="#d9d9d9")
-        self.NR_TimeToFirstBounce.configure(activeforeground="black")
-        self.NR_TimeToFirstBounce.configure(anchor='w')
-        self.NR_TimeToFirstBounce.configure(background="#d9d9d9")
-        self.NR_TimeToFirstBounce.configure(compound='left')
-        self.NR_TimeToFirstBounce.configure(disabledforeground="#a3a3a3")
-        self.NR_TimeToFirstBounce.configure(font="-family {Segoe UI} -size 9")
-        self.NR_TimeToFirstBounce.configure(foreground="#000000")
-        self.NR_TimeToFirstBounce.configure(highlightbackground="#d9d9d9")
-        self.NR_TimeToFirstBounce.configure(highlightcolor="#000000")
-        self.NR_TimeToFirstBounce.configure(text='''Time to first bounce''')
-
-        self.NR_TimeInHand_var = tk.Label(self.Frame7)
-        self.NR_TimeInHand_var.place(relx=0.559, rely=0.115, height=25
-                , width=150)
-        self.NR_TimeInHand_var.configure(activebackground="#d9d9d9")
-        self.NR_TimeInHand_var.configure(activeforeground="black")
-        self.NR_TimeInHand_var.configure(anchor='w')
-        self.NR_TimeInHand_var.configure(background="#d9d9d9")
-        self.NR_TimeInHand_var.configure(compound='left')
-        self.NR_TimeInHand_var.configure(disabledforeground="#a3a3a3")
-        self.NR_TimeInHand_var.configure(font="-family {Segoe UI} -size 9")
-        self.NR_TimeInHand_var.configure(foreground="#000000")
-        self.NR_TimeInHand_var.configure(highlightbackground="#d9d9d9")
-        self.NR_TimeInHand_var.configure(highlightcolor="#000000")
-        self.NR_TimeInHand_var.configure(text='''<Time in hand>''')
-
-        self.NR_TotalTime_var = tk.Label(self.Frame7)
-        self.NR_TotalTime_var.place(relx=0.559, rely=0.065, height=25, width=150)
-
-        self.NR_TotalTime_var.configure(activebackground="#d9d9d9")
-        self.NR_TotalTime_var.configure(activeforeground="black")
-        self.NR_TotalTime_var.configure(anchor='w')
-        self.NR_TotalTime_var.configure(background="#d9d9d9")
-        self.NR_TotalTime_var.configure(compound='left')
-        self.NR_TotalTime_var.configure(disabledforeground="#a3a3a3")
-        self.NR_TotalTime_var.configure(font="-family {Segoe UI} -size 9")
-        self.NR_TotalTime_var.configure(foreground="#000000")
-        self.NR_TotalTime_var.configure(highlightbackground="#d9d9d9")
-        self.NR_TotalTime_var.configure(highlightcolor="#000000")
-        self.NR_TotalTime_var.configure(text='''<Total Time>''')
-
-        self.NR_TimeInAir_var = tk.Label(self.Frame7)
-        self.NR_TimeInAir_var.place(relx=0.559, rely=0.164, height=25, width=150)
-
-        self.NR_TimeInAir_var.configure(activebackground="#d9d9d9")
-        self.NR_TimeInAir_var.configure(activeforeground="black")
-        self.NR_TimeInAir_var.configure(anchor='w')
-        self.NR_TimeInAir_var.configure(background="#d9d9d9")
-        self.NR_TimeInAir_var.configure(compound='left')
-        self.NR_TimeInAir_var.configure(disabledforeground="#a3a3a3")
-        self.NR_TimeInAir_var.configure(font="-family {Segoe UI} -size 9")
-        self.NR_TimeInAir_var.configure(foreground="#000000")
-        self.NR_TimeInAir_var.configure(highlightbackground="#d9d9d9")
-        self.NR_TimeInAir_var.configure(highlightcolor="#000000")
-        self.NR_TimeInAir_var.configure(text='''<Time in air>''')
-
-        self.NR_TimeFirstBounce_var = tk.Label(self.Frame7)
-        self.NR_TimeFirstBounce_var.place(relx=0.559, rely=0.213, height=25
-                , width=150)
-        self.NR_TimeFirstBounce_var.configure(activebackground="#d9d9d9")
-        self.NR_TimeFirstBounce_var.configure(activeforeground="black")
-        self.NR_TimeFirstBounce_var.configure(anchor='w')
-        self.NR_TimeFirstBounce_var.configure(background="#d9d9d9")
-        self.NR_TimeFirstBounce_var.configure(compound='left')
-        self.NR_TimeFirstBounce_var.configure(disabledforeground="#a3a3a3")
-        self.NR_TimeFirstBounce_var.configure(font="-family {Segoe UI} -size 9")
-        self.NR_TimeFirstBounce_var.configure(foreground="#000000")
-        self.NR_TimeFirstBounce_var.configure(highlightbackground="#d9d9d9")
-        self.NR_TimeFirstBounce_var.configure(highlightcolor="#000000")
-        self.NR_TimeFirstBounce_var.configure(text='''<Time to first bounce>''')
-
-        self.NR_AvgVelOverall_var = tk.Label(self.Frame7)
-        self.NR_AvgVelOverall_var.place(relx=0.559, rely=0.311, height=25
-                , width=150)
-        self.NR_AvgVelOverall_var.configure(activebackground="#d9d9d9")
-        self.NR_AvgVelOverall_var.configure(activeforeground="black")
-        self.NR_AvgVelOverall_var.configure(anchor='w')
-        self.NR_AvgVelOverall_var.configure(background="#d9d9d9")
-        self.NR_AvgVelOverall_var.configure(compound='left')
-        self.NR_AvgVelOverall_var.configure(disabledforeground="#a3a3a3")
-        self.NR_AvgVelOverall_var.configure(font="-family {Segoe UI} -size 9")
-        self.NR_AvgVelOverall_var.configure(foreground="#000000")
-        self.NR_AvgVelOverall_var.configure(highlightbackground="#d9d9d9")
-        self.NR_AvgVelOverall_var.configure(highlightcolor="#000000")
-        self.NR_AvgVelOverall_var.configure(text='''<Avg Vel Overall>''')
-
-        self.NR_AvgVelMT_var = tk.Label(self.Frame7)
-        self.NR_AvgVelMT_var.place(relx=0.559, rely=0.36, height=25, width=150)
-        self.NR_AvgVelMT_var.configure(activebackground="#d9d9d9")
-        self.NR_AvgVelMT_var.configure(activeforeground="black")
-        self.NR_AvgVelMT_var.configure(anchor='w')
-        self.NR_AvgVelMT_var.configure(background="#d9d9d9")
-        self.NR_AvgVelMT_var.configure(compound='left')
-        self.NR_AvgVelMT_var.configure(disabledforeground="#a3a3a3")
-        self.NR_AvgVelMT_var.configure(font="-family {Segoe UI} -size 9")
-        self.NR_AvgVelMT_var.configure(foreground="#000000")
-        self.NR_AvgVelMT_var.configure(highlightbackground="#d9d9d9")
-        self.NR_AvgVelMT_var.configure(highlightcolor="#000000")
-        self.NR_AvgVelMT_var.configure(text='''<Avg Vel Mid Throw>''')
-
-        self.NR_PeakVal_var = tk.Label(self.Frame7)
-        self.NR_PeakVal_var.place(relx=0.559, rely=0.409, height=25, width=150)
-        self.NR_PeakVal_var.configure(activebackground="#d9d9d9")
-        self.NR_PeakVal_var.configure(activeforeground="black")
-        self.NR_PeakVal_var.configure(anchor='w')
-        self.NR_PeakVal_var.configure(background="#d9d9d9")
-        self.NR_PeakVal_var.configure(compound='left')
-        self.NR_PeakVal_var.configure(disabledforeground="#a3a3a3")
-        self.NR_PeakVal_var.configure(font="-family {Segoe UI} -size 9")
-        self.NR_PeakVal_var.configure(foreground="#000000")
-        self.NR_PeakVal_var.configure(highlightbackground="#d9d9d9")
-        self.NR_PeakVal_var.configure(highlightcolor="#000000")
-        self.NR_PeakVal_var.configure(text='''<Peak Vel>''')
-
-        self.NR_PeakAcc_var = tk.Label(self.Frame7)
-        self.NR_PeakAcc_var.place(relx=0.559, rely=0.458, height=25, width=150)
-        self.NR_PeakAcc_var.configure(activebackground="#d9d9d9")
-        self.NR_PeakAcc_var.configure(activeforeground="black")
-        self.NR_PeakAcc_var.configure(anchor='w')
-        self.NR_PeakAcc_var.configure(background="#d9d9d9")
-        self.NR_PeakAcc_var.configure(compound='left')
-        self.NR_PeakAcc_var.configure(disabledforeground="#a3a3a3")
-        self.NR_PeakAcc_var.configure(font="-family {Segoe UI} -size 9")
-        self.NR_PeakAcc_var.configure(foreground="#000000")
-        self.NR_PeakAcc_var.configure(highlightbackground="#d9d9d9")
-        self.NR_PeakAcc_var.configure(highlightcolor="#000000")
-        self.NR_PeakAcc_var.configure(text='''<Peak Acc>''')
-
-        self.NR_AvgAngVel_var = tk.Label(self.Frame7)
-        self.NR_AvgAngVel_var.place(relx=0.559, rely=0.573, height=25, width=150)
-
-        self.NR_AvgAngVel_var.configure(activebackground="#d9d9d9")
-        self.NR_AvgAngVel_var.configure(activeforeground="black")
-        self.NR_AvgAngVel_var.configure(anchor='w')
-        self.NR_AvgAngVel_var.configure(background="#d9d9d9")
-        self.NR_AvgAngVel_var.configure(compound='left')
-        self.NR_AvgAngVel_var.configure(disabledforeground="#a3a3a3")
-        self.NR_AvgAngVel_var.configure(font="-family {Segoe UI} -size 9")
-        self.NR_AvgAngVel_var.configure(foreground="#000000")
-        self.NR_AvgAngVel_var.configure(highlightbackground="#d9d9d9")
-        self.NR_AvgAngVel_var.configure(highlightcolor="#000000")
-        self.NR_AvgAngVel_var.configure(text='''<Avg Ang Vel>''')
-
-        self.NR_Rotations_var = tk.Label(self.Frame7)
-        self.NR_Rotations_var.place(relx=0.559, rely=0.622, height=25, width=150)
-
-        self.NR_Rotations_var.configure(activebackground="#d9d9d9")
-        self.NR_Rotations_var.configure(activeforeground="black")
-        self.NR_Rotations_var.configure(anchor='w')
-        self.NR_Rotations_var.configure(background="#d9d9d9")
-        self.NR_Rotations_var.configure(compound='left')
-        self.NR_Rotations_var.configure(disabledforeground="#a3a3a3")
-        self.NR_Rotations_var.configure(font="-family {Segoe UI} -size 9")
-        self.NR_Rotations_var.configure(foreground="#000000")
-        self.NR_Rotations_var.configure(highlightbackground="#d9d9d9")
-        self.NR_Rotations_var.configure(highlightcolor="#000000")
-        self.NR_Rotations_var.configure(text='''<Rotations>''')
-
-        self.NR_FinTopVal_var = tk.Label(self.Frame7)
-        self.NR_FinTopVal_var.place(relx=0.559, rely=0.769, height=25, width=150)
-
-        self.NR_FinTopVal_var.configure(activebackground="#d9d9d9")
-        self.NR_FinTopVal_var.configure(activeforeground="black")
-        self.NR_FinTopVal_var.configure(anchor='w')
-        self.NR_FinTopVal_var.configure(background="#d9d9d9")
-        self.NR_FinTopVal_var.configure(compound='left')
-        self.NR_FinTopVal_var.configure(disabledforeground="#a3a3a3")
-        self.NR_FinTopVal_var.configure(font="-family {Segoe UI} -size 9")
-        self.NR_FinTopVal_var.configure(foreground="#000000")
-        self.NR_FinTopVal_var.configure(highlightbackground="#d9d9d9")
-        self.NR_FinTopVal_var.configure(highlightcolor="#000000")
-        self.NR_FinTopVal_var.configure(text='''<Final Top Value>''')
-
-        self.NR_InitTopVal_var = tk.Label(self.Frame7)
-        self.NR_InitTopVal_var.place(relx=0.559, rely=0.72, height=25, width=150)
-
-        self.NR_InitTopVal_var.configure(activebackground="#d9d9d9")
-        self.NR_InitTopVal_var.configure(activeforeground="black")
-        self.NR_InitTopVal_var.configure(anchor='w')
-        self.NR_InitTopVal_var.configure(background="#d9d9d9")
-        self.NR_InitTopVal_var.configure(compound='left')
-        self.NR_InitTopVal_var.configure(disabledforeground="#a3a3a3")
-        self.NR_InitTopVal_var.configure(font="-family {Segoe UI} -size 9")
-        self.NR_InitTopVal_var.configure(foreground="#000000")
-        self.NR_InitTopVal_var.configure(highlightbackground="#d9d9d9")
-        self.NR_InitTopVal_var.configure(highlightcolor="#000000")
-        self.NR_InitTopVal_var.configure(text='''<Initial Top Value>''')
-
-        self.NR_Title = tk.Label(self.Frame7)
-        self.NR_Title.place(relx=0.022, rely=0.011, height=26, width=339)
-        self.NR_Title.configure(activebackground="#d9d9d9")
-        self.NR_Title.configure(activeforeground="black")
-        self.NR_Title.configure(background="#d9d9d9")
-        self.NR_Title.configure(compound='left')
-        self.NR_Title.configure(disabledforeground="#a3a3a3")
-        self.NR_Title.configure(font="-family {Segoe UI} -size 12 -weight bold")
-        self.NR_Title.configure(foreground="#000000")
-        self.NR_Title.configure(highlightbackground="#d9d9d9")
-        self.NR_Title.configure(highlightcolor="#000000")
-        self.NR_Title.configure(text='''Numerical Results''')
-
-        self.P_CalcRotFrame = tk.Frame(self.top)
-        self.P_CalcRotFrame.place(relx=0.293, rely=0.692, relheight=0.263
-                , relwidth=0.689)
-        self.P_CalcRotFrame.configure(relief='groove')
-        self.P_CalcRotFrame.configure(borderwidth="2")
-        self.P_CalcRotFrame.configure(relief="groove")
-        self.P_CalcRotFrame.configure(background="#d9d9d9")
-        self.P_CalcRotFrame.configure(highlightbackground="#d9d9d9")
-        self.P_CalcRotFrame.configure(highlightcolor="#000000")
-
-        self.P_MeasAccFrame = tk.Frame(self.top)
-        self.P_MeasAccFrame.place(relx=0.293, rely=0.069, relheight=0.262
-                , relwidth=0.689)
-        self.P_MeasAccFrame.configure(relief='groove')
-        self.P_MeasAccFrame.configure(borderwidth="2")
-        self.P_MeasAccFrame.configure(relief="groove")
-        self.P_MeasAccFrame.configure(background="#d9d9d9")
-        self.P_MeasAccFrame.configure(highlightbackground="#d9d9d9")
-        self.P_MeasAccFrame.configure(highlightcolor="#000000")
-
-        self.P_AngVelFrame = tk.Frame(self.top)
-        self.P_AngVelFrame.place(relx=0.293, rely=0.385, relheight=0.263
-                , relwidth=0.689)
-        self.P_AngVelFrame.configure(relief='groove')
-        self.P_AngVelFrame.configure(borderwidth="2")
-        self.P_AngVelFrame.configure(relief="groove")
-        self.P_AngVelFrame.configure(background="#d9d9d9")
-        self.P_AngVelFrame.configure(highlightbackground="#d9d9d9")
-        self.P_AngVelFrame.configure(highlightcolor="#000000")
-
-        self.PT_MeasuredAccel = tk.Label(self.top)
-        self.PT_MeasuredAccel.place(relx=0.293, rely=0.031, height=21, width=185)
-
-        self.PT_MeasuredAccel.configure(activebackground="#d9d9d9")
-        self.PT_MeasuredAccel.configure(activeforeground="black")
-        self.PT_MeasuredAccel.configure(anchor='w')
-        self.PT_MeasuredAccel.configure(background="#d9d9d9")
-        self.PT_MeasuredAccel.configure(compound='left')
-        self.PT_MeasuredAccel.configure(disabledforeground="#a3a3a3")
-        self.PT_MeasuredAccel.configure(font="-family {Segoe UI} -size 12 -weight bold")
-        self.PT_MeasuredAccel.configure(foreground="#000000")
-        self.PT_MeasuredAccel.configure(highlightbackground="#d9d9d9")
-        self.PT_MeasuredAccel.configure(highlightcolor="#000000")
-        self.PT_MeasuredAccel.configure(text='''Measured acceleration''')
-
-        self.PT_MeasuredAngularVelocity = tk.Label(self.top)
-        self.PT_MeasuredAngularVelocity.place(relx=0.293, rely=0.346, height=21
-                , width=214)
-        self.PT_MeasuredAngularVelocity.configure(activebackground="#d9d9d9")
-        self.PT_MeasuredAngularVelocity.configure(activeforeground="black")
-        self.PT_MeasuredAngularVelocity.configure(anchor='w')
-        self.PT_MeasuredAngularVelocity.configure(background="#d9d9d9")
-        self.PT_MeasuredAngularVelocity.configure(compound='left')
-        self.PT_MeasuredAngularVelocity.configure(disabledforeground="#a3a3a3")
-        self.PT_MeasuredAngularVelocity.configure(font="-family {Segoe UI} -size 12 -weight bold")
-        self.PT_MeasuredAngularVelocity.configure(foreground="#000000")
-        self.PT_MeasuredAngularVelocity.configure(highlightbackground="#d9d9d9")
-        self.PT_MeasuredAngularVelocity.configure(highlightcolor="#000000")
-        self.PT_MeasuredAngularVelocity.configure(text='''Measured angular velocity''')
-
-        self.PT_CalculatedRotations = tk.Label(self.top)
-        self.PT_CalculatedRotations.place(relx=0.293, rely=0.654, height=21
-                , width=165)
-        self.PT_CalculatedRotations.configure(activebackground="#d9d9d9")
-        self.PT_CalculatedRotations.configure(activeforeground="black")
-        self.PT_CalculatedRotations.configure(anchor='w')
-        self.PT_CalculatedRotations.configure(background="#d9d9d9")
-        self.PT_CalculatedRotations.configure(compound='left')
-        self.PT_CalculatedRotations.configure(disabledforeground="#a3a3a3")
-        self.PT_CalculatedRotations.configure(font="-family {Segoe UI} -size 12 -weight bold")
-        self.PT_CalculatedRotations.configure(foreground="#000000")
-        self.PT_CalculatedRotations.configure(highlightbackground="#d9d9d9")
-        self.PT_CalculatedRotations.configure(highlightcolor="#000000")
-        self.PT_CalculatedRotations.configure(text='''Calculated rotations''') 
-        
-        
-        
-
         
     
 
