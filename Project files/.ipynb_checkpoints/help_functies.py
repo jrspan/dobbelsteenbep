@@ -144,3 +144,14 @@ def zv_checker(data, N, gamma, first_last=False):
             zv[i] = True
     zv_data['zero velocity'] = zv
     return zv_data
+
+def side_detector(ya):
+    sides = np.array([
+        [0,0,1],
+        [1,0,0],
+        [0,1,0],
+        [0,-1,0],
+        [-1,0,0],
+        [0,0,-1]
+    ])
+    return np.argmin(np.array([np.linalg.norm(side-ya) for side in sides])) + 1
