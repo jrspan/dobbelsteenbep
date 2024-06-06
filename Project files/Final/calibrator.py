@@ -14,10 +14,8 @@ def calibrate_rot_bias(dob, logtime, waittime, freq, acc_range, gyro_range):
         time.sleep(waittime)
         dob.connect()
 
-        #Log the data of the dice
         dob.log(logtime, freq, acc_range, gyro_range)
 
-        # Download the logged data from the dice
         dob.download()
         data = dob.datadf
         data = remove_nan(data)
@@ -90,10 +88,10 @@ def rotate_remove_bias(data, cali):
     return data_nb
 
 
-def cali_std(dob, logtime, freq, acc_range, gyro_range):
+def cali_std(dob, logtime, freq, gyro_range):
     print('Leg de dobbelsteen stil')
     dob.connect()
-    dob.log(logtime, freq, acc_range, gyro_range)
+    dob.log(logtime, freq, 8, gyro_range)
     dob.download()
     data = dob.datadf
     gyro_stds = np.array([data['x_gyro'].std(), data['y_gyro'].std(), data['z_gyro'].std()])
