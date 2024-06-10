@@ -1149,11 +1149,11 @@ class TW_Result:
         
         ### Performing calculation
         try:
-            results = run_analysis_local(self.RW_csv, self.cali, self.std_cali, N=10, gamma=0.001)
+            self.results = iocV7_support.run_analysis_local(self.RW_csv, self.cali, self.std_cali, N=10, gamma=0.001)
         except:
             print("Results Error")
             tk.messagebox.showinfo(title="Error: Results",
-                                   message = "Results error!")
+                                   message = "Results error! Please recheck your selected CSV file.")
             
         #####
         # Hiertussen nog allemaal zooi definen die we willen weergeven op het resultaten scherm
