@@ -92,6 +92,7 @@ class Toplevel1:
         self.dob = None
         
         ### Variables for CALIBRATOR
+        self.css_list = [(2, 1, 1), (0, 1, 2), (1, 1, 3), (1, -1, 4), (0, -1, 5), (2, -1, 6)]
         self.cali = None
         self.std_cali = None
         
@@ -993,6 +994,10 @@ The die will now start the logging process and store the logged data in the sele
         self.disable_connect_cal_log()
         self.c_CalibrationIndicatorLabel.configure(foreground="#ff8000")
         self.c_CalibrationIndicatorLabel.configure(text="Calibrating...")
+        self.list1 = []
+        self.list2 = []
+        self.list3 = []
+        self.list4 = []
         if not self.dob:
             tk.messagebox.showinfo(title="Error: Connection error",
                                    message = "Please connect the die to the software first.")
@@ -1013,25 +1018,23 @@ The die will now start the logging process and store the logged data in the sele
             self.c_CalibrationIndicatorLabel.configure(text="Not Calibrated")
             self.enable_connect_cal_log()
             return
+        for value in self.css_list:
+            tk.messagebox.showinfo(title="Calibrator",
+                                   message="Put the die with the number {value[2]} facing upwards. Then, press Ok.")
+            try:
+                self.list1, self.list2, self.list3, self.list4 = iocV7_support.calibrate_function_list(value, self.dob, self.list1, self.list2, self.list3, self.list4, self.c_mt, self.c_freq, self.c_accrange, self.c_gyrrange)
+            except Exception as e:
+                print("Error during calibration: {e}")
+                return
+        if not len(self.list1) == 6:
+            tk.messagebox.showinfo(title="Error: Calibration error",
+                                   message = "Something went wrong during calibration.")
+            self.c_CalibrationIndicatorLabel.configure(foreground="#ff0000")
+            self.c_CalibrationIndicatorLabel.configure(text="Not Calibrated")
+            self.enable_connect_cal_log()
+            return
         try:
-            ### HIER KOMEN ALLE FUNCTIES VAN CALIBRATIE BESTAND
-            ### ------------------------------------------
-            ### dob = Dobbel class die is aangemaakt in connect
-            ### self.c_mt = Measurement Time
-            ### self.c_lowi = Lenght of Waiting Interval (Wachttijd)
-            ### self.c_freq = Frequentie
-            ### self.c_accrange = Acceleratie range/bereik
-            ### self.c_gyrrange = Gyroscoop bereik
-            ###
-            ### OUTPUTS:
-            ### self.cali
-            ### self.std_cali
-            ### ------------------------------------------
-            ### Note: "from calibrator import *" Werkt niet!
-            ### ------------------------------------------
-            #from calibrator import calibrate_rot_bias, cali_std
-            self.cali = iocV7_support.calibrate_rot_bias(self.dob, self.c_mt, self.c_lowi, self.c_freq, self.c_accrange, self.c_gyrrange, self.q_rot)
-            self.std_cali = iocV7_support.cali_std(self.dob, self.c_mt, self.c_freq, self.c_gyrrange)
+            self.cali, self.std_cali = iocV7_support.calibrate_cali_stdcali(self.dob, self.list1, self.list2, self.list3, self.list4, self.c_mt, self.c_freq, self.c_gyrrange)
         except AttributeError:
             tk.messagebox.showinfo(title="Error: Connection Failure",
                                    message = "The die is disconnected.")
@@ -1042,6 +1045,7 @@ The die will now start the logging process and store the logged data in the sele
         except:
             # Error detectie - Indien er iets misgaat. In theorie zou deze nooit voorkomen.
             print("CALIBRATIE ERROR: Probleem nog niet gevonden.")
+            return
         self.c_CalibrationIndicatorLabel.configure(foreground="#008000")
         self.c_CalibrationIndicatorLabel.configure(text="Calibrated!")
         tk.messagebox.showinfo(title="Calibrator",

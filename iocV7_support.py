@@ -91,6 +91,21 @@ def connect_function():
     dob.connect()
     return dob
 
+### CALIBRATE FUNCTION ###
+def calibrate_function_list(css_value, dob, list1, list2, list3, list4, mt, freq, ar, gr, lowi=1):
+    column, sign, side = css_value
+    try:
+        list1, list2, list3, list4 = cali_loop(column, sign, side, dob, mt, lowi, freq, ar, gr, list1, list2, list3, list4)
+    except Exception as e:
+        print(f"Error encountered: {e}")
+        return None
+    return list1, list2, list3, list4
+
+def calibrate_cali_stdcali(dob, list1, list2, list3, list4, mt, freq, gr):
+    cali = calibrate_rot_bias(list1, list2, list3, list4)
+    std_cali = cali_std(dob, mt, freq, gr)
+    return cali, std_cali
+
 ### LOGGING FUNCTIONS ###
 def logging_function(dob, mt, freq, ar, gr):
     dob.connect()
