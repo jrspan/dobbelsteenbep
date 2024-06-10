@@ -48,7 +48,6 @@ def run_analysis_local(data_df_or_csv_path, cali, std_cali, N, gamma, csv=False,
     # and the corresponding eigenvectors are columns of 'eigenvectors'
     max_eigenvalue_index = np.argmax(eigenvalues)
     max_eigenvector = eigenvectors[:, max_eigenvalue_index]
-    q11 = max_eigenvector
 
     q11 = max_eigenvector
 
@@ -188,7 +187,7 @@ def run_analysis_local(data_df_or_csv_path, cali, std_cali, N, gamma, csv=False,
     gooitijd = []
 
     # Oprapen na stilstand op grond
-    verg_data = zv_data.copy().drop('zero velocity', axis=1) - zv_data.iloc[0,:-1]
+    verg_data = zv_data.copy().drop('zero velocity', axis=1) - zv_data.iloc[0, :-1]
     gooi_data = zv_data.copy().drop('zero velocity', axis=1)
 
     gooi_data['squared norm'] = verg_data['x_acc'] ** 2 + verg_data['y_acc'] ** 2 + verg_data['z_acc'] ** 2
@@ -197,37 +196,46 @@ def run_analysis_local(data_df_or_csv_path, cali, std_cali, N, gamma, csv=False,
     za_data = zv_data.copy()
     za_data['squared norm'] = zv_data['x_acc'] ** 2 + zv_data['y_acc'] ** 2 + zv_data['z_acc'] ** 2
 
-    done = False
-
+    total_raap_duration = 0
     total_lucht_duration = 0
     total_gooi_duration = 0
-    total_raap_duration = 0
 
-    while not done:
+    while gamma < 0.1:
+        done = False
         gedaan = False
-        voltooid = False
         luchttijd.clear()
         gooitijd.clear()
 
         for i in range(N, len(za_data) - N):
-
             # Herken wanneer dobbelsteen wanneer wordt opgepakt
-            if all(waarde > 0.01 * gamma for waarde in gooi_data['squared norm'][i-N:i+N]) and not gedaan:
+            if all(waarde > 0.1 * gamma for waarde in gooi_data['squared norm'][i - N:i + N]) and not gedaan:
                 gooitijd.append(zv_data['timestamp'][i])
                 gedaan = True
+                total_raap_duration = gooitijd[-1] - 2 * N
 
             # Herken wanneer dobbelsteen de hand verlaat
-            elif all(element < gamma for element in za_data['squared norm'][i-N:i+N]) and not voltooid:
-                temp_luchttijd = list(zv_data['timestamp'][i-N:i+N])
+            elif all(element < gamma for element in za_data['squared norm'][i - N:i + N]):
+                temp_luchttijd = list(zv_data['timestamp'][i - N:i + N])
 
                 # Randvoorwaarde dat de dobbelsteen minstens 0.5 secondes wordt geschud
                 if gooitijd and (temp_luchttijd[0] - gooitijd[-1]) > 500:
                     luchttijd.extend(temp_luchttijd)
+
+                    # Continue adding timestamps while in the air
+                    for j in range(i + N, len(za_data)):
+                        if za_data['squared norm'][j] < gamma:
+                            luchttijd.append(zv_data['timestamp'][j])
+                        else:
+                            # Stop adding when a hard landing is detected
+                            if za_data['squared norm'][j] > 10 * gamma:  # A large spike indicating a hard landing
+                                break
+                            luchttijd.append(zv_data['timestamp'][j])
+
                     gooitijd = sorted(gooitijd)
                     luchttijd = sorted(luchttijd)
 
-                    if gooitijd:
-                        total_raap_duration = gooitijd[-1] - 2*N
+                    # if gooitijd:
+                    #     total_raap_duration = gooitijd[-1] - 2 * N
 
                     if luchttijd:
                         land_tijd = luchttijd[-1]
@@ -239,14 +247,22 @@ def run_analysis_local(data_df_or_csv_path, cali, std_cali, N, gamma, csv=False,
                     done = True
                     break
 
-        if not done:
-            gamma += 0.001
+        if done:
+            break
+
+        gamma += 0.005
+        print(gamma)
+        if gamma > 0.1:
+            print("onzeker")
+            break
 
     total_starttotlos = total_raap_duration + total_gooi_duration
     total_starttotgrond = total_lucht_duration + total_raap_duration + total_gooi_duration
 
-    zero_acc_results = np.array([[total_raap_duration], [total_gooi_duration], [total_lucht_duration], [total_starttotlos], [total_starttotgrond]]).T
-    zero_acc_df = pd.DataFrame(zero_acc_results, columns=['Raap tijd', 'Gooi tijd', 'Lucht tijd', 'Start tot los', 'Start tot grond'])
+    side = side_detector(np.mean(np.array([data_nb.loc[len(data_nb)-11:, 'x_acc'], data_nb.loc[len(data_nb)-11:, 'y_acc'], data_nb.loc[len(data_nb)-11:, 'z_acc']]).T, axis=0))
+
+    zero_acc_results = np.array([[total_raap_duration], [total_gooi_duration], [total_lucht_duration], [total_starttotlos], [total_starttotgrond], [side]]).T
+    zero_acc_df = pd.DataFrame(zero_acc_results, columns=['Raap tijd', 'Gooi tijd', 'Lucht tijd', 'Start tot los', 'Start tot grond', 'Laatste zijde'])
     results = pd.concat([data_nb, kalman_results, euler_df, zero_acc_df], axis=1)
     if csv:
         results.to_csv(save_path)

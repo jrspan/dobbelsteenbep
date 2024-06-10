@@ -85,12 +85,12 @@ def remove_nan(df):
         df = df.drop(index=i)
     df = df.reset_index(drop=True)
     for i in range(len(df)):
-        df['timestamp'][i] = df['timestamp'][i] - df['timestamp'][0]
+        df.loc[i, 'timestamp'] = df.loc[i, 'timestamp'] - df.loc[0, 'timestamp']
     for i in range(len(df)):
         for column in df.columns:
-            if np.isnan(df[column][i]):
-                deler = (df['timestamp'][i] - df['timestamp'][i - 1]) / (df['timestamp'][i + 1] - df['timestamp'][i - 1])
-                df[column][i] = df[column][i - 1] + deler * (df[column][i + 1] - df[column][i - 1])
+            if np.isnan(df.loc[i, column]):
+                deler = (df.loc[i, 'timestamp'] - df.loc[i-1, 'timestamp']) / (df.loc[i + 1, 'timestamp'] - df.loc[i-1,'timestamp'])
+                df.loc[i, column] = df.loc[i-1, column] + deler * (df.loc[i+1, column] - df.loc[i-1, column])
     return df
 
 def left_quat_mul(q):
