@@ -2,36 +2,32 @@ from help_functies import *
 from matrix_helper import *
 import time
 
+def cali_loop(column, sign, side, dob, logtime, waittime, freq, acc_range, gyro_range, measurements, Y_list, gyro_data, y_means):
+    print("Leg de dobbelsteen met nummer ", side, " boven")
+    print(f"Wacht {waittime} secondes")
+    time.sleep(waittime)
+    dob.connect()
 
-def calibrate_rot_bias(dob, logtime, waittime, freq, acc_range, gyro_range):
-    measurements = []
-    Y_list = []
-    gyro_data = []
-    y_means = []
-    for i, (column, sign) in zip(range(6), [(2, 1), (0, 1), (1, 1), (1, -1), (0, -1), (2, -1)]):
-        print("Leg de dobbelsteen met nummer ", i + 1, " boven")
-        print(f"Wacht {waittime} secondes")
-        time.sleep(waittime)
-        dob.connect()
+    dob.log(logtime, freq, acc_range, gyro_range)
 
-        dob.log(logtime, freq, acc_range, gyro_range)
+    dob.download()
+    data = dob.datadf
+    data = remove_nan(data)
 
-        dob.download()
-        data = dob.datadf
-        data = remove_nan(data)
+    y_means.append(np.mean(np.array([data['x_acc'], data['y_acc'], data['z_acc']]), axis=1))
 
-        y_means.append(np.mean(np.array([data['x_acc'], data['y_acc'], data['z_acc']]), axis=1))
+    acc_arr = np.array([data['x_acc'], data['y_acc'], data['z_acc']])
+    measurements.append(acc_arr.T)
+    y_arr = np.zeros((acc_arr.shape[1], 3))
+    y_arr[:, column] = sign
+    Y_list.append(y_arr)
 
-        acc_arr = np.array([data['x_acc'], data['y_acc'], data['z_acc']])
-        measurements.append(acc_arr.T)
-        y_arr = np.zeros((acc_arr.shape[1], 3))
-        y_arr[:, column] = sign
-        Y_list.append(y_arr)
-
-        gyro_arr = np.array([data['x_gyro'].mean(), data['y_gyro'].mean(), data['z_gyro'].mean()])
-        gyro_data.append(gyro_arr)
+    gyro_arr = np.array([data['x_gyro'].mean(), data['y_gyro'].mean(), data['z_gyro'].mean()])
+    gyro_data.append(gyro_arr)
+    return measurements, Y_list, gyro_data, y_means
 
 
+def calibrate_rot_bias(measurements, Y_list, gyro_data, y_means):
     Y = np.concatenate(Y_list)
     w = np.concatenate(measurements)
     w = np.hstack((w, np.ones((w.shape[0], 1))))
