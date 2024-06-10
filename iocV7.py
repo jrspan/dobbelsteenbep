@@ -31,45 +31,6 @@ import numpy as np
 import pandas as pd
 import datetime
 
-# Used to create filename for data
-def create_filename_date():
-    now = datetime.datetime.now()
-    date_string = now.strftime("%Y-%m-%d_%H-%M-%S")
-    filename = f"{date_string}"
-    return filename
-
-# Helper function for directory selection
-def select_directory():
-    root = tk.Tk()
-    root.withdraw()  # Hide the root window
-    directory = filedialog.askdirectory()
-    print(f"Selected directory: {directory}")
-    root.destroy()  # Destroy the root window after selection
-    return directory
-
-# Helper function to convert dataframe to csv and save in specified directory
-def save_dataframe_to_csv(df, filename, directory):
-    """
-    Save a pandas DataFrame to a CSV file in the specified directory.
-
-    Parameters:
-    df (pandas.DataFrame): The DataFrame to be saved.
-    filename (str): The name of the CSV file (without directory path).
-    directory (str): The path to the directory where the file will be saved.
-
-    Returns:
-    str: The full path to the saved CSV file.
-    """
-
-    # Construct the full file path
-    file_path = os.path.join(directory, filename)
-
-    # Save the DataFrame to the CSV file
-    try:
-        df.to_csv(file_path, index=False)
-        print(f"DataFrame successfully saved to {file_path}")
-    except Exception as e:
-        print(f"Error saving DataFrame to CSV: {e}")
 
 from dobbel import *
 from calibrator import *
@@ -276,7 +237,7 @@ class Toplevel1:
         self.q_FullGuideButton.configure(highlightbackground="#d9d9d9")
         self.q_FullGuideButton.configure(highlightcolor="#000000")
         self.q_FullGuideButton.configure(text='''View full guide''')
-        self.q_FullGuideButton.configure(command=self.open_website)
+        self.q_FullGuideButton.configure(command=iocV7_support.open_website)
 
         self.Message2 = tk.Message(self.Frame3)
         self.Message2.place(relx=0.012, rely=0.234, relheight=0.659
@@ -936,7 +897,7 @@ The die will now start the logging process and store the logged data in the sele
         self.QuitProgramButton.configure(highlightbackground="#d9d9d9")
         self.QuitProgramButton.configure(highlightcolor="#000000")
         self.QuitProgramButton.configure(text='''Quit Program''')
-        self.QuitProgramButton.configure(command=self.stop_kernel)
+        self.QuitProgramButton.configure(command=iocV7_support.on_destroy)
 
         self.Frame1 = tk.Frame(self.top)
         self.Frame1.place(relx=0.014, rely=0.014, relheight=0.165
@@ -973,14 +934,12 @@ The die will now start the logging process and store the logged data in the sele
         self.Message1.configure(pady="1")
         self.Message1.configure(text='''This software has been created and developed by Bram Hament, Zibbo Huang, Niels van der Rijst, Jelte-Roel Span, and Thimo Speelman. This is performed as aprt fo the Bachelor's End Project for Mechanical Engineering students at the Technical University of Delft.''')
         self.Message1.configure(width=1107)
-        
-    def stop_kernel(self):
-        self.top.destroy()
-        sys.exit()
     
     def browse_directory(self):
         #self.selected_directory = filedialog.askdirectory()
-        self.selected_directory = select_directory()
+        print("Initializing browse directory...")
+        self.selected_directory = iocV7_support.select_directory()
+        print("Selected")
         if self.selected_directory:
             self.s_Dirname.configure(text=self.selected_directory)
             self.Scrolledlistbox1.delete(0, tk.END)
@@ -1000,10 +959,6 @@ The die will now start the logging process and store the logged data in the sele
             self.selected_file = os.path.join(self.selected_directory, selected_file_name)
             self.RW_csv = self.selected_file
             self.r_LoadedFile.configure(text=selected_file_name)
-    
-    def open_website(self):
-        webbrowser.open("https://github.com/jrspan/dobbelsteenbep")
-    
     
     def copy_values(self):
         # Retrieve the value from the Entry widget
@@ -1090,9 +1045,9 @@ The die will now start the logging process and store the logged data in the sele
         ### NOG TE DOEN HIERTUSSEN:
         ### (- Data smoothing d.m.v. Kalman filter enz., tenzij dit pas wordt gedaan bij results)
         ############################
-        self.date = create_filename_date()
+        self.date = iocV7_support.create_filename_date()
         self.filename = f"{self.date}_DieThrowData"
-        save_dataframe_to_csv(self.output_data, self.filename, self.selected_directory)
+        iocV7_support.save_dataframe_to_csv(self.output_data, self.filename, self.selected_directory)
         tk.messagebox.showinfo(title="Die Logging Tool", message=f"Logging Complete. File is now saved in selected directory as {self.filename}")
         #self.l_StatusLogIndicator.configure(text="Not Logging")
         #self.l_StatusLogIndicator.configure(foreground="#ff0000")
@@ -1773,6 +1728,7 @@ def _on_shiftmouse(event, widget):
             widget.xview_scroll(-1, 'units')
         elif event.num == 5:
             widget.xview_scroll(1, 'units')
+            
 def start_up():
     iocV7_support.main()
 

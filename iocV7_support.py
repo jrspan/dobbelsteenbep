@@ -7,12 +7,28 @@
 
 import os
 import sys
+current_directory = os.path.dirname(__file__)
 if not os.path.dirname(__file__) in sys.path:
     sys.path.append(os.path.dirname(__file__))
+    print(f"Current directory added: {current_directory}")
+else:
+    print("Current directory successfully loaded!")
+    
+extra_directory_1 = os.path.join(current_directory, "Final")
+if not extra_directory_1 in sys.path:
+    sys.path.append(extra_directory_1)
+    print(f"New directory added: {extra_directory_1}")
+else:
+    print("Extra directory 1 successfully loaded!")
     
 import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter.constants import *
+
+# Own imports:
+import webbrowser
+from tkinter import filedialog
+###
 
 import iocV7
 
@@ -21,6 +37,40 @@ _debug = True  # False to eliminate debug printing from callback functions.
 def on_destroy():
     root.destroy()
     sys.exit()
+    
+def open_website():
+    webbrowser.open("https://github.com/jrspan/dobbelsteenbep")
+    
+# Helper function for directory selection
+def select_directory():
+    root2 = tk.Tk()
+    root2.withdraw()  # Hide the root window
+    directory = filedialog.askdirectory()
+    print(f"Selected directory: {directory}")
+    root2.destroy()  # Destroy the root window after selection
+    return directory
+    
+# Used to create filename for data
+def create_filename_date():
+    now = datetime.datetime.now()
+    date_string = now.strftime("%Y-%m-%d_%H-%M-%S")
+    filename = f"{date_string}"
+    return filename
+
+# Helper function to convert dataframe to csv and save in specified directory
+def save_dataframe_to_csv(df, filename, directory):
+    """
+    Parameters:
+    df (pandas.DataFrame): The DataFrame to be saved.
+    filename (str): The name of the CSV file (without directory path).
+    directory (str): The path to the directory where the file will be saved.
+    """
+    file_path = os.path.join(directory, filename)
+    try:
+        df.to_csv(file_path, index=False)
+        print(f"DataFrame successfully saved to {file_path}")
+    except Exception as e:
+        print(f"Error saving DataFrame to CSV: {e}")
 
 def open_second_window(window_title, RW_csv, cali, std_cali):
     global _top2, _w2
