@@ -25,7 +25,7 @@ else:
 import tkinter as tk
 import tkinter.ttk as ttk
 from tkinter.constants import *
-from tkinter import filedialog, messagebox
+from tkinter import messagebox
 import numpy as np
 import pandas as pd
 

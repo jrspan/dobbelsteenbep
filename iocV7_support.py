@@ -26,8 +26,9 @@ import tkinter.ttk as ttk
 from tkinter.constants import *
 
 # Own imports:
+from PyQt5.QtWidgets import QApplication, QFileDialog
 import webbrowser
-from tkinter import filedialog
+#from tkinter import filedialog, messagebox
 import datetime
 
 from dobbel import *
@@ -43,12 +44,11 @@ _debug = True  # False to eliminate debug printing from callback functions.
 ### GENERAL FUNCTIONS ###
 # Helper function for directory selection
 def select_directory():
-    root2 = tk.Tk()
-    root2.withdraw()  # Hide the root window
-    directory = filedialog.askdirectory()
-    print(f"Selected directory: {directory}")
-    root2.destroy()  # Destroy the root window after selection
-    return directory
+    app = QApplication([])
+    directory = QFileDialog.getExistingDirectory(None, "Select Directory")
+    if directory:
+        print("Selected directory:", directory)
+        return directory
     
 # Used to create filename for data
 def create_filename_date():
