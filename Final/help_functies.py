@@ -143,10 +143,11 @@ def zv_checker(data, N, gamma, first_last=False):
         for i in range(N, len(zv_data) - N):
             if zv_data['squared norm'][i-N:i+N].mean() > gamma:
                 zv[i] = False
-    zv = [False] * len(zv_data)
-    for i in range(N, len(zv_data) - N):
-        if zv_data['squared norm'][i-N:i+N].mean() < gamma:
-            zv[i] = True
+    else:
+        zv = [False] * len(zv_data)
+        for i in range(N, len(zv_data) - N):
+            if zv_data['squared norm'][i-N:i+N].mean() < gamma:
+                zv[i] = True
     zv_data['zero velocity'] = zv
     return zv_data
 
