@@ -185,6 +185,10 @@ def open_second_window(window_title, RW_csv, cali, std_cali):
     _top2 = tk.Toplevel(root)
     _w2 = iocV7.TW_Result(_top2, RW_csv, cali, std_cali)
     _top2.title(f"Results for: {window_title}")
+    
+def close_second_window():
+    if _top2:
+        _top2.destroy()
 
 def main(*args):
     '''Main entry point for the application.'''

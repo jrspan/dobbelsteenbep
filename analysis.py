@@ -4,7 +4,7 @@ from help_functies import *
 from matrix_helper import *
 
 
-def run_analysis(data_df_or_csv_path, cali, std_cali, N, gamma, csv=False, firstlast=True, save_path='results.csv'):
+def run_analysis(data_df_or_csv_path, cali, std_cali, N, gamma, N_zv, gamma_zv, csv=False, firstlast=False, save_path='results.csv'):
     gyro_std = std_cali['gyro stds']
     acc_std = std_cali['acc stds']
     if csv:
@@ -69,14 +69,24 @@ def run_analysis(data_df_or_csv_path, cali, std_cali, N, gamma, csv=False, first
     p11 = np.array([0,0,0])
 
 
-    Q_gyro = np.array([
-        [gyro_std[0] ** 2, 0, 0],
-        [0, gyro_std[1] ** 2, 0],
-        [0, 0, gyro_std[2] ** 2]
-    ])
-    Q_pv_std = 0.0001
-    Q_pv = Q_pv_std * np.eye(6)
-    Q = np.vstack([np.hstack([Q_pv, np.zeros((6, 3))]), np.hstack([np.zeros((3, 6)), Q_gyro])])
+    # Q_gyro = np.array([
+    #     [gyro_std[0] ** 2, 0, 0],
+    #     [0, gyro_std[1] ** 2, 0],
+    #     [0, 0, gyro_std[2] ** 2]
+    # ])
+    # Q_pv_std = 0.0001
+    # Q_pv = Q_pv_std * np.eye(6)
+    # Q = np.vstack([np.hstack([Q_pv, np.zeros((6, 3))]), np.hstack([np.zeros((3, 6)), Q_gyro])])
+
+    Q = np.array([[acc_std[0] ** 2, 0., 0., 0., 0., 0., 0., 0., 0.],
+                  [0., acc_std[1] ** 2, 0., 0., 0., 0., 0., 0., 0.],
+                  [0., 0., acc_std[2] ** 2, 0., 0., 0., 0., 0., 0.],
+                  [0., 0., 0., acc_std[0] ** 2, 0., 0., 0., 0., 0.],
+                  [0., 0., 0., 0., acc_std[1] ** 2, 0., 0., 0., 0.],
+                  [0., 0., 0., 0., 0., acc_std[2] ** 2, 0., 0., 0.],
+                  [0., 0., 0., 0., 0., 0., gyro_std[0] ** 2, 0., 0.],
+                  [0., 0., 0., 0., 0., 0., 0., gyro_std[1] ** 2, 0.],
+                  [0., 0., 0., 0., 0., 0., 0., 0., gyro_std[2] ** 2]])
 
     small_R = 100 * np.array([
         [acc_std[0] ** 2, 0, 0],
@@ -92,12 +102,7 @@ def run_analysis(data_df_or_csv_path, cali, std_cali, N, gamma, csv=False, first
     P11 = np.vstack([np.hstack([Ppvstd * np.eye(6), np.zeros((6, 4))]), np.hstack([np.zeros((4, 6)), P11_rot])])
 
 
-    zv_data = zv_checker(data_nb, 5, 0.05, firstlast)
-    count = 0
-    for bool in zv_data['zero velocity']:
-        if bool:
-            count += 1
-
+    zv_data = zv_checker(data_nb, N_zv, gamma_zv, firstlast)
 
     xtmin1tmin1 = np.concatenate([p11, v11, q11])
     Ptmin1tmin1 = P11
@@ -200,7 +205,7 @@ def run_analysis(data_df_or_csv_path, cali, std_cali, N, gamma, csv=False, first
     total_lucht_duration = 0
     total_gooi_duration = 0
 
-    while gamma < 0.1:
+    while gamma < 0.5:
         done = False
         gedaan = False
         luchttijd.clear()
@@ -212,6 +217,9 @@ def run_analysis(data_df_or_csv_path, cali, std_cali, N, gamma, csv=False, first
                 gooitijd.append(zv_data['timestamp'][i])
                 gedaan = True
                 total_raap_duration = gooitijd[-1] - 2 * N
+                if total_raap_duration not in list(zv_data.loc[:, 'timestamp']):
+                    index = (zv_data.loc[:, 'timestamp'] - total_raap_duration).abs().argmin()
+                    total_raap_duration = zv_data.loc[index, 'timestamp']
 
             # Herken wanneer dobbelsteen de hand verlaat
             elif all(element < gamma for element in za_data['squared norm'][i - N:i + N]):
@@ -245,16 +253,19 @@ def run_analysis(data_df_or_csv_path, cali, std_cali, N, gamma, csv=False, first
                     if gooitijd and luchttijd:
                         total_gooi_duration = los_tijd - total_raap_duration
                     done = True
-                    break
+                    if gedaan:
+                        break
+
+        gamma += 0.005
+        if gamma > 0.5 or not gedaan:
+            print('onzeker')
+            results = pd.concat([zv_data, kalman_results, euler_df], axis=1)
+            return results
 
         if done:
             break
 
-        gamma += 0.005
-        # print(gamma)
-        if gamma > 0.5:
-            print("onzeker")
-            break
+
 
     total_starttotlos = total_raap_duration + total_gooi_duration
     total_starttotgrond = total_lucht_duration + total_raap_duration + total_gooi_duration
@@ -263,7 +274,46 @@ def run_analysis(data_df_or_csv_path, cali, std_cali, N, gamma, csv=False, first
 
     zero_acc_results = np.array([[total_raap_duration], [total_gooi_duration], [total_lucht_duration], [total_starttotlos], [total_starttotgrond], [side]]).T
     zero_acc_df = pd.DataFrame(zero_acc_results, columns=['Raap tijd', 'Gooi tijd', 'Lucht tijd', 'Start tot los', 'Start tot grond', 'Laatste zijde'])
-    results = pd.concat([data_nb, kalman_results, euler_df, zero_acc_df], axis=1)
+
+    results = pd.concat([zv_data, kalman_results, euler_df, zero_acc_df], axis=1)
+
+    raap_index = results[results.loc[:, 'timestamp'] == results.loc[0, 'Raap tijd']].index
+    loslaat_index = results[results.loc[:, 'timestamp'] == results.loc[0, 'Start tot los']].index
+    neerkom_index = results[results.loc[:, 'timestamp'] == results.loc[0, 'Start tot grond']].index
+
+    for i in range(len(results) - 2 - N_zv, N_zv, -1):
+        if not results.loc[i, 'zero velocity']:
+            stillig_index = i + 1
+            break
+
+    an_arr = np.reshape(np.concatenate(an_list), (len(an_list), 3))
+    norm_acc = np.linalg.norm(an_arr, axis=1)
+
+    mean_acc_hand = np.mean(norm_acc[raap_index[0] : loslaat_index[0]])
+    mean_acc_roll = np.mean(norm_acc[neerkom_index[0] : stillig_index])
+    mean_acc_whole_throw = np.mean(norm_acc[raap_index[0] : stillig_index])
+    max_acc_hand = np.max(norm_acc[raap_index[0] : loslaat_index[0]])
+    max_acc_roll = np.max(norm_acc[neerkom_index[0] : stillig_index])
+    max_acc_whole_throw = np.max(norm_acc[raap_index[0] : stillig_index])
+
+    norm_acc_grav  = np.linalg.norm(np.array(results.loc[:, ['x_acc', 'y_acc', 'z_acc']]), axis=1)
+
+    mean_acc_hand_grav = np.mean(norm_acc_grav[raap_index[0] : loslaat_index[0]])
+    mean_acc_roll_grav = np.mean(norm_acc_grav[neerkom_index[0] : stillig_index])
+    mean_acc_whole_throw_grav = np.mean(norm_acc_grav[raap_index[0] : stillig_index])
+    max_acc_hand_grav = np.max(norm_acc_grav[raap_index[0] : loslaat_index[0]])
+    max_acc_roll_grav = np.max(norm_acc_grav[neerkom_index[0] : stillig_index])
+    max_acc_whole_throw_grav = np.max(norm_acc_grav[raap_index[0] : stillig_index])
+
+    column_list = ['Mean acc hand', 'Max acc hand','Mean acc roll',
+                   'Max acc roll', 'Mean acc whole throw', 'Max acc whole throw',
+                   'Mean acc hand with gravity', 'Max acc hand with gravity','Mean acc roll with gravity',
+                   'Max acc roll with gravity', 'Mean acc whole throw with gravity', 'Max acc whole throw with gravity']
+
+    mean_acc_df = pd.DataFrame(np.array([[mean_acc_hand, max_acc_hand, mean_acc_roll, max_acc_roll, mean_acc_whole_throw, max_acc_whole_throw, mean_acc_hand_grav, max_acc_hand_grav, mean_acc_roll_grav, max_acc_roll_grav, mean_acc_whole_throw_grav, max_acc_whole_throw_grav]]), columns=column_list)
+
+    results = pd.concat([results, mean_acc_df], axis=1)
+
     if csv:
         results.to_csv(save_path)
     else:

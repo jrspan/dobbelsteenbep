@@ -28,10 +28,13 @@ from tkinter.constants import *
 from tkinter import messagebox
 import numpy as np
 import pandas as pd
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.figure import Figure
 
 _location = os.path.dirname(__file__)
 
 import iocV7_support
+from RW_helper import *
 
 _bgcolor = '#d9d9d9'
 _fgcolor = '#000000'
@@ -70,7 +73,7 @@ class Toplevel1:
         top.configure(highlightcolor="#000000")
         
         #
-        self.selected_directory = None
+        self.selected_directory = None # Directory
         
         # Class Variables
         self.c_lowi = "2"
@@ -98,8 +101,8 @@ class Toplevel1:
         
         
         ### Variables for RESULT WINDOW (All start with "RW_")
-        self.RW_title = "<Title name for file>"
-        self.RW_csv = "<filepath for CSV>" # Wordt waarschijnlijk een filepath: "C:\Users\(...)\data.csv"
+        self.RW_title = None
+        self.RW_csv = None # Wordt waarschijnlijk een filepath: "C:\Users\(...)\data.csv"
         
 
         self.top = top
@@ -981,7 +984,7 @@ The die will now start the logging process and store the logged data in the sele
             self.dob = iocV7_support.connect_function()
         except:
             print("[LOG] Foutmelding verbinding")
-            tk.messagebox.showinfo(title="Connection Error", message="Please check your bluetooth connection and try again.")
+            tk.messagebox.showerror(title="Connection Error", message="Please check your bluetooth connection and try again.")
             self.c_ConnectIndicatorLabel.configure(foreground="#ff0000")
             self.c_ConnectIndicatorLabel.configure(text="Not Connected")
             self.enable_connect_cal_log()
@@ -995,11 +998,11 @@ The die will now start the logging process and store the logged data in the sele
     
     def on_click_calibrate(self):
         if not self.selected_directory:
-            tk.messagebox.showinfo(title="Directory error",
+            tk.messagebox.showerror(title="Directory error",
                                    message="Please select a directory")
             self.selected_directory = self.browse_directory()
             if not self.selected_directory:
-                tk.messagebox.showinfo(title="Directory error",
+                tk.messagebox.showerror(title="Directory error",
                                        message="No directory selected. Exiting calibrator...")
                 return
         self.disable_connect_cal_log()
@@ -1010,7 +1013,7 @@ The die will now start the logging process and store the logged data in the sele
         self.list3 = []
         self.list4 = []
         if not self.dob:
-            tk.messagebox.showinfo(title="Error: Connection error",
+            tk.messagebox.showerror(title="Error: Connection error",
                                    message = "Please connect the die to the software first.")
             self.c_CalibrationIndicatorLabel.configure(foreground="#ff0000")
             self.c_CalibrationIndicatorLabel.configure(text="Not Calibrated")
@@ -1024,7 +1027,7 @@ The die will now start the logging process and store the logged data in the sele
             self.c_gyrrange = int(self.c_GyrRangeEntry.get())
         except Exception as e:
             print(f"Error: {e}")
-            tk.messagebox.showinfo(title="Error: Calibration parameters",
+            tk.messagebox.showerror(title="Error: Calibration parameters",
                                    message = "One or multiple parameters are not integers!")
             self.c_CalibrationIndicatorLabel.configure(foreground="#ff0000")
             self.c_CalibrationIndicatorLabel.configure(text="Not Calibrated")
@@ -1039,7 +1042,7 @@ The die will now start the logging process and store the logged data in the sele
                 print(f"Error during calibration: {e}")
                 return
         if not len(self.list1) == 6:
-            tk.messagebox.showinfo(title="Error: Calibration error",
+            tk.messagebox.showerror(title="Error: Calibration error",
                                    message = "Something went wrong during calibration.")
             self.c_CalibrationIndicatorLabel.configure(foreground="#ff0000")
             self.c_CalibrationIndicatorLabel.configure(text="Not Calibrated")
@@ -1048,7 +1051,7 @@ The die will now start the logging process and store the logged data in the sele
         try:
             self.cali, self.std_cali = iocV7_support.calibrate_cali_stdcali(self.dob, self.list1, self.list2, self.list3, self.list4, self.c_mt, self.c_freq, self.c_gyrrange)
         except AttributeError:
-            tk.messagebox.showinfo(title="Error: Connection Failure",
+            tk.messagebox.showerror(title="Error: Connection Failure",
                                    message = "The die is disconnected.")
             self.c_CalibrationIndicatorLabel.configure(foreground="#ff0000")
             self.c_CalibrationIndicatorLabel.configure(text="Not Calibrated")
@@ -1071,13 +1074,15 @@ The die will now start the logging process and store the logged data in the sele
         self.enable_connect_cal_log()
         
     def on_click_logging(self):
+        self.disable_connect_cal_log()
         if not self.selected_directory:
-            tk.messagebox.showinfo(title="Directory error",
+            tk.messagebox.showerror(title="Directory error",
                                    message="Please select a directory to store logging results.")
             self.selected_directory = self.browse_directory()
             if not self.selected_directory:
-                tk.messagebox.showinfo(title="Directory error",
+                tk.messagebox.showerror(title="Directory error",
                                        message="No directory selected. Exiting logging tool...")
+                self.enable_connect_cal_log()
                 return
         try:
             self.l_mt = int(self.l_MeasurementTimeEntry.get())
@@ -1085,7 +1090,7 @@ The die will now start the logging process and store the logged data in the sele
             self.l_accrange = int(self.l_AccRangeEntry.get())
             self.l_gyrrange = int(self.l_GyrRangeEntry.get())
         except ValueError:
-            tk.messagebox.showinfo(title="Error: Logging parameters",
+            tk.messagebox.showerror(title="Error: Logging parameters",
                                    message = "One or multiple logging parameters are not integers!")
             self.c_CalibrationIndicatorLabel.configure(foreground="#ff0000")
             self.c_CalibrationIndicatorLabel.configure(text="Not Calibrated")
@@ -1095,14 +1100,14 @@ The die will now start the logging process and store the logged data in the sele
         self.l_StatusLogIndicator.configure(text="Preparing Logging Tool...")
         self.l_StatusLogIndicator.configure(foreground="#ffff00")
         if not self.dob:
-            tk.messagebox.showinfo(title="Error: Die connection error",
+            tk.messagebox.showerror(title="Error: Die connection error",
                                    message = "The die is not properly connected.")
             self.c_CalibrationIndicatorLabel.configure(foreground="#ff0000")
             self.c_CalibrationIndicatorLabel.configure(text="Not Logging")
             self.enable_connect_cal_log()
             return
         if not self.std_cali or not self.cali:
-            tk.messagebox.showinfo(title="Error: Die calibration error",
+            tk.messagebox.showerror(title="Error: Die calibration error",
                                    message = "The die is not properly calibrated.")
             self.c_CalibrationIndicatorLabel.configure(foreground="#ff0000")
             self.c_CalibrationIndicatorLabel.configure(text="Not Logging")
@@ -1143,20 +1148,28 @@ The die will now start the logging process and store the logged data in the sele
         self.c_ConnectButton.configure(state=tk.NORMAL)
         
     def on_click_results(self):
-        ## TODO: Variables defining for opening.
-        self.RW_title = self.r_LoadedFile.cget("text")
-        #self.cali = calibratie rot angles
-        #self.std_cali = standard deviation
-        #self.RW_csv = CSV bestand
+        self.r_Results.configure(state=tk.DISABLED)
+        if not self.RW_csv:
+            tk.messagebox.showerror(title="CSV File Error",
+                                    message="Please select a CSV file first.")
+            self.r_Results.configure(state=tk.NORMAL)
+            return
         if not self.cali or not self.std_cali:
             print(f"[LOG] No calibration values specified yet.")
             tk.messagebox.showinfo(title="Calibration file",
                                    message="Please select your calibration file (.npz)")
             self.cali, self.std_cali = iocV7_support.load_cali_values()
             if not self.cali or not self.std_cali:
-                tk.messagebox.showinfo(title="Results Error",
+                tk.messagebox.showerror(title="Results Error",
                                        message="No valid calibration values found and/or selected!")
+                self.r_Results.configure(state=tk.NORMAL)
                 return
+        ## TODO: Variables defining for opening.
+        self.RW_title = self.r_LoadedFile.cget("text")
+        #self.cali = calibratie rot angles
+        #self.std_cali = standard deviation
+        #self.RW_csv = CSV bestand
+        self.r_Results.configure(state=tk.NORMAL)
         iocV7_support.open_second_window(self.RW_title, self.RW_csv, self.cali, self.std_cali)
         
         
@@ -1181,21 +1194,18 @@ class TW_Result:
         self.cali = cali
         self.std_cali = std_cali
         
-        
+        print(f"Bestand RW_csv: {self.RW_csv}")
         print(f"Type bestand van self.RW_csv: {type(self.RW_csv)}")
         ### Performing calculation
         try:
-            self.results = iocV7_support.run_analysis(self.RW_csv, self.cali, self.std_cali, N=10, gamma=0.001, csv=True)
+            self.df = pd.read_csv(self.RW_csv)
+            print(f"[LOG] CSV geconverteerd naar pandas dataframe: {self.df}")
+            self.results = iocV7_support.run_analysis(self.df, self.cali, self.std_cali, N=10, gamma=0.001, N_zv=5, gamma_zv=0.05, csv=False)
         except Exception as e:
             print(f"An unexpected error occured: {e}")
-            tk.messagebox.showinfo(title="Error: Results",
-                                   message = "Results error! Please recheck your selected CSV file.")
-            
-        #####
-        # Hiertussen nog allemaal zooi definen die we willen weergeven op het resultaten scherm
-        # (Grafieken, waarden, etc...)
-        #####
-
+            tk.messagebox.showerror(title="Error: Results",
+                                   message = "Results error! Please recheck your selected CSV file and try again.")
+            iocV7_support.close_second_window()         
 
         self.Frame7 = tk.Frame(self.top)
         self.Frame7.place(relx=0.014, rely=0.015, relheight=0.94, relwidth=0.256)
@@ -1645,11 +1655,14 @@ class TW_Result:
         self.PT_CalculatedRotations.configure(highlightcolor="#000000")
         self.PT_CalculatedRotations.configure(text='''Calculated rotations''') 
         
-        
-        
-
+    def plot_raw_acc_data(self, frame):
+        acc_fig, acc_ax = RW_PlotAccXYZ(self.results)
+        canvas = FigureCanvasTkAgg(acc_fig, master=self.P_MeasAccFrame)
+        canvas.draw()
+        canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
         
     
+        
 
 # The following code is added to facilitate the Scrolled widgets you specified.
 class AutoScroll(object):

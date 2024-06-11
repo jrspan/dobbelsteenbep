@@ -138,10 +138,16 @@ def remove_bias(data, cali):
 def zv_checker(data, N, gamma, first_last=False):
     zv_data = data.copy()
     zv_data['squared norm'] = data['x_gyro'] ** 2 + data['y_gyro'] ** 2 + data['z_gyro'] ** 2
-    zv = [first_last] * len(zv_data)
-    for i in range(N, len(zv_data) - N):
-        if zv_data['squared norm'][i-N:i+N].mean() < gamma:
-            zv[i] = True
+    if first_last:
+        zv = [True] * len(zv_data)
+        for i in range(N, len(zv_data) - N):
+            if zv_data['squared norm'][i-N:i+N].mean() > gamma:
+                zv[i] = False
+    else:
+        zv = [False] * len(zv_data)
+        for i in range(N, len(zv_data) - N):
+            if zv_data['squared norm'][i-N:i+N].mean() < gamma:
+                zv[i] = True
     zv_data['zero velocity'] = zv
     return zv_data
 
