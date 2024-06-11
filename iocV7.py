@@ -1024,7 +1024,7 @@ The die will now start the logging process and store the logged data in the sele
             try:
                 self.list1, self.list2, self.list3, self.list4 = iocV7_support.calibrate_function_list(value, self.dob, self.list1, self.list2, self.list3, self.list4, self.c_mt, self.c_freq, self.c_accrange, self.c_gyrrange)
             except Exception as e:
-                print("Error during calibration: {e}")
+                print(f"Error during calibration: {e}")
                 return
         if not len(self.list1) == 6:
             tk.messagebox.showinfo(title="Error: Calibration error",
@@ -1047,6 +1047,8 @@ The die will now start the logging process and store the logged data in the sele
             print(f"An unexpected error occured: {e}")
             return
         ### SAVING CALIBRATION VLAUES ###
+        if not self.selected_directory:
+            self.selected_directory = iocV7_support.select_directory()
         iocV7_support.save_cali_values(self.cali, self.std_cali, self.selected_directory)
         ### END OF SAVE CODE ###
         self.c_CalibrationIndicatorLabel.configure(foreground="#008000")
@@ -1163,9 +1165,12 @@ class TW_Result:
         self.cali = cali
         self.std_cali = std_cali
         
+        
+        print(f"Type bestand van self.RW_csv: {type(self.RW_csv)}")
+s        
         ### Performing calculation
         try:
-            self.results = iocV7_support.run_analysis(self.RW_csv, self.cali, self.std_cali, N=10, gamma=0.001)
+            self.results = iocV7_support.run_analysis(self.RW_csv, self.cali, self.std_cali, N=10, gamma=0.001, csv=True)
         except Exception as e:
             print(f"An unexpected error occured: {e}")
             tk.messagebox.showinfo(title="Error: Results",

@@ -64,6 +64,8 @@ def select_directory():
     if directory:
         print("Selected directory:", directory)
         return directory
+    print("No directory selected")
+    return None
     
 def select_npz_file():
     app = QApplication([])
@@ -72,6 +74,8 @@ def select_npz_file():
     if file_path:
         print("Selected calibration file:", file_path)
         return file_path
+    print("No .npz filepath selected")
+    return None
     
 # Used to create filename for data
 def create_filename_date():
@@ -88,7 +92,7 @@ def save_dataframe_to_csv(df, filename, directory):
     filename (str): The name of the CSV file (without directory path).
     directory (str): The path to the directory where the file will be saved.
     """
-    file_path = os.path.join(directory, filename)
+    file_path = f"{os.path.join(directory, filename)}.csv"
     try:
         df.to_csv(file_path, index=False)
         print(f"DataFrame successfully saved to {file_path}")
@@ -117,8 +121,6 @@ def load_npz_as_dicts(file_path):
     return dicts
 
 
-
-
 ### CONNECT FUNCTIONS ###
 def connect_function():
     dob = dobbellogger()
@@ -129,7 +131,7 @@ def connect_function():
 def calibrate_function_list(css_value, dob, list1, list2, list3, list4, mt, freq, ar, gr, lowi=1):
     column, sign, side = css_value
     try:
-        list1, list2, list3, list4 = calibrator.cali_loop(column, sign, side, dob, mt, lowi, freq, ar, gr, list1, list2, list3, list4)
+        list1, list2, list3, list4 = cali_loop(column, sign, side, dob, mt, lowi, freq, ar, gr, list1, list2, list3, list4)
     except Exception as e:
         print(f"Error encountered: {e}")
         return None
