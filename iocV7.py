@@ -213,7 +213,7 @@ class Toplevel1:
         self.s_Dirname.configure(foreground="#000000")
         self.s_Dirname.configure(highlightbackground="#d9d9d9")
         self.s_Dirname.configure(highlightcolor="#000000")
-        self.s_Dirname.configure(text="No folder selected.")
+        self.s_Dirname.configure(text="No directory selected.")
 
         self.Frame3 = tk.Frame(self.top)
         self.Frame3.place(relx=0.403, rely=0.188, relheight=0.297, relwidth=0.58)
@@ -938,13 +938,17 @@ The die will now start the logging process and store the logged data in the sele
         #self.selected_directory = filedialog.askdirectory()
         print("Initializing browse directory...")
         self.selected_directory = iocV7_support.select_directory()
-        print("Selected")
         if self.selected_directory:
+            print(f"Directory selected: {self.selected_directory}")
             self.s_Dirname.configure(text=self.selected_directory)
             self.Scrolledlistbox1.delete(0, tk.END)
             for filename in os.listdir(self.selected_directory):
                 if filename.endswith('.csv'):
                     self.Scrolledlistbox1.insert(tk.END, filename)
+        else:
+            self.selected_directory = None
+            self.s_Dirname.configure(text="Please select a directory....")
+        return self.selected_directory
                     
     def on_select_listbox(self, event):
         selected_item = self.Scrolledlistbox1.curselection()
@@ -990,6 +994,14 @@ The die will now start the logging process and store the logged data in the sele
         self.enable_connect_cal_log()
     
     def on_click_calibrate(self):
+        if not self.selected_directory:
+            tk.messagebox.showinfo(title="Directory error",
+                                   message="Please select a directory")
+            self.selected_directory = self.browse_directory()
+            if not self.selected_directory:
+                tk.messagebox.showinfo(title="Directory error",
+                                       message="No directory selected. Exiting calibrator...")
+                return
         self.disable_connect_cal_log()
         self.c_CalibrationIndicatorLabel.configure(foreground="#ff8000")
         self.c_CalibrationIndicatorLabel.configure(text="Calibrating...")
@@ -1060,9 +1072,13 @@ The die will now start the logging process and store the logged data in the sele
         
     def on_click_logging(self):
         if not self.selected_directory:
-            tk.messagebox.showinfo(title="Error: Die Logging Tool",
-                                   message="No directory selected for saving CSV file.")
-            return
+            tk.messagebox.showinfo(title="Directory error",
+                                   message="Please select a directory to store logging results.")
+            self.selected_directory = self.browse_directory()
+            if not self.selected_directory:
+                tk.messagebox.showinfo(title="Directory error",
+                                       message="No directory selected. Exiting logging tool...")
+                return
         try:
             self.l_mt = int(self.l_MeasurementTimeEntry.get())
             self.l_freq = int(self.l_FreqEntry.get())
@@ -1167,7 +1183,6 @@ class TW_Result:
         
         
         print(f"Type bestand van self.RW_csv: {type(self.RW_csv)}")
-s        
         ### Performing calculation
         try:
             self.results = iocV7_support.run_analysis(self.RW_csv, self.cali, self.std_cali, N=10, gamma=0.001, csv=True)
