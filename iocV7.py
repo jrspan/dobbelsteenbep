@@ -955,8 +955,7 @@ The die will now start the logging process and store the logged data in the sele
         selected_item = self.Scrolledlistbox1.curselection()
         if selected_item:
             selected_file_name = self.Scrolledlistbox1.get(selected_item)
-            self.selected_file = os.path.join(self.selected_directory, selected_file_name)
-            self.RW_csv = self.selected_file
+            self.RW_csv = os.path.join(self.selected_directory, selected_file_name)
             self.r_LoadedFile.configure(text=selected_file_name)
     
     def copy_values(self):
@@ -1011,7 +1010,8 @@ The die will now start the logging process and store the logged data in the sele
             self.c_freq = int(self.c_FrequencyEntry.get())
             self.c_accrange = int(self.c_AccRangeEntry.get())
             self.c_gyrrange = int(self.c_GyrRangeEntry.get())
-        except ValueError:
+        except Exception as e:
+            print(f"Error: {e}")
             tk.messagebox.showinfo(title="Error: Calibration parameters",
                                    message = "One or multiple parameters are not integers!")
             self.c_CalibrationIndicatorLabel.configure(foreground="#ff0000")
@@ -1020,7 +1020,7 @@ The die will now start the logging process and store the logged data in the sele
             return
         for value in self.css_list:
             tk.messagebox.showinfo(title="Calibrator",
-                                   message="Put the die with the number {value[2]} facing upwards. Then, press Ok.")
+                                   message="Put the die with the number {value[2]} facing upwards. Then, press Ok. Do not touch the die after continuing.")
             try:
                 self.list1, self.list2, self.list3, self.list4 = iocV7_support.calibrate_function_list(value, self.dob, self.list1, self.list2, self.list3, self.list4, self.c_mt, self.c_freq, self.c_accrange, self.c_gyrrange)
             except Exception as e:
@@ -1042,14 +1042,17 @@ The die will now start the logging process and store the logged data in the sele
             self.c_CalibrationIndicatorLabel.configure(text="Not Calibrated")
             self.enable_connect_cal_log()
             return
-        except:
+        except Exception as e:
             # Error detectie - Indien er iets misgaat. In theorie zou deze nooit voorkomen.
-            print("CALIBRATIE ERROR: Probleem nog niet gevonden.")
+            print(f"An unexpected error occured: {e}")
             return
+        ### SAVING CALIBRATION VLAUES ###
+        iocV7_support.save_cali_values(self.cali, self.std_cali, self.selected_directory)
+        ### END OF SAVE CODE ###
         self.c_CalibrationIndicatorLabel.configure(foreground="#008000")
         self.c_CalibrationIndicatorLabel.configure(text="Calibrated!")
         tk.messagebox.showinfo(title="Calibrator",
-                               message = "Calibration succesful!")
+                               message = "The die has been calibrated and succesfully saved!")
         print("Calibration success!. Closing calibrator....")
         self.enable_connect_cal_log()
         
@@ -1127,6 +1130,15 @@ The die will now start the logging process and store the logged data in the sele
         #self.cali = calibratie rot angles
         #self.std_cali = standard deviation
         #self.RW_csv = CSV bestand
+        if not self.cali or not self.std_cali:
+            print(f"[LOG] No calibration values specified yet.")
+            tk.messagebox.showinfo(title="Calibration file",
+                                   message="Please select your calibration file (.npz)")
+            self.cali, self.std_cali = iocV7_support.load_cali_values()
+            if not self.cali or not self.std_cali:
+                tk.messagebox.showinfo(title="Results Error",
+                                       message="No valid calibration values found and/or selected!")
+                return
         iocV7_support.open_second_window(self.RW_title, self.RW_csv, self.cali, self.std_cali)
         
         
@@ -1153,9 +1165,9 @@ class TW_Result:
         
         ### Performing calculation
         try:
-            self.results = iocV7_support.run_analysis_local(self.RW_csv, self.cali, self.std_cali, N=10, gamma=0.001)
-        except:
-            print("Results Error")
+            self.results = iocV7_support.run_analysis(self.RW_csv, self.cali, self.std_cali, N=10, gamma=0.001)
+        except Exception as e:
+            print(f"An unexpected error occured: {e}")
             tk.messagebox.showinfo(title="Error: Results",
                                    message = "Results error! Please recheck your selected CSV file.")
             

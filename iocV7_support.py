@@ -30,21 +30,23 @@ from PyQt5.QtWidgets import QApplication, QFileDialog
 import webbrowser
 #from tkinter import filedialog, messagebox
 import datetime
+import pandas as pd
+import numpy as np
 
 try:
     from dobbel import *
 except Exception as e:
-    print(f"An error occured: {e}")
+    print(f"An error occured: {e}. (Error with importing dobbel.py)")
     
 try:
     from calibrator import *
 except Exception as e:
-    print(f"An error occured: {e}")
+    print(f"An error occured: {e}. (Error with importing calibrator.py)")
     
 try:
     from analysis import *
 except Exception as e:
-    print(f"An error occured: {e}")
+    print(f"An error occured: {e}. (Error with importing analysis.py)")
     
 ###
 
@@ -58,9 +60,18 @@ _debug = True  # False to eliminate debug printing from callback functions.
 def select_directory():
     app = QApplication([])
     directory = QFileDialog.getExistingDirectory(None, "Select Directory")
+    app.quit()
     if directory:
         print("Selected directory:", directory)
         return directory
+    
+def select_npz_file():
+    app = QApplication([])
+    file_path, _ = QFileDialog.getOpenFileName(None, "Select Calibration File", "", "NPZ Files (*.npz)")
+    app.quit()  # Quit the application to avoid blocking the script
+    if file_path:
+        print("Selected calibration file:", file_path)
+        return file_path
     
 # Used to create filename for data
 def create_filename_date():
@@ -83,6 +94,29 @@ def save_dataframe_to_csv(df, filename, directory):
         print(f"DataFrame successfully saved to {file_path}")
     except Exception as e:
         print(f"Error saving DataFrame to CSV: {e}")
+        
+### FILE SAVING FUNCTIONS ###
+# Function to save dictionaries to an .npz file
+def save_dicts_as_npz(file_path, **dicts):
+    combined_data = {}
+    for dict_name, d in dicts.items():
+        for key, value in d.items():
+            combined_data[f'{dict_name}_{key}'] = value
+    np.savez(file_path, **combined_data)
+    print(f"Data has been saved to {file_path}")
+    
+# Function to load .npz file and reconstruct dictionaries
+def load_npz_as_dicts(file_path):
+    loaded_data = np.load(file_path)
+    dicts = {}
+    for key in loaded_data:
+        dict_name, array_key = key.split('_', 1)
+        if dict_name not in dicts:
+            dicts[dict_name] = {}
+        dicts[dict_name][array_key] = loaded_data[key]
+    return dicts
+
+
 
 
 ### CONNECT FUNCTIONS ###
@@ -105,6 +139,28 @@ def calibrate_cali_stdcali(dob, list1, list2, list3, list4, mt, freq, gr):
     cali = calibrate_rot_bias(list1, list2, list3, list4)
     std_cali = cali_std(dob, mt, freq, gr)
     return cali, std_cali
+
+def save_cali_values(cali, std_cali, directory):
+    if not os.path.isdir(directory):
+        print("Minor error: Directory not specified. Allowing user to select directory.")
+        tk.messagebox.showinfo(title="Saving Calibration Data",
+                               message="Please select the directory in which you want to save your data.")
+        directory = select_directory()  # Assuming select_directory function is defined elsewhere
+        if not directory:
+            return  # User cancelled directory selection
+    cali_filedate = create_filename_date()  # Assuming create_filename_date function is defined elsewhere
+    cali_filename = f"{cali_filedate}_CalibrationValues.npz"
+    cali_filepath = os.path.join(directory, cali_filename)
+    save_dicts_as_npz(cali_filepath, dict1=cali, dict2=std_cali)  # Assuming save_dicts_as_npz function is defined elsewhere
+
+def load_cali_values():
+    cali_file = QFileDialog.getOpenFileName(None, "Select .npz Calibration File", "", "NPZ Files (*.npz)")[0]
+    if cali_file:
+        loaded_dicts = load_npz_as_dicts(cali_file)  # Assuming load_npz_as_dicts function is defined elsewhere
+        cali = loaded_dicts.get('dict1')
+        std_cali = loaded_dicts.get('dict2')
+        return cali, std_cali
+    return None, None  # Return None if no file is selected or user cancels
 
 ### LOGGING FUNCTIONS ###
 def logging_function(dob, mt, freq, ar, gr):
