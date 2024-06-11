@@ -4,7 +4,7 @@ from help_functies import *
 from matrix_helper import *
 
 
-def run_analysis(data_df_or_csv_path, cali, std_cali, N, gamma, csv=False, firstlast=True, save_path='results.csv'):
+def run_analysis(data_df_or_csv_path, cali, std_cali, N, gamma, N_zv, gamma_zv, csv=False, firstlast=False, save_path='results.csv'):
     gyro_std = std_cali['gyro stds']
     acc_std = std_cali['acc stds']
     if csv:
@@ -92,12 +92,7 @@ def run_analysis(data_df_or_csv_path, cali, std_cali, N, gamma, csv=False, first
     P11 = np.vstack([np.hstack([Ppvstd * np.eye(6), np.zeros((6, 4))]), np.hstack([np.zeros((4, 6)), P11_rot])])
 
 
-    zv_data = zv_checker(data_nb, 5, 0.05, firstlast)
-    count = 0
-    for bool in zv_data['zero velocity']:
-        if bool:
-            count += 1
-
+    zv_data = zv_checker(data_nb, N_zv, gamma_zv, firstlast)
 
     xtmin1tmin1 = np.concatenate([p11, v11, q11])
     Ptmin1tmin1 = P11
@@ -263,7 +258,27 @@ def run_analysis(data_df_or_csv_path, cali, std_cali, N, gamma, csv=False, first
 
     zero_acc_results = np.array([[total_raap_duration], [total_gooi_duration], [total_lucht_duration], [total_starttotlos], [total_starttotgrond], [side]]).T
     zero_acc_df = pd.DataFrame(zero_acc_results, columns=['Raap tijd', 'Gooi tijd', 'Lucht tijd', 'Start tot los', 'Start tot grond', 'Laatste zijde'])
-    results = pd.concat([data_nb, kalman_results, euler_df, zero_acc_df], axis=1)
+
+    results = pd.concat([zv_data, kalman_results, euler_df, zero_acc_df], axis=1)
+
+    raap_index = results[results.loc[:, 'timestamp'] == results.loc[0, 'Gooi tijd']].index
+    loslaat_index = results[results.loc[:, 'timestamp'] == results.loc[0, 'Start tot los']].index
+    neerkom_index = results[results.loc[:, 'timestamp'] == results.loc[0, 'Start tot grond']].index
+
+    for i in range(len(results) - 2 - N_zv, N_zv, -1):
+        if not results.loc[i, 'zero velocity']:
+            stillig_index = i + 1
+            break
+
+    an_arr = np.reshape(np.concatenate(an_list), (len(an_list), 3))
+    norm_acc = np.linalg.norm(an_arr, axis=1)
+
+    mean_acc_hand = np.mean(norm_acc[raap_index[0] : loslaat_index[0]])
+    mean_acc_roll = np.mean(norm_acc[neerkom_index[0] : stillig_index])
+
+    mean_acc_df = pd.DataFrame(np.array([[mean_acc_hand, mean_acc_roll]]), columns=['Mean acc hand', 'Mean acc roll'])
+    results = pd.concat([results, mean_acc_df], axis=1)
+
     if csv:
         results.to_csv(save_path)
     else:
