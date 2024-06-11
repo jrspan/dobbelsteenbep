@@ -931,7 +931,7 @@ The die will now start the logging process and store the logged data in the sele
         self.Message1.configure(highlightcolor="#000000")
         self.Message1.configure(padx="1")
         self.Message1.configure(pady="1")
-        self.Message1.configure(text='''This software has been created and developed by Bram Hament, Zibbo Huang, Niels van der Rijst, Jelte-Roel Span, and Thimo Speelman. This is performed as aprt fo the Bachelor's End Project for Mechanical Engineering students at the Technical University of Delft.''')
+        self.Message1.configure(text='''This software has been created and developed by Bram Hament, Zibbo Huang, Niels van der Rijst, Jelte-Roel Span, and Thimo Speelman. This is performed as part of the Bachelor's End Project for Mechanical Engineering students at the Technical University of Delft.''')
         self.Message1.configure(width=1107)
     
     def browse_directory(self):
@@ -1020,7 +1020,7 @@ The die will now start the logging process and store the logged data in the sele
             return
         for value in self.css_list:
             tk.messagebox.showinfo(title="Calibrator",
-                                   message="Put the die with the number {value[2]} facing upwards. Then, press Ok. Do not touch the die after continuing.")
+                                   message=f"Put the die with the number {value[2]} facing upwards. Then, press Ok. Do not touch the die after continuing.")
             try:
                 self.list1, self.list2, self.list3, self.list4 = iocV7_support.calibrate_function_list(value, self.dob, self.list1, self.list2, self.list3, self.list4, self.c_mt, self.c_freq, self.c_accrange, self.c_gyrrange)
             except Exception as e:
