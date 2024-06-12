@@ -15,12 +15,12 @@ if not os.path.dirname(__file__) in sys.path:
 else:
     print("Current directory successfully loaded!")
     
-extra_directory_1 = os.path.join(current_directory, "Final")
-if not extra_directory_1 in sys.path:
-    sys.path.append(extra_directory_1)
-    print(f"New directory added: {extra_directory_1}")
-else:
-    print("Extra directory 1 successfully loaded!")
+#extra_directory_1 = os.path.join(current_directory, "Final")
+#if not extra_directory_1 in sys.path:
+#    sys.path.append(extra_directory_1)
+#    print(f"New directory added: {extra_directory_1}")
+#else:
+#    print("Extra directory 1 successfully loaded!")
 
 import tkinter as tk
 import tkinter.ttk as ttk
@@ -1653,14 +1653,19 @@ class TW_Result:
         self.PT_CalculatedRotations.configure(foreground="#000000")
         self.PT_CalculatedRotations.configure(highlightbackground="#d9d9d9")
         self.PT_CalculatedRotations.configure(highlightcolor="#000000")
-        self.PT_CalculatedRotations.configure(text='''Calculated rotations''') 
+        self.PT_CalculatedRotations.configure(text='''Calculated rotations''')
         
-    def plot_raw_acc_data(self, frame):
-        acc_fig, acc_ax = RW_PlotAccXYZ(self.results)
-        canvas = FigureCanvasTkAgg(acc_fig, master=self.P_MeasAccFrame)
+        self.plot_data(RW_PlotAccXYZ, self.P_MeasAccFrame)
+        self.plot_data(RW_PlotGyrXYZ, self.P_AngVelFrame)
+        self.plot_data(RW_PlotEuler, self.P_CalcRotFrame)
+        
+    def plot_data(self, func, frame):
+        fig, ax = func(self.results)
+        canvas = FigureCanvasTkAgg(fig, master=frame)
         canvas.draw()
-        canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+        canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
         
+    
     
         
 

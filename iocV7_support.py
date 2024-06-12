@@ -14,24 +14,29 @@ if not os.path.dirname(__file__) in sys.path:
 else:
     print("Current directory successfully loaded!")
     
-extra_directory_1 = os.path.join(current_directory, "Final")
-if not extra_directory_1 in sys.path:
-    sys.path.append(extra_directory_1)
-    print(f"New directory added: {extra_directory_1}")
-else:
-    print("Extra directory 1 successfully loaded!")
-    
-import tkinter as tk
-import tkinter.ttk as ttk
-from tkinter.constants import *
+#extra_directory_1 = os.path.join(current_directory, "Final")
+#if not extra_directory_1 in sys.path:
+#    sys.path.append(extra_directory_1)
+#    print(f"New directory added: {extra_directory_1}")
+#else:
+#    print("Extra directory 1 successfully loaded!")
 
+try:
+    import tkinter as tk
+    import tkinter.ttk as ttk
+    from tkinter.constants import *
+except Exception as e:
+    print(f"An error occured: {e}")
 # Own imports:
-from PyQt5.QtWidgets import QApplication, QFileDialog
-import webbrowser
-#from tkinter import filedialog, messagebox
-import datetime
-import pandas as pd
-import numpy as np
+try:
+    from PyQt5.QtWidgets import QApplication, QFileDialog
+    import webbrowser
+    #from tkinter import filedialog, messagebox
+    import datetime
+    import pandas as pd
+    import numpy as np
+except Exception as e:
+    print(f"An error occured: {e}")
 
 try:
     from dobbel import *
@@ -49,9 +54,11 @@ except Exception as e:
     print(f"An error occured: {e}. (Error with importing analysis.py)")
     
 ###
-
-import iocV7
-
+try:
+    import iocV7
+except Exception as e:
+    print(f"An error occured: {e}")
+    
 _debug = True  # False to eliminate debug printing from callback functions.
 
 
@@ -68,14 +75,18 @@ def select_directory():
     return None
     
 def select_npz_file():
-    app = QApplication([])
-    file_path, _ = QFileDialog.getOpenFileName(None, "Select Calibration File", "", "NPZ Files (*.npz)")
-    app.quit()  # Quit the application to avoid blocking the script
-    if file_path:
-        print("Selected calibration file:", file_path)
-        return file_path
-    print("No .npz filepath selected")
-    return None
+    try:
+        app = QApplication([])
+        file_path, _ = QFileDialog.getOpenFileName(None, "Select Calibration File", "", "NPZ Files (*.npz)")
+        app.quit()  # Quit the application to avoid blocking the script
+        if file_path:
+            print("Selected calibration file:", file_path)
+            return file_path
+        print("No .npz filepath selected")
+        return None
+    except Exception as e:
+        print(f"An error occued: {e}")
+        return None
     
 # Used to create filename for data
 def create_filename_date():
@@ -156,7 +167,9 @@ def save_cali_values(cali, std_cali, directory):
     save_dicts_as_npz(cali_filepath, dict1=cali, dict2=std_cali)  # Assuming save_dicts_as_npz function is defined elsewhere
 
 def load_cali_values():
+    app = QApplication([])
     cali_file = QFileDialog.getOpenFileName(None, "Select .npz Calibration File", "", "NPZ Files (*.npz)")[0]
+    app.quit()
     if cali_file:
         loaded_dicts = load_npz_as_dicts(cali_file)  # Assuming load_npz_as_dicts function is defined elsewhere
         cali = loaded_dicts.get('dict1')
