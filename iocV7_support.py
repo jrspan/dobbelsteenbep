@@ -60,10 +60,8 @@ except Exception as e:
     print(f"An error occured: {e}")
     
 _debug = True  # False to eliminate debug printing from callback functions.
+# June 12, 11:22
 
-
-### GENERAL FUNCTIONS ###
-# Helper function for directory selection
 def select_directory():
     app = QApplication([])
     directory = QFileDialog.getExistingDirectory(None, "Select Directory")

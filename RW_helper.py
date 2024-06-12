@@ -12,9 +12,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 ### INITIAL VALUES - DELETE THIS WHEN CODE IS DONE ###
-filename = "DATAFRAME.csv"
-dataframe = pd.read_csv(filename)
-print(dataframe.columns)
+#filename = "DATAFRAME.csv"
+#dataframe = pd.read_csv(filename)
+#print(dataframe.columns)
 ### END OF INITIAL VALUES ###
 
 ### DATA INFO ###
