@@ -880,7 +880,7 @@ The die will now start the logging process and store the logged data in the sele
         self.r_Results.configure(highlightbackground="#d9d9d9")
         self.r_Results.configure(highlightcolor="#000000")
         self.r_Results.configure(text='''Show Results''')
-        self.r_Results.configure(command=self.on_click_results_ADMIN)
+        self.r_Results.configure(command=self.on_click_results)
 
         self.QuitProgramButton = tk.Button(self.top)
         self.QuitProgramButton.place(relx=0.021, rely=0.944, height=26
@@ -1141,7 +1141,8 @@ The die will now start the logging process and store the logged data in the sele
                 if filename.endswith('.csv'):
                     self.Scrolledlistbox1.insert(tk.END, filename)
         # Select file instantly for review
-        self.RW_csv = os.path.join(self.selected_directory, selected_file_name)
+        self.RW_csv = os.path.join(self.selected_directory, f"{self.filename}.csv")
+        self.r_LoadedFile.configure(text=f"{self.filename}.csv")
         
         tk.messagebox.showinfo(title="Die Logging Tool", message=f"Logging Complete. File is now saved in selected directory as {self.filename}")
         self.enable_connect_cal_log()
@@ -1163,7 +1164,15 @@ The die will now start the logging process and store the logged data in the sele
                                     message="Please select a CSV file first.")
             self.r_Results.configure(state=tk.NORMAL)
             return
-        print(f"[LOG] No calibration values specified yet.")
+        
+        # Functie om te kijken of CSV file Result file is of niet
+        if len(pd.read_csv(self.RW_csv, nrows=1).columns) > 20:
+            print("[LOG] Results file loaded")
+            self.RW_title = f"{self.RW_csv} [RESULTS FILE]"
+            self.r_Results.configure(state=tk.NORMAL)
+            iocV7_support.open_second_window(self.RW_title, self.RW_csv, None, None)
+            return
+        print(f"[LOG] Raw data file loading. Selecting calibration file...")
         tk.messagebox.showinfo(title="Calibration file",
                                message="Please select your calibration file (.npz)")
         self.cali, self.std_cali = iocV7_support.load_cali_values()
@@ -1175,7 +1184,7 @@ The die will now start the logging process and store the logged data in the sele
             self.r_Results.configure(state=tk.NORMAL)
             return
         ## TODO: Variables defining for opening.
-        self.RW_title = self.r_LoadedFile.cget("text")
+        self.RW_title = f"{self.r_LoadedFile.cget('text')} [RAW DATA FILE]"
         #self.cali = calibratie rot angles
         #self.std_cali = standard deviation
         #self.RW_csv = CSV bestand
@@ -1220,16 +1229,21 @@ class TW_Result:
         
         print(f"Bestand RW_csv: {self.RW_csv}")
         print(f"Type bestand van self.RW_csv: {type(self.RW_csv)}")
+        
+        
         ### Performing calculation
-        try:
-            self.df = pd.read_csv(self.RW_csv)
-            print(f"[LOG] CSV geconverteerd naar pandas dataframe: {self.df}")
-            self.results = iocV7_support.run_analysis(self.df, self.cali, self.std_cali, N=10, gamma=0.001, N_zv=5, gamma_zv=0.05, csv=False)
-        except Exception as e:
-            print(f"An unexpected error occured: {e}")
-            tk.messagebox.showerror(title="Error: Results",
-                                   message = "Results error! Please recheck your selected CSV file and try again.")
-            iocV7_support.close_second_window()
+        if len(pd.read_csv(self.RW_csv, nrows=1).columns) < 20:
+            try:
+                self.df = pd.read_csv(self.RW_csv)
+                print(f"[LOG] CSV geconverteerd naar pandas dataframe: {self.df}")
+                self.results = iocV7_support.run_analysis(self.df, self.cali, self.std_cali, N=10, gamma=0.001, N_zv=5, gamma_zv=0.05, csv=False)
+            except Exception as e:
+                print(f"An unexpected error occured: {e}")
+                tk.messagebox.showerror(title="Error: Results",
+                                        message = "Results error! Please recheck your selected CSV file and try again.")
+                iocV7_support.close_second_window()
+        else:
+            self.results = pd.read_csv(self.RW_csv)
             
         if len(self.results.columns) < 50:
             self.certain = False
@@ -2212,9 +2226,9 @@ class TW_Result:
             
             self.NR_FinTopVal_var.configure(text=f"{RW_DieEndValue(self.results)}")
         
-        #self.plot_data(RW_PlotAccXYZ, self.P_MeasAccFrame)
-        #self.plot_data(RW_PlotGyrXYZ, self.P_AngVelFrame)
-        #self.plot_data(RW_PlotEuler, self.P_CalcRotFrame)
+        self.plot_data(RW_PlotAccXYZ, self.P_MeasAccFrame)
+        self.plot_data(RW_PlotGyrXYZ, self.P_AngVelFrame)
+        self.plot_data(RW_PlotEuler, self.P_CalcRotFrame)
         
         #self.export_to_savefile()
     

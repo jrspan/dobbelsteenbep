@@ -332,12 +332,14 @@ def run_analysis(data_df_or_csv_path, cali, std_cali, N, gamma, N_zv, gamma_zv, 
     max_ang_vel_hand = np.max(norm_gyro[raap_index[0] : loslaat_index[0]])
     mean_ang_vel_flight = np.mean(norm_gyro[loslaat_index[0] : neerkom_index[0]])
     max_ang_vel_flight = np.max(norm_gyro[loslaat_index[0] : neerkom_index[0]])
-    mean_ang_vel_roll = np.mean(norm_gyro[raap_index[0] : stillig_index])
-    max_ang_vel_roll = np.max(norm_gyro[raap_index[0] : stillig_index])
+    mean_ang_vel_roll = np.mean(norm_gyro[neerkom_index[0] : stillig_index])
+    max_ang_vel_roll = np.max(norm_gyro[neerkom_index[0] : stillig_index])
+    mean_ang_vel_throw = np.mean(norm_gyro[raap_index[0] : stillig_index])
+    max_ang_vel_throw = np.max(norm_gyro[raap_index[0] : stillig_index])
 
-    column_list_gyro = ['Total rotation hand', 'Total rotation flight', 'Total rotation roll', 'Total rotation whole throw', 'Mean ang. vel. hand', 'Max ang. vel. hand', 'Mean ang. vel. flight', 'Max ang. vel. flight', 'Mean ang. vel. roll', 'Max ang. vel. roll']
+    column_list_gyro = ['Total rotation hand', 'Total rotation flight', 'Total rotation roll', 'Total rotation whole throw', 'Mean ang. vel. hand', 'Max ang. vel. hand', 'Mean ang. vel. flight', 'Max ang. vel. flight', 'Mean ang. vel. roll', 'Max ang. vel. roll', 'Mean ang. vel. whole throw', 'Max ang. vel. whole throw']
 
-    orientation_df = pd.DataFrame([[total_rotation_hand, total_rotation_flight, total_rotation_roll, total_rotation_throw, mean_ang_vel_hand, max_ang_vel_hand, mean_ang_vel_flight, max_ang_vel_flight, mean_ang_vel_roll, max_ang_vel_roll]], columns=column_list_gyro)
+    orientation_df = pd.DataFrame([[total_rotation_hand, total_rotation_flight, total_rotation_roll, total_rotation_throw, mean_ang_vel_hand, max_ang_vel_hand, mean_ang_vel_flight, max_ang_vel_flight, mean_ang_vel_roll, max_ang_vel_roll, mean_ang_vel_throw, max_ang_vel_throw]], columns=column_list_gyro)
 
     results = pd.concat([results, orientation_df], axis=1)
 
