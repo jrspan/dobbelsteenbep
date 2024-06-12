@@ -305,14 +305,41 @@ def run_analysis(data_df_or_csv_path, cali, std_cali, N, gamma, N_zv, gamma_zv, 
     max_acc_roll_grav = np.max(norm_acc_grav[neerkom_index[0] : stillig_index])
     max_acc_whole_throw_grav = np.max(norm_acc_grav[raap_index[0] : stillig_index])
 
-    column_list = ['Mean acc hand', 'Max acc hand','Mean acc roll',
-                   'Max acc roll', 'Mean acc whole throw', 'Max acc whole throw',
-                   'Mean acc hand with gravity', 'Max acc hand with gravity','Mean acc roll with gravity',
-                   'Max acc roll with gravity', 'Mean acc whole throw with gravity', 'Max acc whole throw with gravity']
+    column_list_acc = ['Mean acc hand', 'Max acc hand','Mean acc roll',
+                       'Max acc roll', 'Mean acc whole throw', 'Max acc whole throw',
+                       'Mean acc hand with gravity', 'Max acc hand with gravity','Mean acc roll with gravity',
+                       'Max acc roll with gravity', 'Mean acc whole throw with gravity', 'Max acc whole throw with gravity']
 
-    mean_acc_df = pd.DataFrame(np.array([[mean_acc_hand, max_acc_hand, mean_acc_roll, max_acc_roll, mean_acc_whole_throw, max_acc_whole_throw, mean_acc_hand_grav, max_acc_hand_grav, mean_acc_roll_grav, max_acc_roll_grav, mean_acc_whole_throw_grav, max_acc_whole_throw_grav]]), columns=column_list)
+    mean_acc_df = pd.DataFrame(np.array([[mean_acc_hand, max_acc_hand, mean_acc_roll, max_acc_roll, mean_acc_whole_throw, max_acc_whole_throw, mean_acc_hand_grav, max_acc_hand_grav, mean_acc_roll_grav, max_acc_roll_grav, mean_acc_whole_throw_grav, max_acc_whole_throw_grav]]), columns=column_list_acc)
 
     results = pd.concat([results, mean_acc_df], axis=1)
+
+    q_arr = np.array(results.loc[:, ['q0', 'q1', 'q2', 'q3']])
+    hoeken = [0]
+    for i in range(1, q_arr.shape[0]):
+        hoeken.append(abs(2 * np.arccos(np.dot(q_arr[i - 1], q_arr[i]))) * 360 / np.pi)
+
+    results['Delta theta'] = hoeken
+
+    total_rotation_hand = sum(hoeken[raap_index[0] : loslaat_index[0]])
+    total_rotation_flight = sum(hoeken[loslaat_index[0] : neerkom_index[0]])
+    total_rotation_roll = sum(hoeken[neerkom_index[0] : stillig_index])
+    total_rotation_throw = sum(hoeken[raap_index[0] : stillig_index])
+
+    norm_gyro = np.linalg.norm(np.array(results.loc[:, ['x_gyro', 'y_gyro', 'z_gyro']]), axis=1)
+
+    mean_ang_vel_hand = np.mean(norm_gyro[raap_index[0] : loslaat_index[0]])
+    max_ang_vel_hand = np.max(norm_gyro[raap_index[0] : loslaat_index[0]])
+    mean_ang_vel_flight = np.mean(norm_gyro[loslaat_index[0] : neerkom_index[0]])
+    max_ang_vel_flight = np.max(norm_gyro[loslaat_index[0] : neerkom_index[0]])
+    mean_ang_vel_roll = np.mean(norm_gyro[raap_index[0] : stillig_index])
+    max_ang_vel_roll = np.max(norm_gyro[raap_index[0] : stillig_index])
+
+    column_list_gyro = ['Total rotation hand', 'Total rotation flight', 'Total rotation roll', 'Total rotation whole throw', 'Mean ang. vel. hand', 'Max ang. vel. hand', 'Mean ang. vel. flight', 'Max ang. vel. flight', 'Mean ang. vel. roll', 'Max ang. vel. roll']
+
+    orientation_df = pd.DataFrame([[total_rotation_hand, total_rotation_flight, total_rotation_roll, total_rotation_throw, mean_ang_vel_hand, max_ang_vel_hand, mean_ang_vel_flight, max_ang_vel_flight, mean_ang_vel_roll, max_ang_vel_roll]], columns=column_list_gyro)
+
+    results = pd.concat([results, orientation_df], axis=1)
 
     if csv:
         results.to_csv(save_path)

@@ -1119,8 +1119,10 @@ The die will now start the logging process and store the logged data in the sele
         #self.l_StatusLogIndicator.configure(foreground="#ff8000")
         #dob.download()
         self.output_data = iocV7_support.logging_function(self.dob, self.l_mt, self.l_freq, self.l_accrange, self.l_gyrrange)
-        self.l_StatusLogIndicator.configure(text="Saving data...")
+        self.l_StatusLogIndicator.configure(text="Downloading...")
         self.l_StatusLogIndicator.configure(foreground="#008000")
+        tk.messagebox.showinfo(title="Die Logging Tool", 
+                               message="Logging Complete! Downloading data...")
         ############################
         ### NOG TE DOEN HIERTUSSEN:
         ### (- Data smoothing d.m.v. Kalman filter enz., tenzij dit pas wordt gedaan bij results)
@@ -1130,6 +1132,17 @@ The die will now start the logging process and store the logged data in the sele
         iocV7_support.save_dataframe_to_csv(self.output_data, self.filename, self.selected_directory)
         self.l_StatusLogIndicator.configure(text="Logging complete")
         self.l_StatusLogIndicator.configure(foreground="#008000")
+        # Updating scrolled listbox with new entry
+        if self.selected_directory:
+            print(f"Reloading directory after logging: {self.selected_directory}")
+            self.s_Dirname.configure(text=self.selected_directory)
+            self.Scrolledlistbox1.delete(0, tk.END)
+            for filename in os.listdir(self.selected_directory):
+                if filename.endswith('.csv'):
+                    self.Scrolledlistbox1.insert(tk.END, filename)
+        # Select file instantly for review
+        self.RW_csv = os.path.join(self.selected_directory, selected_file_name)
+        
         tk.messagebox.showinfo(title="Die Logging Tool", message=f"Logging Complete. File is now saved in selected directory as {self.filename}")
         self.enable_connect_cal_log()
         
@@ -1150,16 +1163,17 @@ The die will now start the logging process and store the logged data in the sele
                                     message="Please select a CSV file first.")
             self.r_Results.configure(state=tk.NORMAL)
             return
+        print(f"[LOG] No calibration values specified yet.")
+        tk.messagebox.showinfo(title="Calibration file",
+                               message="Please select your calibration file (.npz)")
+        self.cali, self.std_cali = iocV7_support.load_cali_values()
         if not self.cali or not self.std_cali:
-            print(f"[LOG] No calibration values specified yet.")
-            tk.messagebox.showinfo(title="Calibration file",
-                                   message="Please select your calibration file (.npz)")
-            self.cali, self.std_cali = iocV7_support.load_cali_values()
-            if not self.cali or not self.std_cali:
-                tk.messagebox.showerror(title="Results Error",
-                                       message="No valid calibration values found and/or selected!")
-                self.r_Results.configure(state=tk.NORMAL)
-                return
+            tk.messagebox.showerror(title="Results Error",
+                                    message="No valid calibration values found and/or selected. Aborting process...")
+            self.cali = None
+            self.std_cali = None
+            self.r_Results.configure(state=tk.NORMAL)
+            return
         ## TODO: Variables defining for opening.
         self.RW_title = self.r_LoadedFile.cget("text")
         #self.cali = calibratie rot angles
@@ -1531,7 +1545,7 @@ class TW_Result:
         self.NR_Rotations_var.configure(foreground="#000000")
         self.NR_Rotations_var.configure(highlightbackground="#d9d9d9")
         self.NR_Rotations_var.configure(highlightcolor="#000000")
-        self.NR_Rotations_var.configure(text='''<Rotations>''')
+        self.NR_Rotations_var.configure(text=f"{RW_TotalRotWholeThrow(self.results")
 
         self.NR_FinTopVal_var = tk.Label(self.Frame7)
         self.NR_FinTopVal_var.place(relx=0.559, rely=0.769, height=25, width=150)
@@ -1546,22 +1560,22 @@ class TW_Result:
         self.NR_FinTopVal_var.configure(foreground="#000000")
         self.NR_FinTopVal_var.configure(highlightbackground="#d9d9d9")
         self.NR_FinTopVal_var.configure(highlightcolor="#000000")
-        self.NR_FinTopVal_var.configure(text='''<Final Top Value>''')
+        self.NR_FinTopVal_var.configure(text=f"{RW_DieEndValue(self.results)}")
 
-        self.NR_InitTopVal_var = tk.Label(self.Frame7)
-        self.NR_InitTopVal_var.place(relx=0.559, rely=0.72, height=25, width=150)
+        #self.NR_InitTopVal_var = tk.Label(self.Frame7)
+        #self.NR_InitTopVal_var.place(relx=0.559, rely=0.72, height=25, width=150)
 
-        self.NR_InitTopVal_var.configure(activebackground="#d9d9d9")
-        self.NR_InitTopVal_var.configure(activeforeground="black")
-        self.NR_InitTopVal_var.configure(anchor='w')
-        self.NR_InitTopVal_var.configure(background="#d9d9d9")
-        self.NR_InitTopVal_var.configure(compound='left')
-        self.NR_InitTopVal_var.configure(disabledforeground="#a3a3a3")
-        self.NR_InitTopVal_var.configure(font="-family {Segoe UI} -size 9")
-        self.NR_InitTopVal_var.configure(foreground="#000000")
-        self.NR_InitTopVal_var.configure(highlightbackground="#d9d9d9")
-        self.NR_InitTopVal_var.configure(highlightcolor="#000000")
-        self.NR_InitTopVal_var.configure(text='''<Initial Top Value>''')
+        #self.NR_InitTopVal_var.configure(activebackground="#d9d9d9")
+        #self.NR_InitTopVal_var.configure(activeforeground="black")
+        #self.NR_InitTopVal_var.configure(anchor='w')
+        #self.NR_InitTopVal_var.configure(background="#d9d9d9")
+        #self.NR_InitTopVal_var.configure(compound='left')
+        #self.NR_InitTopVal_var.configure(disabledforeground="#a3a3a3")
+        #self.NR_InitTopVal_var.configure(font="-family {Segoe UI} -size 9")
+        #self.NR_InitTopVal_var.configure(foreground="#000000")
+        #self.NR_InitTopVal_var.configure(highlightbackground="#d9d9d9")
+        #self.NR_InitTopVal_var.configure(highlightcolor="#000000")
+        #self.NR_InitTopVal_var.configure(text='''<Initial Top Value>''')
 
         self.NR_Title = tk.Label(self.Frame7)
         self.NR_Title.place(relx=0.022, rely=0.011, height=26, width=339)
@@ -1655,15 +1669,19 @@ class TW_Result:
         self.plot_data(RW_PlotGyrXYZ, self.P_AngVelFrame)
         self.plot_data(RW_PlotEuler, self.P_CalcRotFrame)
         
+        #self.export_to_savefile()
+    
     def plot_data(self, func, frame):
         fig, ax = func(self.results)
         canvas = FigureCanvasTkAgg(fig, master=frame)
         canvas.draw()
         canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
         
+    def export_to_savefile(self):
+        self.filedate = iocV7_support.create_filename_date()
+        self.filename = f"{self.filedate}_Results.csv"
+        self.results.to_csv(self.filename)
     
-    
-        
 
 # The following code is added to facilitate the Scrolled widgets you specified.
 class AutoScroll(object):
