@@ -182,6 +182,7 @@ def logging_function(dob, mt, freq, ar, gr):
     dob.download()
     out_data = dob.datadf
     return out_data
+
         
 ### TKINTER FUNCTIONS ###
 def on_destroy():

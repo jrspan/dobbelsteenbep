@@ -53,6 +53,7 @@ Max ang vel flight Mean ang vel roll
 Max ang vel roll
 '''
 
+# Helper function
 def RW_gfe(df, key):
     # Getting first entry of keys.
     # If KeyError: Returns the string "undefined".
@@ -60,8 +61,9 @@ def RW_gfe(df, key):
         return str(df.loc[df.index[0], key])
     except KeyError:
         print(f"KeyError: {key} not a valid column of dataframe.")
-        return str('<Undefined>')
+        return None
 
+# Time functions
 def RW_TotalTime(df):
     # Returns the total time (in seconds) 
     endtime = df.loc[df.index[-1], 'timestamp']
@@ -77,56 +79,71 @@ def RW_ReleaseTimestamp(df):
     return RW_gfe(df, 'Gooi tijd')
 
 def RW_AirborneTime(df):
-    return RW_gfe(df, 'Lucht tijd')
+    return round(float(RW_gfe(df, 'Lucht tijd'))/1000, 2)
 
 def RW_StartToRelease(df):
     return RW_gfe(df, 'Start tot los')
 
 def RW_StartToGround(df):
-    return RW_gfe(df, 'Start tot grond')
+    # Eerste stuiter
+    return round(float(RW_gfe(df, 'Start tot grond')) / 1000, 2)
 
+# Tijd in hand
+def RW_TimeInHand(df):
+    try:
+        return str((float(RW_StartToRelease(df)) - float(RW_TimestampGrab(df))) / 1000)
+    except:
+        return str('<Undefined>')
+
+# Die end
 def RW_DieEndValue(df):
-    return RW_gfe(df, 'Laatste zijde')
+    return str(int(round(float(RW_gfe(df, 'Laatste zijde')), 0)))
 
+
+# Acceleration functions
 def RW_MeanAccHand(df):
-    return RW_gfe(df, 'Mean acc hand')
+    return round(float(RW_gfe(df, 'Mean acc hand')), 3)
 
 def RW_MaxAccHand(df):
-    return RW_gfe(df, 'Max acc hand')
+    return round(float(RW_gfe(df, 'Max acc hand')), 3)
 
 def RW_MeanAccRoll(df):
-    return RW_gfe(df, 'Mean acc roll')
+    return round(float(RW_gfe(df, 'Mean acc roll')), 3)
 
 def RW_MaxAccRoll(df):
-    return RW_gfe(df, 'Max acc roll')
+    return round(float(RW_gfe(df, 'Max acc roll')), 3)
 
 def RW_MeanAccWholeThrow(df):
-    return RW_gfe(df, 'Mean acc whole throw')
+    return round(float(RW_gfe(df, 'Mean acc whole throw')), 3)
 
 def RW_MaxAccWholeThrow(df):
-    return RW_gfe(df, 'Max acc whole throw')
+    return round(float(RW_gfe(df, 'Max acc whole throw')), 3)
 
 def RW_MeanAccHandG(df):
-    return RW_gfe(df, 'Mean acc hand with gravity')
+    return round(float(RW_gfe(df, 'Mean acc hand with gravity')), 3)
 
 def RW_MaxAccHandG(df):
-    return RW_gfe(df, 'Max acc hand with gravity')
+    return round(float(RW_gfe(df, 'Max acc hand with gravity')), 3)
 
 def RW_MeanAccRollG(df):
-    return RW_gfe(df, 'Mean acc roll with gravity')
+    return round(float(RW_gfe(df, 'Mean acc roll with gravity')), 3)
 
 def RW_MaxAccRollG(df):
-    return RW_gfe(df, 'Max acc roll with gravity')
+    return round(float(RW_gfe(df, 'Max acc roll with gravity')), 3)
 
 def RW_MeanAccWholeThrowG(df):
-    return RW_gfe(df, 'Mean acc whole throw with gravity')
+    return round(float(RW_gfe(df, 'Mean acc whole throw with gravity')), 3)
 
 def RW_MaxAccWholeThrowG(df):
-    return RW_gfe(df, 'Max acc whole throw with gravity')
+    return round(float(RW_gfe(df, 'Max acc whole throw with gravity')), 3)
 
+
+# NIET IN RESULTS!
 def RW_DeltaTheta(df):
     return RW_gfe(df, 'Delta theta')
 
+
+# Rotations
 def RW_TotalRotHand(df):
     return RW_gfe(df, 'Total rotation hand')
 
@@ -137,8 +154,9 @@ def RW_TotalRotRoll(df):
     return RW_gfe(df, 'Total rotation roll')
 
 def RW_TotalRotWholeThrow(df):
-    return RW_gfe(df, 'Total rotation whole throw')
+    return str(round(float(RW_gfe(df, 'Total rotation whole throw')) / 360, 2))
 
+# Angular velocity
 def RW_MeanAngVelHand(df):
     return RW_gfe(df, 'Mean ang. vel. hand')
 
