@@ -1229,8 +1229,13 @@ class TW_Result:
             print(f"An unexpected error occured: {e}")
             tk.messagebox.showerror(title="Error: Results",
                                    message = "Results error! Please recheck your selected CSV file and try again.")
-            iocV7_support.close_second_window()         
-
+            iocV7_support.close_second_window()
+            
+        if len(self.results.columns) < 50:
+            self.certain = False
+            tk.messagebox.showwarning(title="Notification",
+                                   message=f"Due to major uncertainties regarding when the die was thrown, some metrics could not be calculated. As a result, data will be missing in this file.")
+        
         self.Frame7 = tk.Frame(self.top)
         self.Frame7.place(relx=0.014, rely=0.015, relheight=0.94, relwidth=0.256)
 
@@ -1255,8 +1260,10 @@ class TW_Result:
         self.NR_Title.configure(highlightcolor="#000000")
         self.NR_Title.configure(text='''Numerical Results''')
 
+
+
         self.NR_TotalTime = tk.Label(self.Frame7)
-        self.NR_TotalTime.place(relx=0.056, rely=0.065, height=20, width=150)
+        self.NR_TotalTime.place(relx=0.056, rely=0.065, height=20, width=250)
         self.NR_TotalTime.configure(activebackground="#d9d9d9")
         self.NR_TotalTime.configure(activeforeground="black")
         self.NR_TotalTime.configure(anchor='w')
@@ -1270,7 +1277,7 @@ class TW_Result:
         self.NR_TotalTime.configure(text='''Total time''')
         
         self.NR_TotalTime_var = tk.Label(self.Frame7)
-        self.NR_TotalTime_var.place(relx=0.559, rely=0.065, height=20, width=150)
+        self.NR_TotalTime_var.place(relx=0.659, rely=0.065, height=20, width=120)
         self.NR_TotalTime_var.configure(activebackground="#d9d9d9")
         self.NR_TotalTime_var.configure(activeforeground="black")
         self.NR_TotalTime_var.configure(anchor='w')
@@ -1284,7 +1291,7 @@ class TW_Result:
         self.NR_TotalTime_var.configure(text='''<Total Time>''')
         
         self.NR_TimeInHand = tk.Label(self.Frame7)
-        self.NR_TimeInHand.place(relx=0.056, rely=0.090, height=20, width=130)
+        self.NR_TimeInHand.place(relx=0.056, rely=0.090, height=20, width=250)
         self.NR_TimeInHand.configure(activebackground="#d9d9d9")
         self.NR_TimeInHand.configure(activeforeground="black")
         self.NR_TimeInHand.configure(anchor='w')
@@ -1298,7 +1305,7 @@ class TW_Result:
         self.NR_TimeInHand.configure(text='''Shake duration''')        
         
         self.NR_TimeInHand_var = tk.Label(self.Frame7)
-        self.NR_TimeInHand_var.place(relx=0.559, rely=0.090, height=20, width=150)
+        self.NR_TimeInHand_var.place(relx=0.659, rely=0.090, height=20, width=120)
         self.NR_TimeInHand_var.configure(activebackground="#d9d9d9")
         self.NR_TimeInHand_var.configure(activeforeground="black")
         self.NR_TimeInHand_var.configure(anchor='w')
@@ -1312,7 +1319,7 @@ class TW_Result:
         self.NR_TimeInHand_var.configure(text='''<Time in hand>''')
 
         self.NR_TimeInAir = tk.Label(self.Frame7)
-        self.NR_TimeInAir.place(relx=0.056, rely=0.115, height=20, width=150)
+        self.NR_TimeInAir.place(relx=0.056, rely=0.115, height=20, width=250)
         self.NR_TimeInAir.configure(activebackground="#d9d9d9")
         self.NR_TimeInAir.configure(activeforeground="black")
         self.NR_TimeInAir.configure(anchor='w')
@@ -1326,7 +1333,7 @@ class TW_Result:
         self.NR_TimeInAir.configure(text='''Flight duration''')
         
         self.NR_TimeInAir_var = tk.Label(self.Frame7)
-        self.NR_TimeInAir_var.place(relx=0.559, rely=0.115, height=20, width=150)
+        self.NR_TimeInAir_var.place(relx=0.659, rely=0.115, height=20, width=120)
         self.NR_TimeInAir_var.configure(activebackground="#d9d9d9")
         self.NR_TimeInAir_var.configure(activeforeground="black")
         self.NR_TimeInAir_var.configure(anchor='w')
@@ -1340,7 +1347,7 @@ class TW_Result:
         self.NR_TimeInAir_var.configure(text='''<Time in air>''')
         
         self.NR_TimeToFirstBounce = tk.Label(self.Frame7)
-        self.NR_TimeToFirstBounce.place(relx=0.056, rely=0.140, height=20, width=150)
+        self.NR_TimeToFirstBounce.place(relx=0.056, rely=0.140, height=20, width=250)
         self.NR_TimeToFirstBounce.configure(activebackground="#d9d9d9")
         self.NR_TimeToFirstBounce.configure(activeforeground="black")
         self.NR_TimeToFirstBounce.configure(anchor='w')
@@ -1354,7 +1361,7 @@ class TW_Result:
         self.NR_TimeToFirstBounce.configure(text='''First bounce contact time''')
 
         self.NR_TimeFirstBounce_var = tk.Label(self.Frame7)
-        self.NR_TimeFirstBounce_var.place(relx=0.559, rely=0.140, height=20, width=150)
+        self.NR_TimeFirstBounce_var.place(relx=0.659, rely=0.140, height=20, width=120)
         self.NR_TimeFirstBounce_var.configure(activebackground="#d9d9d9")
         self.NR_TimeFirstBounce_var.configure(activeforeground="black")
         self.NR_TimeFirstBounce_var.configure(anchor='w')
@@ -1370,7 +1377,7 @@ class TW_Result:
         
         
         self.NR_MeanAcc = tk.Label(self.Frame7)
-        self.NR_MeanAcc.place(relx=0.056, rely=0.190, height=20, width=150)
+        self.NR_MeanAcc.place(relx=0.056, rely=0.190, height=20, width=250)
         self.NR_MeanAcc.configure(activebackground="#d9d9d9")
         self.NR_MeanAcc.configure(activeforeground="black")
         self.NR_MeanAcc.configure(anchor='w')
@@ -1384,7 +1391,7 @@ class TW_Result:
         self.NR_MeanAcc.configure(text='''Mean Acceleration''')
         
         self.NR_MeanAcc_var = tk.Label(self.Frame7)
-        self.NR_MeanAcc_var.place(relx=0.559, rely=0.190, height=20, width=150)
+        self.NR_MeanAcc_var.place(relx=0.659, rely=0.190, height=20, width=120)
         self.NR_MeanAcc_var.configure(activebackground="#d9d9d9")
         self.NR_MeanAcc_var.configure(activeforeground="black")
         self.NR_MeanAcc_var.configure(anchor='w')
@@ -1398,7 +1405,7 @@ class TW_Result:
         self.NR_MeanAcc_var.configure(text='''<Peak Acc>''')
         
         self.NR_PeakAcc = tk.Label(self.Frame7)
-        self.NR_PeakAcc.place(relx=0.056, rely=0.215, height=20, width=150)
+        self.NR_PeakAcc.place(relx=0.056, rely=0.215, height=20, width=250)
         self.NR_PeakAcc.configure(activebackground="#d9d9d9")
         self.NR_PeakAcc.configure(activeforeground="black")
         self.NR_PeakAcc.configure(anchor='w')
@@ -1412,7 +1419,7 @@ class TW_Result:
         self.NR_PeakAcc.configure(text='''Peak acceleration''')
         
         self.NR_PeakAcc_var = tk.Label(self.Frame7)
-        self.NR_PeakAcc_var.place(relx=0.559, rely=0.215, height=20, width=150)
+        self.NR_PeakAcc_var.place(relx=0.659, rely=0.215, height=20, width=120)
         self.NR_PeakAcc_var.configure(activebackground="#d9d9d9")
         self.NR_PeakAcc_var.configure(activeforeground="black")
         self.NR_PeakAcc_var.configure(anchor='w')
@@ -1426,7 +1433,7 @@ class TW_Result:
         self.NR_PeakAcc_var.configure(text='''<Peak Acc>''')
         
         self.NR_MeanAccHand = tk.Label(self.Frame7)
-        self.NR_MeanAccHand.place(relx=0.056, rely=0.240, height=20, width=150)
+        self.NR_MeanAccHand.place(relx=0.056, rely=0.240, height=20, width=250)
         self.NR_MeanAccHand.configure(activebackground="#d9d9d9")
         self.NR_MeanAccHand.configure(activeforeground="black")
         self.NR_MeanAccHand.configure(anchor='w')
@@ -1440,7 +1447,7 @@ class TW_Result:
         self.NR_MeanAccHand.configure(text='''Mean Acceleration Hand''')
         
         self.NR_MeanAccHand_var = tk.Label(self.Frame7)
-        self.NR_MeanAccHand_var.place(relx=0.559, rely=0.240, height=20, width=150)
+        self.NR_MeanAccHand_var.place(relx=0.659, rely=0.240, height=20, width=120)
         self.NR_MeanAccHand_var.configure(activebackground="#d9d9d9")
         self.NR_MeanAccHand_var.configure(activeforeground="black")
         self.NR_MeanAccHand_var.configure(anchor='w')
@@ -1454,7 +1461,7 @@ class TW_Result:
         self.NR_MeanAccHand_var.configure(text='''<Mean Acc Hand>''')
         
         self.NR_PeakAccHand = tk.Label(self.Frame7)
-        self.NR_PeakAccHand.place(relx=0.056, rely=0.265, height=20, width=150)
+        self.NR_PeakAccHand.place(relx=0.056, rely=0.265, height=20, width=250)
         self.NR_PeakAccHand.configure(activebackground="#d9d9d9")
         self.NR_PeakAccHand.configure(activeforeground="black")
         self.NR_PeakAccHand.configure(anchor='w')
@@ -1468,7 +1475,7 @@ class TW_Result:
         self.NR_PeakAccHand.configure(text='''Peak Acceleration Hand''')
         
         self.NR_PeakAccHand_var = tk.Label(self.Frame7)
-        self.NR_PeakAccHand_var.place(relx=0.559, rely=0.265, height=20, width=150)
+        self.NR_PeakAccHand_var.place(relx=0.659, rely=0.265, height=20, width=120)
         self.NR_PeakAccHand_var.configure(activebackground="#d9d9d9")
         self.NR_PeakAccHand_var.configure(activeforeground="black")
         self.NR_PeakAccHand_var.configure(anchor='w')
@@ -1482,7 +1489,7 @@ class TW_Result:
         self.NR_PeakAccHand_var.configure(text='''<Peak Acc Hand>''')
 
         self.NR_MeanAccRoll = tk.Label(self.Frame7)
-        self.NR_MeanAccRoll.place(relx=0.056, rely=0.290, height=20, width=150)
+        self.NR_MeanAccRoll.place(relx=0.056, rely=0.290, height=20, width=250)
         self.NR_MeanAccRoll.configure(activebackground="#d9d9d9")
         self.NR_MeanAccRoll.configure(activeforeground="black")
         self.NR_MeanAccRoll.configure(anchor='w')
@@ -1496,7 +1503,7 @@ class TW_Result:
         self.NR_MeanAccRoll.configure(text='''Mean Acceleration Roll''')
         
         self.NR_MeanAccRoll_var = tk.Label(self.Frame7)
-        self.NR_MeanAccRoll_var.place(relx=0.559, rely=0.290, height=20, width=150)
+        self.NR_MeanAccRoll_var.place(relx=0.659, rely=0.290, height=20, width=120)
         self.NR_MeanAccRoll_var.configure(activebackground="#d9d9d9")
         self.NR_MeanAccRoll_var.configure(activeforeground="black")
         self.NR_MeanAccRoll_var.configure(anchor='w')
@@ -1510,7 +1517,7 @@ class TW_Result:
         self.NR_MeanAccRoll_var.configure(text='''<Mean Acc Roll>''')
         
         self.NR_PeakAccRoll = tk.Label(self.Frame7)
-        self.NR_PeakAccRoll.place(relx=0.056, rely=0.315, height=20, width=150)
+        self.NR_PeakAccRoll.place(relx=0.056, rely=0.315, height=20, width=250)
         self.NR_PeakAccRoll.configure(activebackground="#d9d9d9")
         self.NR_PeakAccRoll.configure(activeforeground="black")
         self.NR_PeakAccRoll.configure(anchor='w')
@@ -1524,7 +1531,7 @@ class TW_Result:
         self.NR_PeakAccRoll.configure(text='''Peak Acceleration Roll''')
         
         self.NR_PeakAccRoll_var = tk.Label(self.Frame7)
-        self.NR_PeakAccRoll_var.place(relx=0.559, rely=0.315, height=20, width=150)
+        self.NR_PeakAccRoll_var.place(relx=0.659, rely=0.315, height=20, width=120)
         self.NR_PeakAccRoll_var.configure(activebackground="#d9d9d9")
         self.NR_PeakAccRoll_var.configure(activeforeground="black")
         self.NR_PeakAccRoll_var.configure(anchor='w')
@@ -1540,7 +1547,7 @@ class TW_Result:
 
 
         self.NR_MeanAccG = tk.Label(self.Frame7)
-        self.NR_MeanAccG.place(relx=0.056, rely=0.365, height=20, width=150)
+        self.NR_MeanAccG.place(relx=0.056, rely=0.365, height=20, width=250)
         self.NR_MeanAccG.configure(activebackground="#d9d9d9")
         self.NR_MeanAccG.configure(activeforeground="black")
         self.NR_MeanAccG.configure(anchor='w')
@@ -1554,7 +1561,7 @@ class TW_Result:
         self.NR_MeanAccG.configure(text='''Mean Acceleration (w. Gravity)''')
         
         self.NR_MeanAccG_var = tk.Label(self.Frame7)
-        self.NR_MeanAccG_var.place(relx=0.559, rely=0.365, height=20, width=150)
+        self.NR_MeanAccG_var.place(relx=0.659, rely=0.365, height=20, width=120)
         self.NR_MeanAccG_var.configure(activebackground="#d9d9d9")
         self.NR_MeanAccG_var.configure(activeforeground="black")
         self.NR_MeanAccG_var.configure(anchor='w')
@@ -1568,7 +1575,7 @@ class TW_Result:
         self.NR_MeanAccG_var.configure(text='''<Mean Acc G>''')
 
         self.NR_PeakAccG = tk.Label(self.Frame7)
-        self.NR_PeakAccG.place(relx=0.056, rely=0.390, height=20, width=150)
+        self.NR_PeakAccG.place(relx=0.056, rely=0.390, height=20, width=250)
         self.NR_PeakAccG.configure(activebackground="#d9d9d9")
         self.NR_PeakAccG.configure(activeforeground="black")
         self.NR_PeakAccG.configure(anchor='w')
@@ -1582,7 +1589,7 @@ class TW_Result:
         self.NR_PeakAccG.configure(text='''Peak Acceleration (w. Gravity)''')
         
         self.NR_PeakAccG_var = tk.Label(self.Frame7)
-        self.NR_PeakAccG_var.place(relx=0.559, rely=0.390, height=20, width=150)
+        self.NR_PeakAccG_var.place(relx=0.659, rely=0.390, height=20, width=120)
         self.NR_PeakAccG_var.configure(activebackground="#d9d9d9")
         self.NR_PeakAccG_var.configure(activeforeground="black")
         self.NR_PeakAccG_var.configure(anchor='w')
@@ -1596,7 +1603,7 @@ class TW_Result:
         self.NR_PeakAccG_var.configure(text='''<Peak Acc G>''')
 
         self.NR_MeanAccHandG = tk.Label(self.Frame7)
-        self.NR_MeanAccHandG.place(relx=0.056, rely=0.415, height=20, width=150)
+        self.NR_MeanAccHandG.place(relx=0.056, rely=0.415, height=20, width=250)
         self.NR_MeanAccHandG.configure(activebackground="#d9d9d9")
         self.NR_MeanAccHandG.configure(activeforeground="black")
         self.NR_MeanAccHandG.configure(anchor='w')
@@ -1610,7 +1617,7 @@ class TW_Result:
         self.NR_MeanAccHandG.configure(text='''Mean Acceleration Hand (w. Gravity)''')
         
         self.NR_MeanAccHandG_var = tk.Label(self.Frame7)
-        self.NR_MeanAccHandG_var.place(relx=0.559, rely=0.415, height=20, width=150)
+        self.NR_MeanAccHandG_var.place(relx=0.659, rely=0.415, height=20, width=120)
         self.NR_MeanAccHandG_var.configure(activebackground="#d9d9d9")
         self.NR_MeanAccHandG_var.configure(activeforeground="black")
         self.NR_MeanAccHandG_var.configure(anchor='w')
@@ -1624,7 +1631,7 @@ class TW_Result:
         self.NR_MeanAccHandG_var.configure(text='''<Mean Acc Hand G>''')
         
         self.NR_PeakAccHandG = tk.Label(self.Frame7)
-        self.NR_PeakAccHandG.place(relx=0.056, rely=0.440, height=20, width=150)
+        self.NR_PeakAccHandG.place(relx=0.056, rely=0.440, height=20, width=250)
         self.NR_PeakAccHandG.configure(activebackground="#d9d9d9")
         self.NR_PeakAccHandG.configure(activeforeground="black")
         self.NR_PeakAccHandG.configure(anchor='w')
@@ -1638,7 +1645,7 @@ class TW_Result:
         self.NR_PeakAccHandG.configure(text='''Peak Acceleration Hand (w. Gravity)''')
         
         self.NR_PeakAccHandG_var = tk.Label(self.Frame7)
-        self.NR_PeakAccHandG_var.place(relx=0.559, rely=0.440, height=20, width=150)
+        self.NR_PeakAccHandG_var.place(relx=0.659, rely=0.440, height=20, width=120)
         self.NR_PeakAccHandG_var.configure(activebackground="#d9d9d9")
         self.NR_PeakAccHandG_var.configure(activeforeground="black")
         self.NR_PeakAccHandG_var.configure(anchor='w')
@@ -1652,7 +1659,7 @@ class TW_Result:
         self.NR_PeakAccHandG_var.configure(text='''<Peak Acc Hand G>''')
 
         self.NR_MeanAccRollG = tk.Label(self.Frame7)
-        self.NR_MeanAccRollG.place(relx=0.056, rely=0.465, height=20, width=150)
+        self.NR_MeanAccRollG.place(relx=0.056, rely=0.465, height=20, width=250)
         self.NR_MeanAccRollG.configure(activebackground="#d9d9d9")
         self.NR_MeanAccRollG.configure(activeforeground="black")
         self.NR_MeanAccRollG.configure(anchor='w')
@@ -1666,7 +1673,7 @@ class TW_Result:
         self.NR_MeanAccRollG.configure(text='''Mean Acceleration Roll (w. Gravity)''')
         
         self.NR_MeanAccRollG_var = tk.Label(self.Frame7)
-        self.NR_MeanAccRollG_var.place(relx=0.559, rely=0.465, height=20, width=150)
+        self.NR_MeanAccRollG_var.place(relx=0.659, rely=0.465, height=20, width=120)
         self.NR_MeanAccRollG_var.configure(activebackground="#d9d9d9")
         self.NR_MeanAccRollG_var.configure(activeforeground="black")
         self.NR_MeanAccRollG_var.configure(anchor='w')
@@ -1680,7 +1687,7 @@ class TW_Result:
         self.NR_MeanAccRollG_var.configure(text='''<Mean Acc Roll G>''')
         
         self.NR_PeakAccRollG = tk.Label(self.Frame7)
-        self.NR_PeakAccRollG.place(relx=0.056, rely=0.490, height=20, width=150)
+        self.NR_PeakAccRollG.place(relx=0.056, rely=0.490, height=20, width=250)
         self.NR_PeakAccRollG.configure(activebackground="#d9d9d9")
         self.NR_PeakAccRollG.configure(activeforeground="black")
         self.NR_PeakAccRollG.configure(anchor='w')
@@ -1694,7 +1701,7 @@ class TW_Result:
         self.NR_PeakAccRollG.configure(text='''Peak Acceleration Roll (w. Gravity)''')
         
         self.NR_PeakAccRollG_var = tk.Label(self.Frame7)
-        self.NR_PeakAccRollG_var.place(relx=0.559, rely=0.490, height=20, width=150)
+        self.NR_PeakAccRollG_var.place(relx=0.659, rely=0.490, height=20, width=120)
         self.NR_PeakAccRollG_var.configure(activebackground="#d9d9d9")
         self.NR_PeakAccRollG_var.configure(activeforeground="black")
         self.NR_PeakAccRollG_var.configure(anchor='w')
@@ -1710,7 +1717,7 @@ class TW_Result:
 
 
         self.NR_TotalRotations = tk.Label(self.Frame7)
-        self.NR_TotalRotations.place(relx=0.056, rely=0.540, height=20, width=150)
+        self.NR_TotalRotations.place(relx=0.056, rely=0.540, height=20, width=250)
         self.NR_TotalRotations.configure(activebackground="#d9d9d9")
         self.NR_TotalRotations.configure(activeforeground="black")
         self.NR_TotalRotations.configure(anchor='w')
@@ -1724,7 +1731,7 @@ class TW_Result:
         self.NR_TotalRotations.configure(text='''Amount of rotations''')
         
         self.NR_TotalRotations_var = tk.Label(self.Frame7)
-        self.NR_TotalRotations_var.place(relx=0.559, rely=0.540, height=20, width=150)
+        self.NR_TotalRotations_var.place(relx=0.659, rely=0.540, height=20, width=120)
         self.NR_TotalRotations_var.configure(activebackground="#d9d9d9")
         self.NR_TotalRotations_var.configure(activeforeground="black")
         self.NR_TotalRotations_var.configure(anchor='w')
@@ -1738,7 +1745,7 @@ class TW_Result:
         self.NR_TotalRotations_var.configure(text='''<Amount Rotations Whole Throw>''')
 
         self.NR_RotationsHand = tk.Label(self.Frame7)
-        self.NR_RotationsHand.place(relx=0.056, rely=0.565, height=20, width=150)
+        self.NR_RotationsHand.place(relx=0.056, rely=0.565, height=20, width=250)
         self.NR_RotationsHand.configure(activebackground="#d9d9d9")
         self.NR_RotationsHand.configure(activeforeground="black")
         self.NR_RotationsHand.configure(anchor='w')
@@ -1752,7 +1759,7 @@ class TW_Result:
         self.NR_RotationsHand.configure(text='''Rotations in hand''')
         
         self.NR_RotationsHand_var = tk.Label(self.Frame7)
-        self.NR_RotationsHand_var.place(relx=0.559, rely=0.565, height=20, width=150)
+        self.NR_RotationsHand_var.place(relx=0.659, rely=0.565, height=20, width=120)
         self.NR_RotationsHand_var.configure(activebackground="#d9d9d9")
         self.NR_RotationsHand_var.configure(activeforeground="black")
         self.NR_RotationsHand_var.configure(anchor='w')
@@ -1766,7 +1773,7 @@ class TW_Result:
         self.NR_RotationsHand_var.configure(text='''<Rotations in hand>''')
         
         self.NR_RotationsFlight = tk.Label(self.Frame7)
-        self.NR_RotationsFlight.place(relx=0.056, rely=0.590, height=20, width=150)
+        self.NR_RotationsFlight.place(relx=0.056, rely=0.590, height=20, width=250)
         self.NR_RotationsFlight.configure(activebackground="#d9d9d9")
         self.NR_RotationsFlight.configure(activeforeground="black")
         self.NR_RotationsFlight.configure(anchor='w')
@@ -1780,7 +1787,7 @@ class TW_Result:
         self.NR_RotationsFlight.configure(text='''Rotations in Flight''')
         
         self.NR_RotationsFlight_var = tk.Label(self.Frame7)
-        self.NR_RotationsFlight_var.place(relx=0.559, rely=0.590, height=20, width=150)
+        self.NR_RotationsFlight_var.place(relx=0.659, rely=0.590, height=20, width=120)
         self.NR_RotationsFlight_var.configure(activebackground="#d9d9d9")
         self.NR_RotationsFlight_var.configure(activeforeground="black")
         self.NR_RotationsFlight_var.configure(anchor='w')
@@ -1794,7 +1801,7 @@ class TW_Result:
         self.NR_RotationsFlight_var.configure(text='''<Rotations in Flight>''')
         
         self.NR_RotationsRoll = tk.Label(self.Frame7)
-        self.NR_RotationsRoll.place(relx=0.056, rely=0.615, height=20, width=150)
+        self.NR_RotationsRoll.place(relx=0.056, rely=0.615, height=20, width=250)
         self.NR_RotationsRoll.configure(activebackground="#d9d9d9")
         self.NR_RotationsRoll.configure(activeforeground="black")
         self.NR_RotationsRoll.configure(anchor='w')
@@ -1808,7 +1815,7 @@ class TW_Result:
         self.NR_RotationsRoll.configure(text='''Rotations in Roll''')
         
         self.NR_RotationsRoll_var = tk.Label(self.Frame7)
-        self.NR_RotationsRoll_var.place(relx=0.559, rely=0.615, height=20, width=150)
+        self.NR_RotationsRoll_var.place(relx=0.659, rely=0.615, height=20, width=120)
         self.NR_RotationsRoll_var.configure(activebackground="#d9d9d9")
         self.NR_RotationsRoll_var.configure(activeforeground="black")
         self.NR_RotationsRoll_var.configure(anchor='w')
@@ -1824,7 +1831,7 @@ class TW_Result:
         
         
         self.NR_MeanAngVel = tk.Label(self.Frame7)
-        self.NR_MeanAngVel.place(relx=0.056, rely=0.665, height=20, width=150)
+        self.NR_MeanAngVel.place(relx=0.056, rely=0.665, height=20, width=250)
         self.NR_MeanAngVel.configure(activebackground="#d9d9d9")
         self.NR_MeanAngVel.configure(activeforeground="black")
         self.NR_MeanAngVel.configure(anchor='w')
@@ -1838,7 +1845,7 @@ class TW_Result:
         self.NR_MeanAngVel.configure(text='''Average angular velocity''')
         
         self.NR_MeanAngVel_var = tk.Label(self.Frame7)
-        self.NR_MeanAngVel_var.place(relx=0.559, rely=0.665, height=20, width=150)
+        self.NR_MeanAngVel_var.place(relx=0.659, rely=0.665, height=20, width=120)
         self.NR_MeanAngVel_var.configure(activebackground="#d9d9d9")
         self.NR_MeanAngVel_var.configure(activeforeground="black")
         self.NR_MeanAngVel_var.configure(anchor='w')
@@ -1852,7 +1859,7 @@ class TW_Result:
         self.NR_MeanAngVel_var.configure(text='''<Avg Ang Vel>''')
 
         self.NR_MaxAngVel = tk.Label(self.Frame7)
-        self.NR_MaxAngVel.place(relx=0.056, rely=0.690, height=20, width=150)
+        self.NR_MaxAngVel.place(relx=0.056, rely=0.690, height=20, width=250)
         self.NR_MaxAngVel.configure(activebackground="#d9d9d9")
         self.NR_MaxAngVel.configure(activeforeground="black")
         self.NR_MaxAngVel.configure(anchor='w')
@@ -1866,7 +1873,7 @@ class TW_Result:
         self.NR_MaxAngVel.configure(text='''Peak angular velocity''')
         
         self.NR_MaxAngVel_var = tk.Label(self.Frame7)
-        self.NR_MaxAngVel_var.place(relx=0.559, rely=0.690, height=20, width=150)
+        self.NR_MaxAngVel_var.place(relx=0.659, rely=0.690, height=20, width=120)
         self.NR_MaxAngVel_var.configure(activebackground="#d9d9d9")
         self.NR_MaxAngVel_var.configure(activeforeground="black")
         self.NR_MaxAngVel_var.configure(anchor='w')
@@ -1880,7 +1887,7 @@ class TW_Result:
         self.NR_MaxAngVel_var.configure(text='''<Max Ang Vel>''')
 
         self.NR_MeanAngVelHand = tk.Label(self.Frame7)
-        self.NR_MeanAngVelHand.place(relx=0.056, rely=0.715, height=20, width=150)
+        self.NR_MeanAngVelHand.place(relx=0.056, rely=0.715, height=20, width=250)
         self.NR_MeanAngVelHand.configure(activebackground="#d9d9d9")
         self.NR_MeanAngVelHand.configure(activeforeground="black")
         self.NR_MeanAngVelHand.configure(anchor='w')
@@ -1894,7 +1901,7 @@ class TW_Result:
         self.NR_MeanAngVelHand.configure(text='''Mean angular velocity hand''')
         
         self.NR_MeanAngVelHand_var = tk.Label(self.Frame7)
-        self.NR_MeanAngVelHand_var.place(relx=0.559, rely=0.715, height=20, width=150)
+        self.NR_MeanAngVelHand_var.place(relx=0.659, rely=0.715, height=20, width=120)
         self.NR_MeanAngVelHand_var.configure(activebackground="#d9d9d9")
         self.NR_MeanAngVelHand_var.configure(activeforeground="black")
         self.NR_MeanAngVelHand_var.configure(anchor='w')
@@ -1908,7 +1915,7 @@ class TW_Result:
         self.NR_MeanAngVelHand_var.configure(text='''<Avg Ang Vel Hand>''')
 
         self.NR_MaxAngVelHand = tk.Label(self.Frame7)
-        self.NR_MaxAngVelHand.place(relx=0.056, rely=0.740, height=20, width=150)
+        self.NR_MaxAngVelHand.place(relx=0.056, rely=0.740, height=20, width=250)
         self.NR_MaxAngVelHand.configure(activebackground="#d9d9d9")
         self.NR_MaxAngVelHand.configure(activeforeground="black")
         self.NR_MaxAngVelHand.configure(anchor='w')
@@ -1922,7 +1929,7 @@ class TW_Result:
         self.NR_MaxAngVelHand.configure(text='''Peak angular velocity hand''')
         
         self.NR_MaxAngVelHand_var = tk.Label(self.Frame7)
-        self.NR_MaxAngVelHand_var.place(relx=0.559, rely=0.740, height=20, width=150)
+        self.NR_MaxAngVelHand_var.place(relx=0.659, rely=0.740, height=20, width=120)
         self.NR_MaxAngVelHand_var.configure(activebackground="#d9d9d9")
         self.NR_MaxAngVelHand_var.configure(activeforeground="black")
         self.NR_MaxAngVelHand_var.configure(anchor='w')
@@ -1936,7 +1943,7 @@ class TW_Result:
         self.NR_MaxAngVelHand_var.configure(text='''<Max Ang Vel Hand>''')
 
         self.NR_MeanAngVelFlight = tk.Label(self.Frame7)
-        self.NR_MeanAngVelFlight.place(relx=0.056, rely=0.765, height=20, width=150)
+        self.NR_MeanAngVelFlight.place(relx=0.056, rely=0.765, height=20, width=250)
         self.NR_MeanAngVelFlight.configure(activebackground="#d9d9d9")
         self.NR_MeanAngVelFlight.configure(activeforeground="black")
         self.NR_MeanAngVelFlight.configure(anchor='w')
@@ -1950,7 +1957,7 @@ class TW_Result:
         self.NR_MeanAngVelFlight.configure(text='''Average angular velocity flight''')
         
         self.NR_MeanAngVelFlight_var = tk.Label(self.Frame7)
-        self.NR_MeanAngVelFlight_var.place(relx=0.559, rely=0.765, height=20, width=150)
+        self.NR_MeanAngVelFlight_var.place(relx=0.659, rely=0.765, height=20, width=120)
         self.NR_MeanAngVelFlight_var.configure(activebackground="#d9d9d9")
         self.NR_MeanAngVelFlight_var.configure(activeforeground="black")
         self.NR_MeanAngVelFlight_var.configure(anchor='w')
@@ -1964,7 +1971,7 @@ class TW_Result:
         self.NR_MeanAngVelFlight_var.configure(text='''<Avg Ang Vel Flight>''')
 
         self.NR_MaxAngVelFlight = tk.Label(self.Frame7)
-        self.NR_MaxAngVelFlight.place(relx=0.056, rely=0.790, height=20, width=150)
+        self.NR_MaxAngVelFlight.place(relx=0.056, rely=0.790, height=20, width=250)
         self.NR_MaxAngVelFlight.configure(activebackground="#d9d9d9")
         self.NR_MaxAngVelFlight.configure(activeforeground="black")
         self.NR_MaxAngVelFlight.configure(anchor='w')
@@ -1978,7 +1985,7 @@ class TW_Result:
         self.NR_MaxAngVelFlight.configure(text='''Peak angular velocity flight''')
         
         self.NR_MaxAngVelFlight_var = tk.Label(self.Frame7)
-        self.NR_MaxAngVelFlight_var.place(relx=0.559, rely=0.790, height=20, width=150)
+        self.NR_MaxAngVelFlight_var.place(relx=0.659, rely=0.790, height=20, width=120)
         self.NR_MaxAngVelFlight_var.configure(activebackground="#d9d9d9")
         self.NR_MaxAngVelFlight_var.configure(activeforeground="black")
         self.NR_MaxAngVelFlight_var.configure(anchor='w')
@@ -1992,7 +1999,7 @@ class TW_Result:
         self.NR_MaxAngVelFlight_var.configure(text='''<Max Ang Vel Flight>''')
 
         self.NR_MeanAngVelRoll = tk.Label(self.Frame7)
-        self.NR_MeanAngVelRoll.place(relx=0.056, rely=0.815, height=20, width=150)
+        self.NR_MeanAngVelRoll.place(relx=0.056, rely=0.815, height=20, width=250)
         self.NR_MeanAngVelRoll.configure(activebackground="#d9d9d9")
         self.NR_MeanAngVelRoll.configure(activeforeground="black")
         self.NR_MeanAngVelRoll.configure(anchor='w')
@@ -2006,7 +2013,7 @@ class TW_Result:
         self.NR_MeanAngVelRoll.configure(text='''Mean angular velocity roll''')
         
         self.NR_MeanAngVelRoll_var = tk.Label(self.Frame7)
-        self.NR_MeanAngVelRoll_var.place(relx=0.559, rely=0.815, height=20, width=150)
+        self.NR_MeanAngVelRoll_var.place(relx=0.659, rely=0.815, height=20, width=120)
         self.NR_MeanAngVelRoll_var.configure(activebackground="#d9d9d9")
         self.NR_MeanAngVelRoll_var.configure(activeforeground="black")
         self.NR_MeanAngVelRoll_var.configure(anchor='w')
@@ -2020,7 +2027,7 @@ class TW_Result:
         self.NR_MeanAngVelRoll_var.configure(text='''<Avg Ang Vel Roll>''')
 
         self.NR_MaxAngVelRoll = tk.Label(self.Frame7)
-        self.NR_MaxAngVelRoll.place(relx=0.056, rely=0.840, height=20, width=150)
+        self.NR_MaxAngVelRoll.place(relx=0.056, rely=0.840, height=20, width=250)
         self.NR_MaxAngVelRoll.configure(activebackground="#d9d9d9")
         self.NR_MaxAngVelRoll.configure(activeforeground="black")
         self.NR_MaxAngVelRoll.configure(anchor='w')
@@ -2034,7 +2041,7 @@ class TW_Result:
         self.NR_MaxAngVelRoll.configure(text='''Peak angular velocity roll''')
         
         self.NR_MaxAngVelRoll_var = tk.Label(self.Frame7)
-        self.NR_MaxAngVelRoll_var.place(relx=0.559, rely=0.840, height=20, width=150)
+        self.NR_MaxAngVelRoll_var.place(relx=0.659, rely=0.840, height=20, width=120)
         self.NR_MaxAngVelRoll_var.configure(activebackground="#d9d9d9")
         self.NR_MaxAngVelRoll_var.configure(activeforeground="black")
         self.NR_MaxAngVelRoll_var.configure(anchor='w')
@@ -2050,7 +2057,7 @@ class TW_Result:
     
 
         self.NR_FinalTopValue = tk.Label(self.Frame7)
-        self.NR_FinalTopValue.place(relx=0.056, rely=0.890, height=20, width=150)
+        self.NR_FinalTopValue.place(relx=0.056, rely=0.890, height=20, width=250)
         self.NR_FinalTopValue.configure(activebackground="#d9d9d9")
         self.NR_FinalTopValue.configure(activeforeground="black")
         self.NR_FinalTopValue.configure(anchor='w')
@@ -2064,7 +2071,7 @@ class TW_Result:
         self.NR_FinalTopValue.configure(text='''Final top value''')
 
         self.NR_FinTopVal_var = tk.Label(self.Frame7)
-        self.NR_FinTopVal_var.place(relx=0.559, rely=0.890, height=20, width=150)
+        self.NR_FinTopVal_var.place(relx=0.659, rely=0.890, height=20, width=120)
         self.NR_FinTopVal_var.configure(activebackground="#d9d9d9")
         self.NR_FinTopVal_var.configure(activeforeground="black")
         self.NR_FinTopVal_var.configure(anchor='w')
@@ -2182,15 +2189,26 @@ class TW_Result:
             self.NR_MeanAccRoll_var.configure(text=f"{RW_MeanAccRoll(self.results)} N/m^2")
             self.NR_PeakAccRoll_var.configure(text=f"{RW_MaxAccRoll(self.results)} N/m^2")
             
-            self.NR_TotalRotations_var.configure(text=f"{RW_TotalRotWholeThrow(self.results)}")
-            self.NR_RotationsHand_var.configure(text="TBD")
+            self.NR_MeanAccG_var.configure(text=f"{RW_MeanAccWholeThrowG(self.results)} N/m^2")
+            self.NR_PeakAccG_var.configure(text=f"{RW_MaxAccWholeThrowG(self.results)} N/m^2")
+            self.NR_MeanAccHandG_var.configure(text=f"{RW_MeanAccHandG(self.results)} N/m^2")
+            self.NR_PeakAccHandG_var.configure(text=f"{RW_MaxAccHandG(self.results)} N/m^2")
+            self.NR_MeanAccRollG_var.configure(text=f"{RW_MeanAccRollG(self.results)} N/m^2")
+            self.NR_PeakAccRollG_var.configure(text=f"{RW_MaxAccRollG(self.results)} N/m^2")
             
-            self.NR_MeanAngVel_var.configure(text='''<Avg Ang Vel>''')
-            self.NR_MaxAngVel_var.configure(text="TBD")
-            self.NR_MeanAngVelRoll_var.configure(text='TBD')
-            self.NR_MaxAngVelRoll_var.configure(text='TBD')
-            self.NR_MeanAngVelFlight_var.configure(text='TBD')
-            self.NR_MaxAngVelFlight_var.configure(text='TBD')
+            self.NR_TotalRotations_var.configure(text=f"{RW_TotalRotWholeThrow(self.results)}")
+            self.NR_RotationsHand_var.configure(text=f"{RW_TotalRotHand(self.results)}")
+            self.NR_RotationsFlight_var.configure(text=f"{RW_TotalRotFlight(self.results)}")
+            self.NR_RotationsRoll_var.configure(text=f"{RW_TotalRotRoll(self.results)}")
+            
+            self.NR_MeanAngVel_var.configure(text=f"{RW_MeanAngVelWholeThrow(self.results)} deg/sec")
+            self.NR_MaxAngVel_var.configure(text=f"{RW_MaxAngVelWholeThrow(self.results)} deg/sec")
+            self.NR_MeanAngVelHand_var.configure(text=f"{RW_MeanAngVelHand(self.results)} deg/sec")
+            self.NR_MaxAngVelHand_var.configure(text=f"{RW_MaxAngVelHand(self.results)} deg/sec")
+            self.NR_MeanAngVelFlight_var.configure(text=f"{RW_MeanAngVelFlight(self.results)} deg/sec")
+            self.NR_MaxAngVelFlight_var.configure(text=f"{RW_MaxAngVelFlight(self.results)} deg/sec")
+            self.NR_MeanAngVelRoll_var.configure(text=f"{RW_MeanAngVelRoll(self.results)} deg/sec")
+            self.NR_MaxAngVelRoll_var.configure(text=f"{RW_MaxAngVelRoll(self.results)} deg/sec")
             
             self.NR_FinTopVal_var.configure(text=f"{RW_DieEndValue(self.results)}")
         

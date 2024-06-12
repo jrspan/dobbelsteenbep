@@ -16,9 +16,9 @@ import matplotlib.pyplot as plt
 #filename = "DATAFRAME.csv"
 #filename2 = "2024-06-12_11-28-53_RawDieData.csv"
 #filename3 = "2024-06-12_12-09-43_Results.csv"
-#filename4 = "2024-06-12_12-40-31_Results.csv"
-#dataframe = pd.read_csv(filename4)
-#print(dataframe.columns)
+filename4 = "2024-06-12_12-40-31_Results.csv"
+dataframe = pd.read_csv(filename4)
+print(dataframe.columns)
 ### END OF INITIAL VALUES ###
 
 ### DATA INFO ###
@@ -119,6 +119,8 @@ def RW_MeanAccWholeThrow(df):
 def RW_MaxAccWholeThrow(df):
     return round(float(RW_gfe(df, 'Max acc whole throw')), 3)
 
+
+# Acceleration w. Gravity
 def RW_MeanAccHandG(df):
     return round(float(RW_gfe(df, 'Mean acc hand with gravity')), 3)
 
@@ -145,35 +147,49 @@ def RW_DeltaTheta(df):
 
 # Rotations
 def RW_TotalRotHand(df):
-    return RW_gfe(df, 'Total rotation hand')
+    return round(float(RW_gfe(df, 'Total rotation hand'))/ 360, 2)
 
 def RW_TotalRotFlight(df):
-    return RW_gfe(df, 'Total rotation flight')
+    return round(float(RW_gfe(df, 'Total rotation flight')) / 360, 2)
 
 def RW_TotalRotRoll(df):
-    return RW_gfe(df, 'Total rotation roll')
+    return round(float(RW_gfe(df, 'Total rotation roll')) / 360, 2)
 
 def RW_TotalRotWholeThrow(df):
-    return str(round(float(RW_gfe(df, 'Total rotation whole throw')) / 360, 2))
+    return round(float(RW_gfe(df, 'Total rotation whole throw')) / 360, 2)
 
 # Angular velocity
 def RW_MeanAngVelHand(df):
-    return RW_gfe(df, 'Mean ang. vel. hand')
+    return round(float(RW_gfe(df, 'Mean ang. vel. hand')), 2)
 
 def RW_MaxAngVelHand(df):
-    return RW_gfe(df, 'Max ang. vel. hand')
+    return round(float(RW_gfe(df, 'Max ang. vel. hand')), 2)
 
 def RW_MeanAngVelFlight(df):
-    return RW_gfe(df, 'Mean ang. vel. flight')
+    return round(float(RW_gfe(df, 'Mean ang. vel. flight')), 2)
 
 def RW_MaxAngVelFlight(df):
-    return RW_gfe(df, 'Max ang. vel. flight')
+    return round(float(RW_gfe(df, 'Max ang. vel. flight')), 2)
 
 def RW_MeanAngVelRoll(df):
-    return RW_gfe(df, 'Mean ang. vel. roll')
+    return round(float(RW_gfe(df, 'Mean ang. vel. roll')), 2)
 
 def RW_MaxAngVelRoll(df):
-    return RW_gfe(df, 'Max ang. vel. roll')
+    return round(float(RW_gfe(df, 'Max ang. vel. roll')), 2)
+
+def RW_MeanAngVelWholeThrow(df):
+    try:
+        return round(float(RW_gfe(df, 'Mean ang. vel. whole throw')), 2)
+    except Exception as e:
+        print(f"An error occurd: {e} (Executed during Mean ang. vel. whole throw")
+        return
+    
+def RW_MaxAngVelWholeThrow(df):
+    try:
+        return round(float(RW_gfe(df, 'Max ang. vel. whole throw')), 2)
+    except Exception as e:
+        print(f"An error occured: {e} (Executed during Max Ang. Vel. Whole Throw)")
+        return
 
 
 ### PLOTS ###
