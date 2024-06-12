@@ -1087,8 +1087,8 @@ The die will now start the logging process and store the logged data in the sele
         except ValueError:
             tk.messagebox.showerror(title="Error: Logging parameters",
                                    message = "One or multiple logging parameters are not integers!")
-            self.c_CalibrationIndicatorLabel.configure(foreground="#ff0000")
-            self.c_CalibrationIndicatorLabel.configure(text="Not Calibrated")
+            self.l_StatusLogIndicator.configure(foreground="#ff0000")
+            self.l_StatusLogIndicator.configure(text="Not Logging")
             self.enable_connect_cal_log()
             return
         self.disable_connect_cal_log()
@@ -1097,21 +1097,22 @@ The die will now start the logging process and store the logged data in the sele
         if not self.dob:
             tk.messagebox.showerror(title="Error: Die connection error",
                                    message = "The die is not properly connected.")
-            self.c_CalibrationIndicatorLabel.configure(foreground="#ff0000")
-            self.c_CalibrationIndicatorLabel.configure(text="Not Logging")
+            self.l_StatusLogIndicator.configure(foreground="#ff0000")
+            self.l_StatusLogIndicator.configure(text="Not Logging")
             self.enable_connect_cal_log()
             return
         if not self.std_cali or not self.cali:
             tk.messagebox.showerror(title="Error: Die calibration error",
                                    message = "The die is not properly calibrated.")
-            self.c_CalibrationIndicatorLabel.configure(foreground="#ff0000")
-            self.c_CalibrationIndicatorLabel.configure(text="Not Logging")
+            self.l_StatusLogIndicator.configure(foreground="#ff0000")
+            self.l_StatusLogIndicator.configure(text="Not Logging")
             self.enable_connect_cal_log()
             return
-        tk.messagebox.showinfo(title="Die Logging Tool", 
-                               message="Press Ok when you are ready to log. The logger will start after continuing.")
         self.l_StatusLogIndicator.configure(text="Logging...")
         self.l_StatusLogIndicator.configure(foreground="#ff8000")
+        tk.messagebox.showinfo(title="Die Logging Tool", 
+                               message="Press Ok when you are ready to log. The logger will start after continuing.")
+        
         #tk.messagebox.showinfo(title="Die Logging Tool", 
         #                       message="The logger has stopped logging. Downloading data now...")
         #self.l_StatusLogIndicator.configure(text="Downloading data...")
