@@ -348,7 +348,7 @@ The die will now start the logging process and store the logged data in the sele
         self.l_Sec.configure(foreground="#000000")
         self.l_Sec.configure(highlightbackground="#d9d9d9")
         self.l_Sec.configure(highlightcolor="#000000")
-        self.l_Sec.configure(text='''Sec''')
+        self.l_Sec.configure(text='''s''')
 
         self.l_FreqLabel = tk.Label(self.Frame5)
         self.l_FreqLabel.place(relx=0.071, rely=0.57, height=20, width=71)
@@ -423,7 +423,7 @@ The die will now start the logging process and store the logged data in the sele
         self.l_g.configure(foreground="#000000")
         self.l_g.configure(highlightbackground="#d9d9d9")
         self.l_g.configure(highlightcolor="#000000")
-        self.l_g.configure(text='''g (N/m^2)''')
+        self.l_g.configure(text='''g''')
 
         self.l_GyrRangeLabel = tk.Label(self.Frame5)
         self.l_GyrRangeLabel.place(relx=0.071, rely=0.736, height=20, width=100)
@@ -461,7 +461,7 @@ The die will now start the logging process and store the logged data in the sele
         self.l_DegSec.configure(foreground="#000000")
         self.l_DegSec.configure(highlightbackground="#d9d9d9")
         self.l_DegSec.configure(highlightcolor="#000000")
-        self.l_DegSec.configure(text='''Deg / Sec''')
+        self.l_DegSec.configure(text='''Deg / s''')
 
         self.l_LogSetTitle = tk.Label(self.Frame5)
         self.l_LogSetTitle.place(relx=0.027, rely=0.038, height=20, width=378)
@@ -659,7 +659,7 @@ The die will now start the logging process and store the logged data in the sele
         #self.c_WaitLengthUnit.configure(foreground="#000000")
         #self.c_WaitLengthUnit.configure(highlightbackground="#d9d9d9")
         #self.c_WaitLengthUnit.configure(highlightcolor="#000000")
-        #self.c_WaitLengthUnit.configure(text='''Sec''')
+        #self.c_WaitLengthUnit.configure(text='''s''')
 
         self.c_MeasurementTimeUnit = tk.Label(self.Frame4)
         self.c_MeasurementTimeUnit.place(relx=0.726, rely=0.489, height=20
@@ -674,7 +674,7 @@ The die will now start the logging process and store the logged data in the sele
         self.c_MeasurementTimeUnit.configure(foreground="#000000")
         self.c_MeasurementTimeUnit.configure(highlightbackground="#d9d9d9")
         self.c_MeasurementTimeUnit.configure(highlightcolor="#000000")
-        self.c_MeasurementTimeUnit.configure(text='''Sec''')
+        self.c_MeasurementTimeUnit.configure(text='''s''')
 
         self.c_FrequencyLabel = tk.Label(self.Frame4)
         self.c_FrequencyLabel.place(relx=0.044, rely=0.57, height=20, width=164)
@@ -730,7 +730,7 @@ The die will now start the logging process and store the logged data in the sele
         self.c_g.configure(foreground="#000000")
         self.c_g.configure(highlightbackground="#d9d9d9")
         self.c_g.configure(highlightcolor="#000000")
-        self.c_g.configure(text='''g (N/m^2)''')
+        self.c_g.configure(text='''g''')
 
         self.c_GyrRangeLabel = tk.Label(self.Frame4)
         self.c_GyrRangeLabel.place(relx=0.044, rely=0.736, height=20, width=127)
@@ -758,7 +758,7 @@ The die will now start the logging process and store the logged data in the sele
         self.c_DegSec.configure(foreground="#000000")
         self.c_DegSec.configure(highlightbackground="#d9d9d9")
         self.c_DegSec.configure(highlightcolor="#000000")
-        self.c_DegSec.configure(text='''Deg / Sec''')
+        self.c_DegSec.configure(text='''Deg / s''')
 
         self.Label7 = tk.Label(self.Frame4)
         self.Label7.place(relx=0.023, rely=0.038, height=19, width=410)
@@ -2096,7 +2096,7 @@ class TW_Result:
         self.NR_FinTopVal_var.configure(foreground="#000000")
         self.NR_FinTopVal_var.configure(highlightbackground="#d9d9d9")
         self.NR_FinTopVal_var.configure(highlightcolor="#000000")
-        self.NR_FinTopVal_var.configure(text=f"{RW_DieEndValue(self.results)}")
+        self.NR_FinTopVal_var.configure(text='<Die side>') #f"{RW_DieEndValue(self.results)}")
         
         self.NR_SaveFile = tk.Button(self.Frame7)
         self.NR_SaveFile.place(relx=0.056, rely=0.940, height=25, width=100)
@@ -2173,7 +2173,7 @@ class TW_Result:
 
         self.PT_CalculatedRotations = tk.Label(self.top)
         self.PT_CalculatedRotations.place(relx=0.293, rely=0.654, height=21
-                , width=165)
+                , width=300)
         self.PT_CalculatedRotations.configure(activebackground="#d9d9d9")
         self.PT_CalculatedRotations.configure(activeforeground="black")
         self.PT_CalculatedRotations.configure(anchor='w')
@@ -2184,56 +2184,61 @@ class TW_Result:
         self.PT_CalculatedRotations.configure(foreground="#000000")
         self.PT_CalculatedRotations.configure(highlightbackground="#d9d9d9")
         self.PT_CalculatedRotations.configure(highlightcolor="#000000")
-        self.PT_CalculatedRotations.configure(text='''Calculated rotations''')
+        self.PT_CalculatedRotations.configure(text='''Estimated orientation in Euler angles''')
         
         
         # Always obtainable:
-        self.NR_TotalTime_var.configure(text= f"{RW_TotalTime(self.results)} sec")
-        
+        self.NR_TotalTime_var.configure(text= f"{RW_TotalTime(self.results)} s")
+
         if self.certain:
             #self.totaltime always defined
-            self.NR_TimeInHand_var.configure(text=f"{RW_TimeInHand(self.results)} sec")
-            self.NR_TimeInAir_var.configure(text=f"{RW_AirborneTime(self.results)} sec")
-            self.NR_TimeFirstBounce_var.configure(text=f"{RW_StartToGround(self.results)} sec")
+            self.NR_TimeInHand_var.configure(text=f"{RW_TimeInHand(self.results)} s")
+            self.NR_TimeInAir_var.configure(text=f"{RW_AirborneTime(self.results)} s")
+            self.NR_TimeFirstBounce_var.configure(text=f"{RW_StartToGround(self.results)} s")
             
-            self.NR_MeanAcc_var.configure(text=f"{RW_MeanAccWholeThrow(self.results)} N/m^2")
-            self.NR_PeakAcc_var.configure(text=f"{RW_MaxAccWholeThrow(self.results)} N/m^2")
-            self.NR_MeanAccHand_var.configure(text=f"{RW_MeanAccHand(self.results)} N/m^2")
-            self.NR_PeakAccHand_var.configure(text=f"{RW_MaxAccHand(self.results)} N/m^2")
-            self.NR_MeanAccRoll_var.configure(text=f"{RW_MeanAccRoll(self.results)} N/m^2")
-            self.NR_PeakAccRoll_var.configure(text=f"{RW_MaxAccRoll(self.results)} N/m^2")
+            self.NR_MeanAcc_var.configure(text=f"{RW_MeanAccWholeThrow(self.results)} g")
+            self.NR_PeakAcc_var.configure(text=f"{RW_MaxAccWholeThrow(self.results)} g")
+            self.NR_MeanAccHand_var.configure(text=f"{RW_MeanAccHand(self.results)} g")
+            self.NR_PeakAccHand_var.configure(text=f"{RW_MaxAccHand(self.results)} g")
+            self.NR_MeanAccRoll_var.configure(text=f"{RW_MeanAccRoll(self.results)} g")
+            self.NR_PeakAccRoll_var.configure(text=f"{RW_MaxAccRoll(self.results)} g")
             
-            self.NR_MeanAccG_var.configure(text=f"{RW_MeanAccWholeThrowG(self.results)} N/m^2")
-            self.NR_PeakAccG_var.configure(text=f"{RW_MaxAccWholeThrowG(self.results)} N/m^2")
-            self.NR_MeanAccHandG_var.configure(text=f"{RW_MeanAccHandG(self.results)} N/m^2")
-            self.NR_PeakAccHandG_var.configure(text=f"{RW_MaxAccHandG(self.results)} N/m^2")
-            self.NR_MeanAccRollG_var.configure(text=f"{RW_MeanAccRollG(self.results)} N/m^2")
-            self.NR_PeakAccRollG_var.configure(text=f"{RW_MaxAccRollG(self.results)} N/m^2")
+            self.NR_MeanAccG_var.configure(text=f"{RW_MeanAccWholeThrowG(self.results)} g")
+            self.NR_PeakAccG_var.configure(text=f"{RW_MaxAccWholeThrowG(self.results)} g")
+            self.NR_MeanAccHandG_var.configure(text=f"{RW_MeanAccHandG(self.results)} g")
+            self.NR_PeakAccHandG_var.configure(text=f"{RW_MaxAccHandG(self.results)} g")
+            self.NR_MeanAccRollG_var.configure(text=f"{RW_MeanAccRollG(self.results)} g")
+            self.NR_PeakAccRollG_var.configure(text=f"{RW_MaxAccRollG(self.results)} g")
             
             self.NR_TotalRotations_var.configure(text=f"{RW_TotalRotWholeThrow(self.results)}")
             self.NR_RotationsHand_var.configure(text=f"{RW_TotalRotHand(self.results)}")
             self.NR_RotationsFlight_var.configure(text=f"{RW_TotalRotFlight(self.results)}")
             self.NR_RotationsRoll_var.configure(text=f"{RW_TotalRotRoll(self.results)}")
             
-            self.NR_MeanAngVel_var.configure(text=f"{RW_MeanAngVelWholeThrow(self.results)} deg/sec")
-            self.NR_MaxAngVel_var.configure(text=f"{RW_MaxAngVelWholeThrow(self.results)} deg/sec")
-            self.NR_MeanAngVelHand_var.configure(text=f"{RW_MeanAngVelHand(self.results)} deg/sec")
-            self.NR_MaxAngVelHand_var.configure(text=f"{RW_MaxAngVelHand(self.results)} deg/sec")
-            self.NR_MeanAngVelFlight_var.configure(text=f"{RW_MeanAngVelFlight(self.results)} deg/sec")
-            self.NR_MaxAngVelFlight_var.configure(text=f"{RW_MaxAngVelFlight(self.results)} deg/sec")
-            self.NR_MeanAngVelRoll_var.configure(text=f"{RW_MeanAngVelRoll(self.results)} deg/sec")
-            self.NR_MaxAngVelRoll_var.configure(text=f"{RW_MaxAngVelRoll(self.results)} deg/sec")
+            self.NR_MeanAngVel_var.configure(text=f"{RW_MeanAngVelWholeThrow(self.results)} deg/s")
+            self.NR_MaxAngVel_var.configure(text=f"{RW_MaxAngVelWholeThrow(self.results)} deg/s")
+            self.NR_MeanAngVelHand_var.configure(text=f"{RW_MeanAngVelHand(self.results)} deg/s")
+            self.NR_MaxAngVelHand_var.configure(text=f"{RW_MaxAngVelHand(self.results)} deg/s")
+            self.NR_MeanAngVelFlight_var.configure(text=f"{RW_MeanAngVelFlight(self.results)} deg/s")
+            self.NR_MaxAngVelFlight_var.configure(text=f"{RW_MaxAngVelFlight(self.results)} deg/s")
+            self.NR_MeanAngVelRoll_var.configure(text=f"{RW_MeanAngVelRoll(self.results)} deg/s")
+            self.NR_MaxAngVelRoll_var.configure(text=f"{RW_MaxAngVelRoll(self.results)} deg/s")
             
             self.NR_FinTopVal_var.configure(text=f"{RW_DieEndValue(self.results)}")
-        
-        self.plot_data(RW_PlotAccXYZ, self.P_MeasAccFrame)
-        self.plot_data(RW_PlotGyrXYZ, self.P_AngVelFrame)
-        self.plot_data(RW_PlotEuler, self.P_CalcRotFrame)
-        
+
+            self.plot_data(RW_PlotAccXYZ, self.P_MeasAccFrame, vline=True)
+            self.plot_data(RW_PlotGyrXYZ, self.P_AngVelFrame, vline=True)
+            self.plot_data(RW_PlotEuler, self.P_CalcRotFrame, vline=True)
+        else:
+            self.plot_data(RW_PlotAccXYZ, self.P_MeasAccFrame)
+            self.plot_data(RW_PlotGyrXYZ, self.P_AngVelFrame)
+            self.plot_data(RW_PlotEuler, self.P_CalcRotFrame)
+
+
         #self.export_to_savefile()
     
-    def plot_data(self, func, frame):
-        fig, ax = func(self.results)
+    def plot_data(self, func, frame, vline=False):
+        fig, ax = func(self.results, vline)
         canvas = FigureCanvasTkAgg(fig, master=frame)
         canvas.draw()
         canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)

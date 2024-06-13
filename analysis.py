@@ -226,7 +226,7 @@ def run_analysis(data_df_or_csv_path, cali, std_cali, N, gamma, N_zv, gamma_zv, 
                 temp_luchttijd = list(zv_data['timestamp'][i - N:i + N])
 
                 # Randvoorwaarde dat de dobbelsteen minstens 0.5 secondes wordt geschud
-                if gooitijd and (temp_luchttijd[0] - gooitijd[-1]) > 500:
+                if gooitijd and (temp_luchttijd[0] - gooitijd[-1]) > 100:
                     luchttijd.extend(temp_luchttijd)
 
                     # Continue adding timestamps while in the air
