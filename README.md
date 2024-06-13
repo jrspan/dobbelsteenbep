@@ -37,7 +37,7 @@ With these two files, result can be compiled with the built-in results tool.
 Results can be obtained from the raw data file and the corresponding calibration file. Adding to this, the results can also be directly compiled from a results file, which is also formatted in .csv. In the latter case, no calibration file is needed.
 
 Here are the steps to obtain results:
-1. In the storage window, brwose to the directory in which your .csv file (either raw data or results) is located. All eligible files will be loaded in the listbox.
+1. In the storage window, browse to the directory in which your .csv file (either raw data or results) is located. All eligible files will be loaded in the listbox.
 2. In the listbox, click on the file you want to load and select "Apply". The selected file will now appear in the results window.
 3. Click on "Show Results". If a raw data file was selected, a pop-up will appear asking for the calibration (.npz) file.
 4. The results window will now load. Note: if the data is deemed "uncertain", a notification will appear and some results will be missing.
