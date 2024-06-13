@@ -10,6 +10,20 @@
 ## Introduction
 
 ## Software requirements
+The only requirements that are needed for the device are a (stable) bluetooth connection and the ability to execute Python codes.
+
+Within Python, the following modules are needed:
+- MetaWear
+- NumPy
+- Pandas
+- Matplotlib
+- PyQt5
+- tkinter
+- webbrowser
+- datetime
+
+Most of these modules are already installed by default.
+If any of these modules are not present or found, the software will fail to start.
 
 ## Using Die Logging tool
 The die logging tool will provide two files which can be used to obtain results: the raw data of the logged die, and the calibration values. Both of these files are needed to accurately calculate the results. 
