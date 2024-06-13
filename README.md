@@ -2,12 +2,9 @@
 # Die Measurement Tool Guide
 
 ## Table of Contents
-- Introduction
 - Software requirements
 - Using Die Logging tool
 - Using Die Results tool
-
-## Introduction
 
 ## Software requirements
 The only requirements that are needed for the device are a (stable) bluetooth connection and the ability to execute Python codes.
