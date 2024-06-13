@@ -25,7 +25,7 @@ Within Python, the following modules are needed:
 Most of these modules are already installed by default.
 If any of these modules are not present or found, the software will fail to start.
 
-## Using Die Logging tool
+## Using the logging tool
 The die logging tool will provide two files which can be used to obtain results: the raw data of the logged die, and the calibration values. Both of these files are needed to accurately calculate the results. 
 
 Below are the steps to use the die logging tool:
@@ -36,7 +36,7 @@ Below are the steps to use the die logging tool:
 
 With these two files, result can be compiled with the built-in results tool.
 
-## Using Die Results tool
+## Using the results tool
 Results can be obtained from the raw data file and the corresponding calibration file. Adding to this, the results can also be directly compiled from a results file, which is also formatted in .csv. In the latter case, no calibration file is needed.
 
 Here are the steps to obtain results:
