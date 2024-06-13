@@ -26,10 +26,10 @@ If any of these modules are not present or found, the software will fail to star
 ## User interface overview
 The user interface enables using and visualizing the Python code without the need for any prior knowledge of Python. 
 
-### GUI main window
+##### GUI main window
 When the software is first openeed, there are 4 main windows which the user will make use of: storage, calibrator, logging tool, and results.
 
-### File types and storage
+##### File types and storage
 The die measurement tool mainly uses 2 file formats: CSV and NPZ. The CSV format is used to store all measured data, and is used for every calculation. The NPZ file is used to store the calibration data. When a file is created and saved through the software, the filename will always contain the date and time at which it was created (format: YYYY-MM-DD-HH-MM-SS).
 
 ## Usage of logging tool
