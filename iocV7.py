@@ -6,9 +6,9 @@ import sys
 current_directory = os.path.dirname(__file__)
 if not os.path.dirname(__file__) in sys.path:
     sys.path.append(os.path.dirname(__file__))
-    print(f"Current directory added: {current_directory}")
+    print(f"[ioc_MAIN] Current directory added: {current_directory}")
 else:
-    print("Current directory successfully loaded!")
+    print("[ioc_MAIN] Current directory successfully loaded!")
     
 #extra_directory_1 = os.path.join(current_directory, "Final")
 #if not extra_directory_1 in sys.path:
@@ -16,20 +16,26 @@ else:
 #    print(f"New directory added: {extra_directory_1}")
 #else:
 #    print("Extra directory 1 successfully loaded!")
-
-import tkinter as tk
-import tkinter.ttk as ttk
-from tkinter.constants import *
-from tkinter import messagebox
-import numpy as np
-import pandas as pd
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from matplotlib.figure import Figure
-
+try:
+    import tkinter as tk
+    import tkinter.ttk as ttk
+    from tkinter.constants import *
+    from tkinter import messagebox
+    import numpy as np
+    import pandas as pd
+    from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+    from matplotlib.figure import Figure
+except Exception as e:
+    print("[ioc_MAIN Imports] Error while loading modules: {e}")
+    
 _location = os.path.dirname(__file__)
 
-import iocV7_support
-from RW_helper import *
+try:
+    import iocV7_support
+    from RW_helper import *
+except Exception as e:
+    print("[ioc_MAIN Imports] Error while importing other files: {e} | Make sure the files are stored in the same directory as the main code.")
+
 
 _bgcolor = '#d9d9d9'
 _fgcolor = '#000000'
@@ -171,6 +177,7 @@ class Toplevel1:
         self.s_ApplyButton.configure(highlightbackground="#d9d9d9")
         self.s_ApplyButton.configure(highlightcolor="#000000")
         self.s_ApplyButton.configure(text='''Apply''')
+        self.s_ApplyButton.configure(state=tk.DISABLED)
         self.s_ApplyButton.configure(command=self.apply_selection)
 
         self.s_BrowseButton = tk.Button(self.Frame2)
@@ -211,7 +218,7 @@ class Toplevel1:
         self.s_Dirname.configure(foreground="#000000")
         self.s_Dirname.configure(highlightbackground="#d9d9d9")
         self.s_Dirname.configure(highlightcolor="#000000")
-        self.s_Dirname.configure(text="No directory selected.")
+        self.s_Dirname.configure(text="Please select a directory...")
 
         self.Frame3 = tk.Frame(self.top)
         self.Frame3.place(relx=0.403, rely=0.188, relheight=0.297, relwidth=0.58)
@@ -934,10 +941,10 @@ The die will now start the logging process and store the logged data in the sele
     
     def browse_directory(self):
         #self.selected_directory = filedialog.askdirectory()
-        print("Initializing browse directory...")
+        print("[ioc_MAIN] Initializing browse directory...")
         self.selected_directory = iocV7_support.select_directory()
         if self.selected_directory:
-            print(f"Directory selected: {self.selected_directory}")
+            print(f"[ioc_MAIN] Selected: {self.selected_directory}")
             self.s_Dirname.configure(text=self.selected_directory)
             self.Scrolledlistbox1.delete(0, tk.END)
             for filename in os.listdir(self.selected_directory):
@@ -973,33 +980,36 @@ The die will now start the logging process and store the logged data in the sele
         self.disable_connect_cal_log()
         self.c_ConnectIndicatorLabel.configure(foreground="#ff8000")
         self.c_ConnectIndicatorLabel.configure(text="Connecting...")
-        print("[LOG] Verbinding wordt geprobeerd....")
+        print("[ioc_MAIN] Attempting to connect die....")
         try:
             #from dobbel import dobbellogger
             self.dob = iocV7_support.connect_function()
         except:
-            print("[LOG] Foutmelding verbinding")
+            print("[ioc_MAIN] Die connection error")
             tk.messagebox.showerror(title="Connection Error", message="Please check your bluetooth connection and try again.")
             self.c_ConnectIndicatorLabel.configure(foreground="#ff0000")
             self.c_ConnectIndicatorLabel.configure(text="Not Connected")
             self.enable_connect_cal_log()
             self.dob = None
             return
-        print("[LOG] Verbinding vastgelegd, self.dob is defined.")
+        print("[ioc_MAIN] Connection succesful! self.dob initialized.")
         tk.messagebox.showinfo(title="Connection", message="Connection successful")
         self.c_ConnectIndicatorLabel.configure(foreground="#008000")
         self.c_ConnectIndicatorLabel.configure(text="Connected")
         self.enable_connect_cal_log()
     
     def on_click_calibrate(self):
+        print("[ioc_MAIN] Calibration button clicked. Starting calibrator preparations...")
         if not self.selected_directory:
             tk.messagebox.showerror(title="Directory error",
                                    message="Please select a directory")
             self.selected_directory = self.browse_directory()
             if not self.selected_directory:
+                print("[ioc_MAIN] No directory selected. Aborting calibrator...")
                 tk.messagebox.showerror(title="Directory error",
                                        message="No directory selected. Exiting calibrator...")
                 return
+        print("[ioc_MAIN Calibrator] Directory defined. Establishing connection with die...")
         self.disable_connect_cal_log()
         self.c_CalibrationIndicatorLabel.configure(foreground="#ff8000")
         self.c_CalibrationIndicatorLabel.configure(text="Calibrating...")
@@ -1008,6 +1018,7 @@ The die will now start the logging process and store the logged data in the sele
         self.list3 = []
         self.list4 = []
         if not self.dob:
+            print("[ioc_MAIN Calibrator] Error: die is not connected. Aborting calibrator...")
             tk.messagebox.showerror(title="Error: Connection error",
                                    message = "Please connect the die to the software first.")
             self.c_CalibrationIndicatorLabel.configure(foreground="#ff0000")
@@ -1021,31 +1032,36 @@ The die will now start the logging process and store the logged data in the sele
             self.c_accrange = int(self.c_AccRangeEntry.get())
             self.c_gyrrange = int(self.c_GyrRangeEntry.get())
         except Exception as e:
-            print(f"Error: {e}")
+            print(f"[ioc_MAIN Calibrator] Error: {e}")
             tk.messagebox.showerror(title="Error: Calibration parameters",
                                    message = "One or multiple parameters are not integers!")
             self.c_CalibrationIndicatorLabel.configure(foreground="#ff0000")
             self.c_CalibrationIndicatorLabel.configure(text="Not Calibrated")
             self.enable_connect_cal_log()
             return
+        print("[ioc_MAIN Calibrator] Calibration values defined. Starting side calibrations...")
         for value in self.css_list:
             tk.messagebox.showinfo(title="Calibrator",
                                    message=f"Put the die with the number {value[2]} facing upwards. Then, press Ok. Do not touch the die after continuing.")
             try:
                 self.list1, self.list2, self.list3, self.list4 = iocV7_support.calibrate_function_list(value, self.dob, self.list1, self.list2, self.list3, self.list4, self.c_mt, self.c_freq, self.c_accrange, self.c_gyrrange)
             except Exception as e:
-                print(f"Error during calibration: {e}")
+                print(f"[ioc_MAIN Calibrator] Error during calibration: {e}")
                 return
+        print("[ioc_MAIN Calibrator] Side calibrations finished.")
         if not len(self.list1) == 6:
+            print(f"[ioc_MAIN Calibrator] Error: Length of measurement values mismatch (expected: 6, actual: {len(self.list1)}")
             tk.messagebox.showerror(title="Error: Calibration error",
                                    message = "Something went wrong during calibration.")
             self.c_CalibrationIndicatorLabel.configure(foreground="#ff0000")
             self.c_CalibrationIndicatorLabel.configure(text="Not Calibrated")
             self.enable_connect_cal_log()
             return
+        print("[ioc_MAIN Calibrator] Side calibrations finished. Starting standard deviation calibration...")
         try:
             self.cali, self.std_cali = iocV7_support.calibrate_cali_stdcali(self.dob, self.list1, self.list2, self.list3, self.list4, self.c_mt, self.c_freq, self.c_gyrrange)
         except AttributeError:
+            print(f"[ioc_MAIN Calibrator] Error: Connection failure, resulting in missing attributes. (AttributeError: {AttributeError})")
             tk.messagebox.showerror(title="Error: Connection Failure",
                                    message = "The die is disconnected.")
             self.c_CalibrationIndicatorLabel.configure(foreground="#ff0000")
@@ -1054,10 +1070,12 @@ The die will now start the logging process and store the logged data in the sele
             return
         except Exception as e:
             # Error detectie - Indien er iets misgaat. In theorie zou deze nooit voorkomen.
-            print(f"An unexpected error occured: {e}")
+            print(f"[ioc_MAIN Calibrator] Error: Something went wrong. {e}")
             return
+        print("[ioc_MAIN Calibrator] Finished standard deviations. Attempting to save data...")
         ### SAVING CALIBRATION VLAUES ###
         if not self.selected_directory:
+            print("[ioc_MAIN Calibrator] Minor error: Directory renamed or removed by user during calibration. Opening directory selector...")
             self.selected_directory = iocV7_support.select_directory()
         iocV7_support.save_cali_values(self.cali, self.std_cali, self.selected_directory)
         ### END OF SAVE CODE ###
@@ -1065,32 +1083,37 @@ The die will now start the logging process and store the logged data in the sele
         self.c_CalibrationIndicatorLabel.configure(text="Calibrated!")
         tk.messagebox.showinfo(title="Calibrator",
                                message = "The die has been calibrated and succesfully saved!")
-        print("Calibration success!. Closing calibrator....")
+        print("[ioc_MAIN Calibrator] Calibration successfully saved! Closing calibrator....")
         self.enable_connect_cal_log()
         
     def on_click_logging(self):
+        print("[ioc_MAIN] Logging button pressed. Initializing logger...")
         self.disable_connect_cal_log()
         if not self.selected_directory:
             tk.messagebox.showerror(title="Directory error",
                                    message="Please select a directory to store logging results.")
             self.selected_directory = self.browse_directory()
             if not self.selected_directory:
+                print("[ioc_MAIN_logger] Error: No directory selected. Exiting logger...")
                 tk.messagebox.showerror(title="Directory error",
                                        message="No directory selected. Exiting logging tool...")
                 self.enable_connect_cal_log()
                 return
+        print("[ioc_MAIN logger] Directory defined. Starting logger preparations...")
         try:
             self.l_mt = int(self.l_MeasurementTimeEntry.get())
             self.l_freq = int(self.l_FreqEntry.get())
             self.l_accrange = int(self.l_AccRangeEntry.get())
             self.l_gyrrange = int(self.l_GyrRangeEntry.get())
         except ValueError:
+            print("[ioc_MAIN logger] Error: Values not numberical and/or missing.")
             tk.messagebox.showerror(title="Error: Logging parameters",
                                    message = "One or multiple logging parameters are not integers!")
             self.l_StatusLogIndicator.configure(foreground="#ff0000")
             self.l_StatusLogIndicator.configure(text="Not Logging")
             self.enable_connect_cal_log()
             return
+        print("[ioc_MAIN logger] Checking self.dob existence (connection)...")
         self.disable_connect_cal_log()
         self.l_StatusLogIndicator.configure(text="Preparing Logging Tool...")
         self.l_StatusLogIndicator.configure(foreground="#ffff00")
@@ -1101,13 +1124,7 @@ The die will now start the logging process and store the logged data in the sele
             self.l_StatusLogIndicator.configure(text="Not Logging")
             self.enable_connect_cal_log()
             return
-        if not self.std_cali or not self.cali:
-            tk.messagebox.showerror(title="Error: Die calibration error",
-                                   message = "The die is not properly calibrated.")
-            self.l_StatusLogIndicator.configure(foreground="#ff0000")
-            self.l_StatusLogIndicator.configure(text="Not Logging")
-            self.enable_connect_cal_log()
-            return
+        print("[ioc_MAIN logger] Starting logging process...")
         self.l_StatusLogIndicator.configure(text="Logging...")
         self.l_StatusLogIndicator.configure(foreground="#ff8000")
         tk.messagebox.showinfo(title="Die Logging Tool", 
@@ -1121,6 +1138,7 @@ The die will now start the logging process and store the logged data in the sele
         self.output_data = iocV7_support.logging_function(self.dob, self.l_mt, self.l_freq, self.l_accrange, self.l_gyrrange)
         self.l_StatusLogIndicator.configure(text="Downloading...")
         self.l_StatusLogIndicator.configure(foreground="#008000")
+        print("[ioc_MAIN logger] End of logging process. Starting download...")
         tk.messagebox.showinfo(title="Die Logging Tool", 
                                message="Logging Complete! Downloading data...")
         ############################
@@ -1143,7 +1161,7 @@ The die will now start the logging process and store the logged data in the sele
         # Select file instantly for review
         self.RW_csv = os.path.join(self.selected_directory, f"{self.filename}.csv")
         self.r_LoadedFile.configure(text=f"{self.filename}.csv")
-        
+        print("[ioc_MAIN logger] Succesfully logged data and saved to CSV!")
         tk.messagebox.showinfo(title="Die Logging Tool", message=f"Logging Complete. File is now saved in selected directory as {self.filename}")
         self.enable_connect_cal_log()
         
@@ -1158,30 +1176,36 @@ The die will now start the logging process and store the logged data in the sele
         self.c_ConnectButton.configure(state=tk.NORMAL)
         
     def on_click_results(self):
+        print("[ioc_MAIN] Results button pressed.")
         self.r_Results.configure(state=tk.DISABLED)
         if not self.RW_csv:
+            print("[ioc_MAIN Results] Error: Not a CSV file selected!")
             tk.messagebox.showerror(title="CSV File Error",
                                     message="Please select a CSV file first.")
             self.r_Results.configure(state=tk.NORMAL)
             return
         # Functie om te kijken of CSV wel de juiste colommen bevat
         if not iocV7_support.verify_CSV_columns(pd.read_csv(self.RW_csv)):
+            print("[ioc_MAIN Results] Error: Invalid CSV file (Not a raw data file or results file!")
             tk.messagebox.showerror(title="CSV File Error",
                                     message="Invalid CSV file selected! Aborting...")
             self.r_Results.configure(state=tk.NORMAL)
             return
         # Functie om te kijken of CSV file Result file is of niet
         if len(pd.read_csv(self.RW_csv, nrows=1).columns) > 20:
-            print("[LOG] Results file loaded")
+            print("[ioc_MAIN Results] Type of CSV file selected: RESULTS FILE")
             self.RW_title = f"{self.RW_csv} [RESULTS FILE]"
             self.r_Results.configure(state=tk.NORMAL)
+            print("[ioc_MAIN Results] Opening results window...")
             iocV7_support.open_second_window(self.RW_title, self.RW_csv, None, None)
             return
-        print(f"[LOG] Raw data file loading. Selecting calibration file...")
+        print("[ioc_MAIN Results] Type of CSV file selected: RAW DATA FILE")
+        print("[ioc_MAIN Results] Selecting calibration file...")
         tk.messagebox.showinfo(title="Calibration file",
                                message="Please select your calibration file (.npz)")
         self.cali, self.std_cali = iocV7_support.load_cali_values()
         if not self.cali or not self.std_cali:
+            print("[ioc_MAIN Results] Error: No calibration file selected. Aborting process...")
             tk.messagebox.showerror(title="Results Error",
                                     message="No valid calibration values found and/or selected. Aborting process...")
             self.cali = None
@@ -1194,6 +1218,7 @@ The die will now start the logging process and store the logged data in the sele
         #self.std_cali = standard deviation
         #self.RW_csv = CSV bestand
         self.r_Results.configure(state=tk.NORMAL)
+        print("[ioc_MAIN Results] Opening results window...")
         iocV7_support.open_second_window(self.RW_title, self.RW_csv, self.cali, self.std_cali)
         
         

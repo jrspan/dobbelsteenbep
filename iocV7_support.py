@@ -10,9 +10,9 @@ import sys
 current_directory = os.path.dirname(__file__)
 if not os.path.dirname(__file__) in sys.path:
     sys.path.append(os.path.dirname(__file__))
-    print(f"Current directory added: {current_directory}")
+    print(f"[ioc_SUPPORT] Current directory added: {current_directory}")
 else:
-    print("Current directory successfully loaded!")
+    print("[ioc_SUPPORT] Current directory successfully loaded!")
     
 #extra_directory_1 = os.path.join(current_directory, "Final")
 #if not extra_directory_1 in sys.path:
@@ -25,39 +25,35 @@ try:
     import tkinter as tk
     import tkinter.ttk as ttk
     from tkinter.constants import *
-except Exception as e:
-    print(f"An error occured: {e}")
-# Own imports:
-try:
+    # Own imports
     from PyQt5.QtWidgets import QApplication, QFileDialog
     import webbrowser
-    #from tkinter import filedialog, messagebox
     import datetime
     import pandas as pd
     import numpy as np
 except Exception as e:
-    print(f"An error occured: {e}")
+    print(f"[ioc_SUPPORT Imports] An error occured: {e}")
 
 try:
     from dobbel import *
 except Exception as e:
-    print(f"An error occured: {e}. (Error with importing dobbel.py)")
+    print(f"[ioc_SUPPORT Imports] An error occured: {e}. (Error with importing dobbel.py)")
     
 try:
     from calibrator import *
 except Exception as e:
-    print(f"An error occured: {e}. (Error with importing calibrator.py)")
+    print(f"[ioc_SUPPORT Imports] An error occured: {e}. (Error with importing calibrator.py)")
     
 try:
     from analysis import *
 except Exception as e:
-    print(f"An error occured: {e}. (Error with importing analysis.py)")
+    print(f"[ioc_SUPPORT Imports] An error occured: {e}. (Error with importing analysis.py)")
     
 ###
 try:
     import iocV7
 except Exception as e:
-    print(f"An error occured: {e}")
+    print(f"[ioc_SUPPORT Imports] An error occured: {e}. (Error while importing iocV7.py)")
     
 _debug = True  # False to eliminate debug printing from callback functions.
 # June 12, 11:22
@@ -67,23 +63,24 @@ def select_directory():
     directory = QFileDialog.getExistingDirectory(None, "Select Directory")
     app.quit()
     if directory:
-        print("Selected directory:", directory)
+        print("[ioc_SUPPORT] Selected directory:", directory)
         return directory
-    print("No directory selected")
+    print("[ioc_SUPPORT] No directory selected")
     return None
     
 def select_npz_file():
+    print("[ioc_SUPPORT] Selecting NPZ file...")
     try:
         app = QApplication([])
         file_path, _ = QFileDialog.getOpenFileName(None, "Select Calibration File", "", "NPZ Files (*.npz)")
         app.quit()  # Quit the application to avoid blocking the script
         if file_path:
-            print("Selected calibration file:", file_path)
+            print("[ioc_SUPPORT] Selected calibration file:", file_path)
             return file_path
-        print("No .npz filepath selected")
+        print("[ioc_SUPPORT] No NPZ file selected")
         return None
     except Exception as e:
-        print(f"An error occued: {e}")
+        print(f"[ioc_SUPPORT] An error occued: {e}")
         return None
     
 # Used to create filename for data
@@ -104,9 +101,9 @@ def save_dataframe_to_csv(df, filename, directory):
     file_path = f"{os.path.join(directory, filename)}.csv"
     try:
         df.to_csv(file_path, index=False)
-        print(f"DataFrame successfully saved to {file_path}")
+        print(f"[ioc_SUPPORT] DataFrame successfully saved to {file_path}")
     except Exception as e:
-        print(f"Error saving DataFrame to CSV: {e}")
+        print(f"[ioc_SUPPORT] Error saving DataFrame to CSV: {e}")
         
 ### FILE SAVING FUNCTIONS ###
 # Function to save dictionaries to an .npz file
@@ -116,7 +113,7 @@ def save_dicts_as_npz(file_path, **dicts):
         for key, value in d.items():
             combined_data[f'{dict_name}_{key}'] = value
     np.savez(file_path, **combined_data)
-    print(f"Data has been saved to {file_path}")
+    print(f"[ioc_SUPPORT] Data has been saved to {file_path}")
     
 # Function to load .npz file and reconstruct dictionaries
 def load_npz_as_dicts(file_path):
@@ -148,7 +145,7 @@ def calibrate_function_list(css_value, dob, list1, list2, list3, list4, mt, freq
     try:
         list1, list2, list3, list4 = cali_loop(column, sign, side, dob, mt, lowi, freq, ar, gr, list1, list2, list3, list4)
     except Exception as e:
-        print(f"Error encountered: {e}")
+        print(f"[ioc_SUPPORT] Error encountered: {e}")
         return None
     return list1, list2, list3, list4
 
@@ -159,7 +156,7 @@ def calibrate_cali_stdcali(dob, list1, list2, list3, list4, mt, freq, gr):
 
 def save_cali_values(cali, std_cali, directory):
     if not os.path.isdir(directory):
-        print("Minor error: Directory not specified. Allowing user to select directory.")
+        print("[ioc_SUPPORT] Minor error: Directory not specified. Allowing user to select directory.")
         tk.messagebox.showinfo(title="Saving Calibration Data",
                                message="Please select the directory in which you want to save your data.")
         directory = select_directory()  # Assuming select_directory function is defined elsewhere
