@@ -129,6 +129,12 @@ def load_npz_as_dicts(file_path):
         dicts[dict_name][array_key] = loaded_data[key]
     return dicts
 
+def verify_CSV_columns(df):
+    required_columns = ['timestamp', 'x_acc', 'y_acc', 'z_acc', 'x_gyro', 'y_gyro', 'z_gyro']
+    if set(required_columns).issubset(df.columns):
+        return True
+    else:
+        return False
 
 ### CONNECT FUNCTIONS ###
 def connect_function():

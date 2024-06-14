@@ -348,7 +348,7 @@ The die will now start the logging process and store the logged data in the sele
         self.l_Sec.configure(foreground="#000000")
         self.l_Sec.configure(highlightbackground="#d9d9d9")
         self.l_Sec.configure(highlightcolor="#000000")
-        self.l_Sec.configure(text='''s''')
+        self.l_Sec.configure(text='''sec''')
 
         self.l_FreqLabel = tk.Label(self.Frame5)
         self.l_FreqLabel.place(relx=0.071, rely=0.57, height=20, width=71)
@@ -412,7 +412,7 @@ The die will now start the logging process and store the logged data in the sele
         self.l_AccRangeEntry.set(self.accrange_options[-2])
 
         self.l_g = tk.Label(self.Frame5)
-        self.l_g.place(relx=0.745, rely=0.651, height=21, width=71)
+        self.l_g.place(relx=0.745, rely=0.651, height=21, width=100)
         self.l_g.configure(activebackground="#d9d9d9")
         self.l_g.configure(activeforeground="black")
         self.l_g.configure(anchor='w')
@@ -423,7 +423,7 @@ The die will now start the logging process and store the logged data in the sele
         self.l_g.configure(foreground="#000000")
         self.l_g.configure(highlightbackground="#d9d9d9")
         self.l_g.configure(highlightcolor="#000000")
-        self.l_g.configure(text='''g''')
+        self.l_g.configure(text='''g (9.81 m/s^2)''')
 
         self.l_GyrRangeLabel = tk.Label(self.Frame5)
         self.l_GyrRangeLabel.place(relx=0.071, rely=0.736, height=20, width=100)
@@ -461,7 +461,7 @@ The die will now start the logging process and store the logged data in the sele
         self.l_DegSec.configure(foreground="#000000")
         self.l_DegSec.configure(highlightbackground="#d9d9d9")
         self.l_DegSec.configure(highlightcolor="#000000")
-        self.l_DegSec.configure(text='''Deg / s''')
+        self.l_DegSec.configure(text='''deg / sec''')
 
         self.l_LogSetTitle = tk.Label(self.Frame5)
         self.l_LogSetTitle.place(relx=0.027, rely=0.038, height=20, width=378)
@@ -674,7 +674,7 @@ The die will now start the logging process and store the logged data in the sele
         self.c_MeasurementTimeUnit.configure(foreground="#000000")
         self.c_MeasurementTimeUnit.configure(highlightbackground="#d9d9d9")
         self.c_MeasurementTimeUnit.configure(highlightcolor="#000000")
-        self.c_MeasurementTimeUnit.configure(text='''s''')
+        self.c_MeasurementTimeUnit.configure(text='''sec''')
 
         self.c_FrequencyLabel = tk.Label(self.Frame4)
         self.c_FrequencyLabel.place(relx=0.044, rely=0.57, height=20, width=164)
@@ -719,7 +719,7 @@ The die will now start the logging process and store the logged data in the sele
         self.c_Hertz.configure(text='''Hz''')
 
         self.c_g = tk.Label(self.Frame4)
-        self.c_g.place(relx=0.726, rely=0.651, height=21, width=70)
+        self.c_g.place(relx=0.726, rely=0.651, height=21, width=100)
         self.c_g.configure(activebackground="#d9d9d9")
         self.c_g.configure(activeforeground="black")
         self.c_g.configure(anchor='w')
@@ -730,7 +730,7 @@ The die will now start the logging process and store the logged data in the sele
         self.c_g.configure(foreground="#000000")
         self.c_g.configure(highlightbackground="#d9d9d9")
         self.c_g.configure(highlightcolor="#000000")
-        self.c_g.configure(text='''g''')
+        self.c_g.configure(text='''g (9.81 m/s^2)''')
 
         self.c_GyrRangeLabel = tk.Label(self.Frame4)
         self.c_GyrRangeLabel.place(relx=0.044, rely=0.736, height=20, width=127)
@@ -758,7 +758,7 @@ The die will now start the logging process and store the logged data in the sele
         self.c_DegSec.configure(foreground="#000000")
         self.c_DegSec.configure(highlightbackground="#d9d9d9")
         self.c_DegSec.configure(highlightcolor="#000000")
-        self.c_DegSec.configure(text='''Deg / s''')
+        self.c_DegSec.configure(text='''deg / sec''')
 
         self.Label7 = tk.Label(self.Frame4)
         self.Label7.place(relx=0.023, rely=0.038, height=19, width=410)
@@ -1164,7 +1164,12 @@ The die will now start the logging process and store the logged data in the sele
                                     message="Please select a CSV file first.")
             self.r_Results.configure(state=tk.NORMAL)
             return
-        
+        # Functie om te kijken of CSV wel de juiste colommen bevat
+        if not iocV7_support.verify_CSV_columns(pd.read_csv(self.RW_csv)):
+            tk.messagebox.showerror(title="CSV File Error",
+                                    message="Invalid CSV file selected! Aborting...")
+            self.r_Results.configure(state=tk.NORMAL)
+            return
         # Functie om te kijken of CSV file Result file is of niet
         if len(pd.read_csv(self.RW_csv, nrows=1).columns) > 20:
             print("[LOG] Results file loaded")
@@ -1229,7 +1234,6 @@ class TW_Result:
         
         print(f"Bestand RW_csv: {self.RW_csv}")
         print(f"Type bestand van self.RW_csv: {type(self.RW_csv)}")
-        
         
         ### Performing calculation
         if len(pd.read_csv(self.RW_csv, nrows=1).columns) < 20:
@@ -2142,7 +2146,7 @@ class TW_Result:
         self.P_AngVelFrame.configure(highlightcolor="#000000")
 
         self.PT_MeasuredAccel = tk.Label(self.top)
-        self.PT_MeasuredAccel.place(relx=0.293, rely=0.031, height=21, width=185)
+        self.PT_MeasuredAccel.place(relx=0.293, rely=0.031, height=21, width=600)
 
         self.PT_MeasuredAccel.configure(activebackground="#d9d9d9")
         self.PT_MeasuredAccel.configure(activeforeground="black")
@@ -2154,11 +2158,11 @@ class TW_Result:
         self.PT_MeasuredAccel.configure(foreground="#000000")
         self.PT_MeasuredAccel.configure(highlightbackground="#d9d9d9")
         self.PT_MeasuredAccel.configure(highlightcolor="#000000")
-        self.PT_MeasuredAccel.configure(text='''Measured acceleration''')
+        self.PT_MeasuredAccel.configure(text='''Measured acceleration (x: time [sec], y: acceleration [m/s^2])''')
 
         self.PT_MeasuredAngularVelocity = tk.Label(self.top)
         self.PT_MeasuredAngularVelocity.place(relx=0.293, rely=0.346, height=21
-                , width=214)
+                , width=600)
         self.PT_MeasuredAngularVelocity.configure(activebackground="#d9d9d9")
         self.PT_MeasuredAngularVelocity.configure(activeforeground="black")
         self.PT_MeasuredAngularVelocity.configure(anchor='w')
@@ -2169,11 +2173,11 @@ class TW_Result:
         self.PT_MeasuredAngularVelocity.configure(foreground="#000000")
         self.PT_MeasuredAngularVelocity.configure(highlightbackground="#d9d9d9")
         self.PT_MeasuredAngularVelocity.configure(highlightcolor="#000000")
-        self.PT_MeasuredAngularVelocity.configure(text='''Measured angular velocity''')
+        self.PT_MeasuredAngularVelocity.configure(text='''Measured angular velocity (x = time [sec], y = angular velocity [deg / sec])''')
 
         self.PT_CalculatedRotations = tk.Label(self.top)
         self.PT_CalculatedRotations.place(relx=0.293, rely=0.654, height=21
-                , width=300)
+                , width=600)
         self.PT_CalculatedRotations.configure(activebackground="#d9d9d9")
         self.PT_CalculatedRotations.configure(activeforeground="black")
         self.PT_CalculatedRotations.configure(anchor='w')
@@ -2184,7 +2188,7 @@ class TW_Result:
         self.PT_CalculatedRotations.configure(foreground="#000000")
         self.PT_CalculatedRotations.configure(highlightbackground="#d9d9d9")
         self.PT_CalculatedRotations.configure(highlightcolor="#000000")
-        self.PT_CalculatedRotations.configure(text='''Estimated orientation in Euler angles''')
+        self.PT_CalculatedRotations.configure(text='''Estimated orientation in Euler angles (x = time [s], y = angle [deg])''')
         
         
         # Always obtainable:
