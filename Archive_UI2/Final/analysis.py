@@ -4,7 +4,11 @@ from help_functies import *
 from matrix_helper import *
 
 
+<<<<<<< HEAD:Final/analysis.py
 def run_analysis(data_df_or_csv_path, cali, std_cali, N, gamma, N_zv, gamma_zv, csv=False, firstlast=False, save_path='results.csv'):
+=======
+def run_analysis(data_df_or_csv_path, cali, std_cali, N, gamma, csv=False, firstlast=True, save_path='results.csv'):
+>>>>>>> User-Interface-2:Archive_UI2/Final/analysis.py
     gyro_std = std_cali['gyro stds']
     acc_std = std_cali['acc stds']
     if csv:
@@ -205,7 +209,11 @@ def run_analysis(data_df_or_csv_path, cali, std_cali, N, gamma, N_zv, gamma_zv, 
     total_lucht_duration = 0
     total_gooi_duration = 0
 
+<<<<<<< HEAD:Final/analysis.py
     while gamma < 0.5:
+=======
+    while gamma < 0.1:
+>>>>>>> User-Interface-2:Archive_UI2/Final/analysis.py
         done = False
         gedaan = False
         luchttijd.clear()
@@ -217,9 +225,12 @@ def run_analysis(data_df_or_csv_path, cali, std_cali, N, gamma, N_zv, gamma_zv, 
                 gooitijd.append(zv_data['timestamp'][i])
                 gedaan = True
                 total_raap_duration = gooitijd[-1] - 2 * N
+<<<<<<< HEAD:Final/analysis.py
                 if total_raap_duration not in list(zv_data.loc[:, 'timestamp']):
                     index = (zv_data.loc[:, 'timestamp'] - total_raap_duration).abs().argmin()
                     total_raap_duration = zv_data.loc[index, 'timestamp']
+=======
+>>>>>>> User-Interface-2:Archive_UI2/Final/analysis.py
 
             # Herken wanneer dobbelsteen de hand verlaat
             elif all(element < gamma for element in za_data['squared norm'][i - N:i + N]):
@@ -266,6 +277,17 @@ def run_analysis(data_df_or_csv_path, cali, std_cali, N, gamma, N_zv, gamma_zv, 
             break
 
 
+<<<<<<< HEAD:Final/analysis.py
+=======
+        if done:
+            break
+
+        gamma += 0.005
+        # print(gamma)
+        if gamma > 0.5:
+            print("onzeker")
+            break
+>>>>>>> User-Interface-2:Archive_UI2/Final/analysis.py
 
     total_starttotlos = total_raap_duration + total_gooi_duration
     total_starttotgrond = total_lucht_duration + total_raap_duration + total_gooi_duration
@@ -274,6 +296,7 @@ def run_analysis(data_df_or_csv_path, cali, std_cali, N, gamma, N_zv, gamma_zv, 
 
     zero_acc_results = np.array([[total_raap_duration], [total_gooi_duration], [total_lucht_duration], [total_starttotlos], [total_starttotgrond], [side]]).T
     zero_acc_df = pd.DataFrame(zero_acc_results, columns=['Raap tijd', 'Gooi tijd', 'Lucht tijd', 'Start tot los', 'Start tot grond', 'Laatste zijde'])
+<<<<<<< HEAD:Final/analysis.py
 
     results = pd.concat([zv_data, kalman_results, euler_df, zero_acc_df], axis=1)
 
@@ -343,6 +366,9 @@ def run_analysis(data_df_or_csv_path, cali, std_cali, N, gamma, N_zv, gamma_zv, 
 
     results = pd.concat([results, orientation_df], axis=1)
 
+=======
+    results = pd.concat([data_nb, kalman_results, euler_df, zero_acc_df], axis=1)
+>>>>>>> User-Interface-2:Archive_UI2/Final/analysis.py
     if csv:
         results.to_csv(save_path)
     else:
