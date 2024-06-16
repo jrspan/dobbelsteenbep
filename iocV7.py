@@ -26,7 +26,7 @@ try:
     from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
     from matplotlib.figure import Figure
 except Exception as e:
-    print("[ioc_MAIN Imports] Error while loading modules: {e}")
+    print(f"[ioc_MAIN Imports] Error while loading modules: {e}")
     
 _location = os.path.dirname(__file__)
 
@@ -34,7 +34,7 @@ try:
     import iocV7_support
     from RW_helper import *
 except Exception as e:
-    print("[ioc_MAIN Imports] Error while importing other files: {e} | Make sure the files are stored in the same directory as the main code.")
+    print(f"[ioc_MAIN Imports] Error while importing other files: {e} | Make sure the files are stored in the same directory as the main code.")
 
 
 _bgcolor = '#d9d9d9'
