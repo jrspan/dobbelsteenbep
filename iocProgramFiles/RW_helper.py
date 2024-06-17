@@ -4,9 +4,9 @@ current_directory = os.path.dirname(__file__)
 os.chdir(current_directory)
 if not os.path.dirname(__file__) in sys.path:
     sys.path.append(os.path.dirname(__file__))
-    print(f"Current directory added: {current_directory}")
+    print(f"[RW_helper] Current directory added: {current_directory}")
 else:
-    print("Current directory successfully loaded!")
+    print("[RW_helper] Current directory successfully loaded!")
 
 import pandas as pd
 import numpy as np

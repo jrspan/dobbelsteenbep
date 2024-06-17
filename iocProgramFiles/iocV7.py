@@ -177,7 +177,7 @@ class Toplevel1:
         self.s_ApplyButton.configure(highlightbackground="#d9d9d9")
         self.s_ApplyButton.configure(highlightcolor="#000000")
         self.s_ApplyButton.configure(text='''Apply''')
-        self.s_ApplyButton.configure(state=tk.DISABLED)
+        self.s_ApplyButton.configure(state=tk.NORMAL)
         self.s_ApplyButton.configure(command=self.apply_selection)
 
         self.s_BrowseButton = tk.Button(self.Frame2)
@@ -966,6 +966,9 @@ The die will now start the logging process and store the logged data in the sele
             selected_file_name = self.Scrolledlistbox1.get(selected_item)
             self.RW_csv = os.path.join(self.selected_directory, selected_file_name)
             self.r_LoadedFile.configure(text=selected_file_name)
+        else:
+            tk.messagebox.showerror(title="File loading error",
+                                    message="No file selected")
     
     def copy_values(self):
         # Retrieve the value from the Entry widget
