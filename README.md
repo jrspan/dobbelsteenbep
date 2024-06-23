@@ -8,9 +8,9 @@
 - Usage of results tool
 
 ## Software requirements
-The only requirements that are needed for the device are a (stable) bluetooth connection and the ability to execute Python codes.
+The only requirements that are needed for the device are a (stable) bluetooth connection and Python installed on your device. Python 3.12 is recommended, but other versions should work as well.
 
-Within Python, the following modules are needed:
+With Python, the following modules are needed:
 - MetaWear
 - NumPy
 - Pandas
@@ -36,6 +36,9 @@ Below are the steps to use the die logging tool:
 4. In the die logging window, fill in the logging parameters. These can be copied directly from the calibrator, but other values may be used as well. Following the the logging instructions. After the logging process, a .csv file will be stored in the previously selected directory.
 
 With these two files, result can be compiled with the built-in results tool.
+
+## Starting the software
+To start the software, simply run the ioc_STARTER.py file.
 
 ## Usage of results tool
 Results can be obtained from the raw data file and the corresponding calibration file. Adding to this, the results can also be directly compiled from a results file, which is also formatted in .csv. In the latter case, no calibration file is needed.
